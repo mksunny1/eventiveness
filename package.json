@@ -1,0 +1,27 @@
+{
+  "name": "eventivity",
+  "version": "0.9.1",
+  "description": "A framework for writing accessible and joyfully interactive web applicationa with traditional HTML, CSS and Javascript",
+  "main": "eventivity.js",
+  "directories": {
+    "example": "examples"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": ".git"
+  },
+  "keywords": [
+    "HTML",
+    "CSS",
+    "Javascript",
+    "vanilla",
+    "reactivity",
+    "accessibility",
+    "tradition"
+  ],
+  "author": "Mark Sun",
+  "license": "MIT"
+}
