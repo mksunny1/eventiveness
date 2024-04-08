@@ -43,7 +43,7 @@ So they can be used on their own in a project.
 
 1. Arender
 
-javascript```
+```js
     import { arender } from "./arender.js";
     const template = arender("<div>${arg1}</div>${arg2}", ['arg1', 'arg2']);
     const renderedA = template('Arg 1a', Promise.resolve('Arg 2a'));
@@ -52,7 +52,7 @@ javascript```
 
 2. Apriori
 
-javascript```
+```js
     import { apriori } from './apriori.js'
     const viewFactory = await apriori(fetch('html-fragment.html).then(r => r.text()));
     const differentViews = [viewFactory(), viewFactory()];
@@ -60,7 +60,7 @@ javascript```
 
 3. Sophistry
 
-javascript```
+```js
     import { sophistry } from '../sophistry.js'
     const mySophistry = sophistry();
     const styles = mySophistry(element);
