@@ -108,7 +108,7 @@ const fallbackProps = {prop1: 'Fallback', prop4: 'Last resort'};
 const {comp, act} = actribute(fallbackProps);
 act.register('comp1', (node, prop1) => node.textContent = prop1);
 act.register('comp2', (node, prop2) => node.style.left = prop2);
-// ...
+// ... other components.
 delete act.registry.comp2;
 ```
 
