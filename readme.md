@@ -69,7 +69,7 @@ javascript```
 
 4. Eventivity
 
-javascript```
+```js
     import { eventivity } from '../eventivity.js';
     const myEventivity = eventivity();
     const e = myEventivity.event();
@@ -82,7 +82,7 @@ javascript```
 
 5. Domitory
 
-javascript```
+```js
     import { Fragment, apply, onEnter, addEventListener } from '../domitory.js';
 
     const = window.myForm;    // form with id myForm.
@@ -102,7 +102,7 @@ javascript```
 
 6. Actribute
 
-javascript```
+```js
 import { actribute } from '../actribute.js';
 const fallbackProps = {prop1: 'Fallback', prop4: 'Last resort'};
 const {comp, act} = actribute(fallbackProps);
@@ -112,7 +112,7 @@ act.register('comp2', (node, prop2) => node.style.left = prop2);
 delete act.registry.comp2;
 ```
 
-html```
+```html
     <main>
         <section o-comp1="prop1"  o-comp2="prop2" >
             First section
