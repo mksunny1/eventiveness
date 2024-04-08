@@ -1,8 +1,8 @@
-# Eventivity Javascript Framework
+# Eventiveness Javascript Framework
 
 This is tiny bunch of abstractions created with the goal of simplifying the developement of highly interactive web frontends using vanilla HTML, CSS and Javascript. Everything is exactly the way they look and there is no hidden magic. The framework consists of 5.5 independent libraries which tackle unique concerns in front-end development. We avoid repeating standard functions in the javascript language and instead focus on new primitives which complement and enhance them. After reading this guide to the framework along with their inline documentation and the attached examples (2), there is nothing left to learn except more standard HTML, CSS and Javascript.
 
-## Eventivity Libraries
+## Eventiveness Libraries
 
 1. Arender
 
@@ -33,13 +33,13 @@ may likely be assimilated into the Javascript standard eventually.
 Actribute provides a more widely supported, flexible and powerful alternative to extending built-in HTML elements.
 
 
-## Including Eventivity
+## Including Eventiveness
 
 Apart from the small dependency of apriory on arender, all the libraries function independently and cater to different needs.
 So they can be used on their own in a project.
 
 
-## Using Eventivity
+## Using Eventiveness
 
 1. Arender
 
@@ -126,7 +126,7 @@ html```
 
 ## Contributing
 
-If you like the concept and/or the direction of Eventivity framework, please contribute to this project. Contribution starts with a simple starring of this repository. Next you can start or join discussions about this project, here or anywhere. You can contribute some of your use-cases to the list of examples. You can still help improve the documentation, complete the site,  
+If you like the concept and/or the direction of Eventiveness framework, please contribute to this project. Contribution starts with a simple starring of this repository. Next you can start or join discussions about this project, here or anywhere. You can contribute some of your use-cases to the list of examples. You can still help improve the documentation, complete the site,  
 consolidate features and fix bugs. There is still a long development journey ahead for this library.
 
 Another really cool way to contribute is to sponsor the project. You can sponsor the project as a 'thank you' or as a way of showing your support for the direction we have chosen and giving Eventivity the best opportunity to thrive. 
