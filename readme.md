@@ -1,4 +1,4 @@
-# Eventiveness Web Framework
+# Eventiveness
 
 This is bunch of tiny abstractions created with the goal of simplifying the developement of highly interactive web frontends using vanilla HTML, CSS and Javascript. Everything is exactly the way they look and there is no hidden magic. The framework consists of 5.5 independent libraries which tackle unique concerns in front-end development. We avoid repeating standard functions in the javascript language and instead focus on new primitives which complement and enhance them. After reading this guide to the framework along with their inline documentation and the attached examples (2), there is nothing left to learn except more standard HTML, CSS and Javascript.
 
@@ -88,7 +88,7 @@ Actribute provides a more widely supported, flexible and powerful alternative to
 ```js
     import { Fragment, apply, onEnter, addEventListener } from '../domitory.js';
 
-    const = window.myForm;    // form with id myForm.
+    const form = window.myForm;    // form with id myForm.
 
     apply({
         input: input => { 
