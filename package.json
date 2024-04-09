@@ -1,6 +1,6 @@
 {
   "name": "eventiveness",
-  "version": "0.9.2",
+  "version": "0.9.3",
   "description": "A framework for writing accessible and joyfully interactive web applicationa with traditional HTML, CSS and Javascript",
   "main": "eventivity.js",
   "directories": {
