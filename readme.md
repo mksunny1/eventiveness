@@ -51,7 +51,7 @@ Actribute provides a more widely supported, flexible and powerful alternative to
 
 ```js
     import { apriori } from './apriori.js'
-    const viewFactory = await apriori(fetch('html-fragment.html).then(r => r.text()));
+    const viewFactory = await apriori(fetch('html-fragment.html').then(r => r.text()));
     const differentViews = [viewFactory(), viewFactory()];
 ```
 
@@ -60,7 +60,13 @@ Actribute provides a more widely supported, flexible and powerful alternative to
 ```js
     import { sophistry } from '../sophistry.js'
     const mySophistry = sophistry();
-    const styles = mySophistry(element);
+    const element = (await apriori(`
+    <div>
+        <p>I have encapsulated styles</p>
+        <style>/* encapsulatedd styles */</style>
+    </div>
+    `)).tree;
+    const styles = mySophistry(element); // the styles get popped here.
     for (let style of styles) style.style(element);
 ```
 
