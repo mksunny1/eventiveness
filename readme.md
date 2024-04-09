@@ -32,6 +32,9 @@ may likely be assimilated into the Javascript standard eventually.
 
 Actribute provides a more widely supported, flexible and powerful alternative to extending built-in HTML elements.
 
+## Installation
+
+```npm install eventiveness```
 
 ## Usage
 
