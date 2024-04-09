@@ -129,7 +129,7 @@ delete act.registry.comp2;
 
 ## Contributing
 
-If you like the concept and/or the direction of Eventiveness framework, please contribute to this project. Contribution starts with a simple starring of this repository. Next you can start or join discussions about this project, here or anywhere. You can contribute some of your use-cases to the list of examples. You can still help improve the documentation, complete the site,  
+If you like the concept and/or the direction of Eventiveness framework, please contribute to this project. Contribution starts with a simple starring of this repository. Next you can start or join discussions about this project, here or anywhere. You can contribute some of your use-cases to the list of examples. You can still help improve the documentation, complete the site (eventivejs.com),  
 consolidate features and fix bugs. There is still a long development journey ahead for this library.
 
 Another really cool way to contribute is to sponsor the project. You can sponsor the project as a 'thank you' or as a way of showing your support for the direction we have chosen and giving Eventivity the best opportunity to thrive. 
