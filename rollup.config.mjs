@@ -32,12 +32,12 @@ export default [
         { format: 'cjs', dir: './dist/cjs' }
       ]
     },
-    {
+    /* {
       input:  './src/eventiveness.js',  // ['./src/arender.js', './src/apriori.js', './src/sophistry.js', './src/eventivity.js', './src/domitory.js', './src/actribute.js'],
       plugins: [ dts() ],
       output: {
         format: 'es',
         file: './dist/eventiveness.d.ts' 
       }
-    }
+    } */
   ]
