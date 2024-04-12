@@ -1,7 +1,4 @@
-import { eventivity } from '../eventivity.js';
-import { Fragment, apply, onEnter, addEventListener } from '../domitory.js';
-import { apriori } from '../apriori.js'
-import { sophistry } from '../sophistry.js'
+import { eventivity, Fragment, apply, onEnter, addEventListener, apriori, sophistry } from '../dist/esm/eventiveness.js';
 
 const accountEventivity = eventivity();
 const e = accountEventivity.event();
@@ -17,12 +14,8 @@ const views = {};
 
 
 function getView(name, inverse, map) {
-    console.log(accountEventivity.handlers);
-
     const frag = views[name]();
     const view = new Fragment(frag);
-
-    console.log('view');
 
     // apply styles within
     const styles = accountSophistry(frag);
@@ -35,7 +28,7 @@ function getView(name, inverse, map) {
 
     // ensure this view is removed when inverse view is added. the handler is cleared (removed) after it runs 
     // because it only runs once.
-    h[[inverse + 'View']](() => view.remove(), { clear: true });
+    h[[inverse + 'View']](() => view.remove(), { own: true });
 
     return view;
 }
@@ -67,7 +60,7 @@ function loginView() {
 
     // when login succeeds, show profile view
     // h.loginYes(resp => resp.json().then(j => profileView(j.user)));
-    h.loginYes(j => profileView(j.args[0]), {clear: true});
+    h.loginYes(j => profileView(j.args[0]), {own: true});
 }
 
 
@@ -99,7 +92,7 @@ function profileView(username) {
     });
 
     // when logout is successful, show login view
-    h.logoutYes(() => loginView(), {clear: true});
+    h.logoutYes(() => loginView(), {own: true});
 }
 
 /**
@@ -122,14 +115,12 @@ apply({
  * @param {*} username 
  */
 async function login(username) {
-    console.log('Called.');
     if (Math.round(Math.random())) e.loginYes(username, {esc: true});
     else e.loginNo('Massive error occured');
 }
 
 
 async function logout() {
-    console.log('logout!');
     e.logoutYes({});
 }
 

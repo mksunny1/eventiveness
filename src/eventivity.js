@@ -195,7 +195,7 @@ eventivity.EventContext = class extends eventivity.Context {
             }
 
             // cleanup handlers 'owned' by this event. nb: 'owned by' different from 'bound to'
-            deleters = this.scope.owners[event];
+            deleters = this.scope.owners[event] || [];
             for (deleter of deleters) deleter();
         }
 
