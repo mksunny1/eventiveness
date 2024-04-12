@@ -37,7 +37,7 @@ export default [
       plugins: [ dts() ],
       output: {
         format: 'es',
-        file: './dist/eventivity.d.ts' 
+        file: './dist/eventiveness.d.ts' 
       }
     }
   ]
