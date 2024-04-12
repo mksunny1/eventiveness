@@ -41,7 +41,7 @@ Actribute provides a more widely supported, flexible and powerful alternative to
 1. Arender
 
 ```js
-    import { arender } from "eventiveness.js";
+    import { arender } from "eventiveness/arendet";
     const template = arender("<div>${arg1}</div>${arg2}", ['arg1', 'arg2']);
     const renderedA = template('Arg 1a', Promise.resolve('Arg 2a'));
     const renderedB = template('Arg 1b', Promise.resolve('Arg 2b'));
@@ -50,7 +50,7 @@ Actribute provides a more widely supported, flexible and powerful alternative to
 2. Apriori
 
 ```js
-    import { apriori } from 'eventiveness.js'
+    import { apriori } from 'eventiveness/apriori'
     const viewFactory = await apriori(fetch('html-fragment.html').then(r => r.text()));
     const differentViews = [viewFactory(), viewFactory()];
 ```
@@ -58,7 +58,7 @@ Actribute provides a more widely supported, flexible and powerful alternative to
 3. Sophistry
 
 ```js
-    import { sophistry } from 'eventiveness.js'
+    import { sophistry } from 'eventiveness/sophistry'
     const mySophistry = sophistry();
     const element = (await apriori(`
     <div>
@@ -73,7 +73,7 @@ Actribute provides a more widely supported, flexible and powerful alternative to
 4. Eventivity
 
 ```js
-    import { eventivity } from 'eventiveness.js';
+    import { eventivity } from 'eventiveness/eventivity';
     const myEventivity = eventivity();
     const e = myEventivity.event();
     const h = myEventivity.handler();
@@ -86,7 +86,7 @@ Actribute provides a more widely supported, flexible and powerful alternative to
 5. Domitory
 
 ```js
-    import { Fragment, apply, onEnter, addEventListener } from 'eventiveness.js';
+    import { Fragment, apply, onEnter, addEventListener } from 'eventiveness/domitory';
 
     const form = window.myForm;    // form with id myForm.
 
@@ -106,7 +106,7 @@ Actribute provides a more widely supported, flexible and powerful alternative to
 6. Actribute
 
 ```js
-import { actribute } from 'eventiveness.js';
+import { actribute } from 'eventiveness/actribute';
 const fallbackProps = {prop1: 'Fallback', prop4: 'Last resort'};
 const {comp, act} = actribute(fallbackProps);
 act.register('comp1', (node, prop1) => node.textContent = prop1);
