@@ -54,12 +54,14 @@ export function querySelectorAll(selectors, element) {
  * @param {*} event 
  * @param {*} listener 
  * @param {*} preventDefault 
+ * @param {*} stopPropagation 
  */
-export function addEventListener(element, event, listener, preventDefault) {
+export function addEventListener(element, event, listener, preventDefault, stopPropagation) {
     let handling = false;
 
     element.addEventListener(event, async (...args) => {
         if (preventDefault) args[0].preventDefault();
+        if (stopPropagation) args[0].stopPropagation();
         if (handling) return;
         handling = true;
         const result = listener(...args);

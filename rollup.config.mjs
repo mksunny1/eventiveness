@@ -25,7 +25,7 @@ export default [
           ]
         }),
         createCommonJsPackage(),
-        terser()
+        // terser()
       ],
       output: [
         { format: 'es', dir: './dist/esm' },

@@ -84,7 +84,9 @@ const apriori = async (tree,  createTemplate) => {
 apriori.tree = function(str) {
     const temp = document.createElement('template');
     temp.innerHTML = str;
-    return temp.content;
+    let result = temp.content;
+    if (result.children.length === 1) result = result.children[0];
+    return result;
 };
 
 /**
@@ -243,8 +245,56 @@ function eventivity() {
 
     scope.owners = new Map();
 
+    scope.object = new eventivity.Object(scope);  // raise events with objects
     return scope;
 }
+
+eventivity.Object = class {
+    handlers = new WeakMap();
+    hc = 0;
+    constructor(scope) {
+        this.scope = scope;
+    }
+    handler(fn, ...objects) {
+        const deleters = [];
+        let handlers, hc, deleter, owner;
+        const owners = this.scope.owners;
+        for (let object of objects) {
+            this.hc++;
+            hc = this.hc;
+            if (!this.handlers.has(object)) this.handlers.set(object, {});
+            handlers = this.handlers.get(object);
+            handlers[hc] = fn;
+            deleter = () => delete handlers[hc];
+            if (fn instanceof Array && typeof fn[1] === 'object' && fn[1].hasOwnProperty('own')) {
+                owner = fn[1].own;
+                owner = owner?.prefix || owner;
+                
+                if (owner) {
+                    if (!(owners.hasOwnProperty(owner))) owners.set(owner, []);
+                    owners.get(owner).push(deleter);
+                }
+            }
+            deleters.push(deleter);
+        }
+        return deleters;
+    };
+    event(args, ...objects) {
+        let handlers, key, fn, ops, res, deleters, deleter;
+        for (let object of objects) {
+            if (!this.handlers.has(object)) continue;
+            handlers = this.handlers.get(object);
+            for ({key, fn} of Object.entries(handlers)) {
+                if (fn instanceof Array) [fn, ops] = fn;
+                else ops = null;
+                res = fn({args, handler: object});
+                if (ops?.esc && res === 'esc') break;
+            }
+            deleters = this.scope.owners.get(object) || [];
+            for (deleter of deleters) deleter();
+        }
+    }
+};
 
 eventivity.Context = class {
     scope; options = {}; #createProxy; prefix = null; 
@@ -322,9 +372,10 @@ eventivity.HandlerContext = class extends eventivity.Context {
             if (this.options?.own) { // used for cleanup.
                 let owner = this.options.own;
                 if (typeof owner !== 'string') owner = this.eventName;  // eg true or 1
+                else owner = owner.prefix || owner;
                 const owners = this.scope.owners;
-                if (!(owners.hasOwnProperty(owner))) owners[owner] = [];
-                owners[owner].push(deleter(this.scope.handlers, this.eventName, this.handlerName));
+                if (!(owners.hasOwnProperty(owner))) owners.set(owner, []);
+                owners.get(owner).push(deleter(this.scope.handlers, this.eventName, this.handlerName));
             }
             handler = [this, handlerFunction, handlerName];
             if (!(this.scope.handlers.hasOwnProperty(this.eventName))) this.scope.handlers[this.eventName] = {};
@@ -377,7 +428,7 @@ eventivity.EventContext = class extends eventivity.Context {
     dispatch(handlersArg) {
         // handlersArg.event === this in this case:
         const results = {};
-
+        
         // default event dispatcher. can be overriden by applying alternate executor, same way scope can be applied.
         let eventHandlers, values, handler, result, deleters, deleter;
         for (let event of this.events) {
@@ -391,7 +442,7 @@ eventivity.EventContext = class extends eventivity.Context {
             }
 
             // cleanup handlers 'owned' by this event. nb: 'owned by' different from 'bound to'
-            deleters = this.scope.owners[event] || [];
+            deleters = this.scope.owners.get(event) || [];
             for (deleter of deleters) deleter();
         }
 
@@ -485,12 +536,14 @@ function querySelectorAll(selectors, element) {
  * @param {*} event 
  * @param {*} listener 
  * @param {*} preventDefault 
+ * @param {*} stopPropagation 
  */
-function addEventListener(element, event, listener, preventDefault) {
+function addEventListener(element, event, listener, preventDefault, stopPropagation) {
     let handling = false;
 
     element.addEventListener(event, async (...args) => {
         if (preventDefault) args[0].preventDefault();
+        if (stopPropagation) args[0].stopPropagation();
         if (handling) return;
         handling = true;
         const result = listener(...args);

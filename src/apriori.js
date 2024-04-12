@@ -41,5 +41,7 @@ export const apriori = async (tree,  createTemplate) => {
 apriori.tree = function(str) {
     const temp = document.createElement('template');
     temp.innerHTML = str;
-    return temp.content;
+    let result = temp.content;
+    if (result.children.length === 1) result = result.children[0];
+    return result;
 }
