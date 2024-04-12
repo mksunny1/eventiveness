@@ -138,5 +138,5 @@ Thank you for contributing.
 
 ## Ongoing Work
 
-Increasing the test coverage for the library and improving the documentation
+Resolved issues with npm install, increasing test coverage and improving the documentation.
 
