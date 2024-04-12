@@ -1,0 +1,41 @@
+{
+  "name": "eventiveness",
+  "version": "0.9.71",
+  "description": "A framework for writing accessible and joyfully interactive web applicationa with traditional HTML, CSS and Javascript",
+  "main": "src/eventiveness.js",
+  "directories": {
+    "example": "examples"
+  },
+  "exports": {
+    ".": {
+      "require": "./cjs/eventiveness.js",
+      "default": "./esm/eventiveness.js"
+    }
+  },
+  "scripts": {
+    "test": "jest",
+    "build": "rollup -c"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/markersunny/eventiveness"
+  },
+  "keywords": [
+    "HTML",
+    "CSS",
+    "Javascript",
+    "vanilla",
+    "reactivity",
+    "accessibility",
+    "tradition"
+  ],
+  "author": "Mark Sun",
+  "license": "MIT",
+  "devDependencies": {
+    "@rollup/plugin-terser": "^0.4.4",
+    "jest": "^29.7.0",
+    "rollup": "^4.14.1",
+    "rollup-plugin-copy": "^3.5.0",
+    "rollup-plugin-dts": "^6.1.0"
+  }
+}

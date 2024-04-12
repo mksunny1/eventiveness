@@ -1,0 +1,5 @@
+
+
+
+import { actribute } from "./actribute";
+
