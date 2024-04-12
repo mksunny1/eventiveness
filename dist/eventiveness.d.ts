@@ -84,7 +84,7 @@ const apriori = async (tree,  createTemplate) => {
 apriori.tree = function(str) {
     const temp = document.createElement('template');
     temp.innerHTML = str;
-    return new apriori.Fragment(temp.content);
+    return temp.content;
 };
 
 /**
