@@ -42,11 +42,22 @@ apply({
         function clear() {startIndex = 0; table.innerHTML = ''}
 
         const values = new WeakMap();
-        function setValue(node, text) {
-            values.set(node, text);
-            apply({'.lbl': lbl => lbl.textContent = text}, node);
+        function setValues(nodes, data, append, labels) {
+            const length = data.length;
+            let label
+            if (labels) {
+                for (let i = 0; i < length; i++) {
+                    label = labels[i];
+                    label.textContent = (!append)? data[i]: label.textContent + data[i];
+                    values.set(nodes[i], label);
+                }
+            } else {
+                for (let i = 0; i < length; i++) {
+                    label = values.get(nodes[i]);
+                    label.textContent = (!append)? data[i]: label.textContent + data[i];
+                }
+            }
         }
-        const getValue = (node) => values.get(node);
 
         function addRows(data) {
             const newRows = [];
@@ -58,8 +69,8 @@ apply({
             const removeListener = (e, node) => node.parentNode.removeChild(node);
 
             applyAll({
-                tr: labels => {
-                    for (let i = startIndex; i < labels.length; i++) setValue(labels[i], data[i - startIndex]);
+                '.lbl': labels => {
+                    setValues(newRows, data, false, labels.slice(startIndex));
                 },
                 'span.remove': rems => {
                     addEventListener(rems.slice(startIndex).map((rem, i) => [rem, newRows[i]]), 
@@ -79,20 +90,20 @@ apply({
             '#update': btnListener(() => {
                 const children = Array.from(table.children);
                 const length = children.length;
-                let child;
-                for (let i = 0; i < length; i+= 10) {
+                let tenth = [], data = [], child;
+                for (let i = 0; i < length; i += 10) {
                     child = children[i];
-                    setValue(child, getValue(child) + ' !!!');
+                    tenth.push(child); data.push(' !!!');
                 }
+                setValues(tenth, data, true);
             }),
             '#clear': btnListener(clear),
             '#swaprows': btnListener(() => {
                 const children = Array.from(table.children);
                 const length = children.length;
                 if (length > 998) {
-                    const temp = getValue(children[1]);
-                    setValue(children[1], getValue(children[998]));
-                    setValue(children[998], temp);
+                    setValues([children[1], children[998]], 
+                        [values.get(children[998]).textContent, values.get(children[1]).textContent]);
                 }
             })
         });

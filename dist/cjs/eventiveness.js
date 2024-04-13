@@ -545,13 +545,13 @@ function querySelectorAll(selectors, element) {
  * @param {*} elements 
  * @param {*} event 
  * @param {*} listener 
- * @param {*} modifiers 
+ * @param {*} options 
  */
-function addEventListener(elements, event, listener, modifiers) {
+function addEventListener(elements, event, listener, options) {
     let handling = false;
 
-    const before = modifiers?.before || modifiers?.be;
-    const after = modifiers?.after || modifiers?.af;
+    const before = options?.before || options?.be;
+    const after = options?.after || options?.af;
 
     let mixin, ctx;
     const context = new WeakMap();
@@ -570,7 +570,9 @@ function addEventListener(elements, event, listener, modifiers) {
         if (after) for (mixin of after) mixin(...allArgs);
         
         if (result instanceof Promise) await result;
-        handling = false;
+        if (options?.wait) {
+            setTimeout(() => handling = false, options.wait);
+        } else handling = false;
     }
 
     if (!(elements instanceof Array)) elements = [elements];
