@@ -19,6 +19,7 @@ export const apriori = async (tree,  createTemplate) => {
     while (typeof tree !== "string" && !(tree instanceof Node)) {
         if (tree instanceof Promise) tree = await tree;
         if (typeof tree === 'function') tree = tree();
+        if (tree instanceof Response) tree = tree.text();
     } 
     
     let result;

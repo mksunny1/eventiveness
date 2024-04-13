@@ -51,7 +51,7 @@ Actribute provides a more widely supported, flexible and powerful alternative to
 
 ```js
     import { apriori } from 'eventiveness'
-    const viewFactory = await apriori(fetch('html-fragment.html').then(r => r.text()));
+    const viewFactory = await apriori(fetch('html-fragment.html'));
     const differentViews = [viewFactory(), viewFactory()];
 ```
 
