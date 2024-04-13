@@ -359,10 +359,10 @@ eventivity.HandlerContext = class extends eventivity.Context {
         this.handlerFunction = handlerFunction;
 
         if (handlerFunction) {
-            if (this.options?.raf) {    // request animation frame
+            if (this.options?.raf || this.options?.requestAnimationFrame) {    // request animation frame
                 const handler2 = handlerFunction;
                 handlerFunction = (arg) => window.requestAnimationFrame(timeStamp => handler2(arg, timeStamp));
-            } else if (this.options?.st) {    // set timeout of 0 secs. have to be explicit with longer periods or setintervals
+            } else if (this.options?.st || this.options?.setTimeout) {    // set timeout of 0 secs. have to be explicit with longer periods or setintervals
                 const handler2 = handlerFunction;
                 handlerFunction = (arg) => setTimeout((...timeoutArgs) => handler2(arg, ...timeoutArgs));
             }
@@ -534,25 +534,61 @@ function querySelectorAll(selectors, element) {
  * listeners that only conclude after promises are resolved. the function passed here should return 
  * promises that must be awaited before the event handling concludes.
  * 
- * @param {*} element 
+ * This supports passing extra contextual information to the handler 
+ * via the 'extras' property of the options object. This feature can help 
+ * to reduce the number of similar handlers that have to be created. See the 
+ * 'benchmark' example.
+ * 
+ * Options also enables things like preventDefault and stopPropagation to 
+ * be 'pre-configured' rather than called explicitly.
+ * 
+ * @param {*} elements 
  * @param {*} event 
  * @param {*} listener 
- * @param {*} preventDefault 
- * @param {*} stopPropagation 
+ * @param {*} modifiers 
  */
-function addEventListener(element, event, listener, preventDefault, stopPropagation) {
+function addEventListener(elements, event, listener, modifiers) {
     let handling = false;
 
-    element.addEventListener(event, async (...args) => {
-        if (preventDefault) args[0].preventDefault();
-        if (stopPropagation) args[0].stopPropagation();
+    const before = modifiers?.before || modifiers?.be;
+    const after = modifiers?.after || modifiers?.af;
+
+    let mixin, ctx;
+    const context = new WeakMap();
+    let hasContext = false;
+
+    async function proxyListener(e) {
         if (handling) return;
         handling = true;
-        const result = listener(...args);
+
+        if (hasContext) ctx = context.get(e.target);
+        else ctx = null;
+
+        const allArgs = [e, ctx];
+        if (before) for (mixin of before) mixin(...allArgs);
+        const result = listener(...allArgs);
+        if (after) for (mixin of after) mixin(...allArgs);
+        
         if (result instanceof Promise) await result;
         handling = false;
-    });
+    }
+
+    if (!(elements instanceof Array)) elements = [elements];
+    
+    for (let element of elements) {
+        if (element instanceof Array) {
+            [element, ctx] = element;
+            context.set(element, ctx);
+            hasContext = true;
+        }
+        element.addEventListener(event, proxyListener);
+    }
+
 }
+
+const stopPropagation = e => e.stopPropagation();
+const preventDefault = e => e.preventDefault();
+
 
 /**
  * Invoke a function when enter key is pressed in an element. This is like effectively creating a new event 
@@ -560,15 +596,12 @@ function addEventListener(element, event, listener, preventDefault, stopPropagat
  * 
  * @param {*} element 
  * @param {*} fn 
- * @param {*} preventDefault 
+ * @param {*} options 
  */
-function onEnter(element, fn, preventDefault) {
+function onEnter(element, fn, options) {
     addEventListener(element, 'keyup', event => {
-        if (event.key === 13) {
-            if (preventDefault) event.preventDefault();
-            return fn();
-        }
-    });
+        if (event.key === 13) return fn();
+    }, options);
 }
 
 /**
@@ -579,17 +612,26 @@ function onEnter(element, fn, preventDefault) {
  * @param {*} element 
  */
 function apply(map, element) {
-    // console.log(element);
-    // for (let e of element?.childNodes || []) console.log(e);
-
     let elements, fn, e;
     for (let [selectors, fns] of Object.entries(map)) {
         elements = querySelectorAll(selectors, element);
         if (!(fns instanceof Array)) fns = [fns];
-        for (e of elements) {
-            // console.log(e);
-            for (fn of fns) fn(e);
-        }
+        for (e of elements) for (fn of fns) fn(e);
+    }
+}
+
+/**
+ * Similar to 'apply' but a more efficient implementation
+ * 
+ * @param {*} map 
+ * @param {*} element 
+ */
+function applyAll(map, element) {
+    let elements, fn;
+    for (let [selectors, fns] of Object.entries(map)) {
+        elements = Array.from(querySelectorAll(selectors, element));
+        if (!(fns instanceof Array)) fns = [fns];
+        for (fn of fns) fn(elements);
     }
 }
 
@@ -685,11 +727,14 @@ exports.Fragment = Fragment;
 exports.actribute = actribute;
 exports.addEventListener = addEventListener;
 exports.apply = apply;
+exports.applyAll = applyAll;
 exports.apriori = apriori;
 exports.arender = arender;
 exports.eventivity = eventivity;
 exports.onEnter = onEnter;
+exports.preventDefault = preventDefault;
 exports.querySelector = querySelector;
 exports.querySelectorAll = querySelectorAll;
 exports.selectRules = selectRules;
 exports.sophistry = sophistry;
+exports.stopPropagation = stopPropagation;

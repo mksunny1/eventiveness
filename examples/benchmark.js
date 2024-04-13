@@ -1,4 +1,4 @@
-import { apriori, apply, addEventListener, eventivity } from '../src/eventiveness.js';
+import { apriori, apply, addEventListener, eventivity, applyAll, preventDefault, stopPropagation } from '../src/eventiveness.js';
 
 function _random(max) {
     return Math.round(Math.random() * 1000) % max;
@@ -26,18 +26,20 @@ apply({
         const myEventivity = eventivity();
         const handler = myEventivity.handler();
         const event = myEventivity.event();
+        let startIndex = 0;
 
-        handler.add($ => table.appendChild(row(...$.args)) , {raf: true});   
-        
+        handler.add($ => addRows($.args));   
+
         function buildData(count) {
-            let item;
+            let data = [];
             for (let i = 0; i < count; i++) {
-                item = adjectives[_random(adjectives.length)] + " " + colours[_random(colours.length)] + " " + nouns[_random(nouns.length)];
-                event.add([item, rowTemplate()]);
+                data.push(adjectives[_random(adjectives.length)] + " " + colours[_random(colours.length)] + " " + nouns[_random(nouns.length)]);
             }
+            event.add(data);
+            startIndex += count;
         }
 
-        function clear() {table.innerHTML = ''}
+        function clear() {startIndex = 0; table.innerHTML = ''}
 
         const values = new WeakMap();
         function setValue(node, text) {
@@ -46,27 +48,35 @@ apply({
         }
         const getValue = (node) => values.get(node);
 
-        function row(item, node) {
-            setValue(node, item);
-            apply({
-                '.remove': rem => {
-                    addEventListener(rem, 'click', () => {
-                        console.log('Called');
-                        node.parentNode.removeChild(node);
-                    }, true, true);
+        function addRows(data) {
+            const newRows = [];
+            for (let i = 0; i < data.length; i++) {
+                newRows.push(rowTemplate());
+            }
+            table.append(...newRows);
+
+            const removeListener = (e, node) => node.parentNode.removeChild(node);
+
+            applyAll({
+                tr: labels => {
+                    for (let i = startIndex; i < labels.length; i++) setValue(labels[i], data[i - startIndex]);
+                },
+                'span.remove': rems => {
+                    addEventListener(rems.slice(startIndex).map((rem, i) => [rem, newRows[i]]), 
+                    'click', removeListener, {before: [preventDefault, stopPropagation]});
                 }
-            }, node);
-            return node;
+            }, table);
+            return newRows;
         }
 
         function runN(n) { clear(); buildData(n); }
-        const listener = (fn) => btn => addEventListener(btn, 'click', fn);
+        const btnListener = (fn) => btn => addEventListener(btn, 'click', fn);
 
         apply({
-            '#run': listener(() => runN(1000)),
-            '#runlots': listener(() => runN(10000)),
-            '#add': listener(() => buildData(1000)),
-            '#update': listener(() => {
+            '#run': btnListener(() => runN(1000)),
+            '#runlots': btnListener(() => runN(10000)),
+            '#add': btnListener(() => buildData(1000)),
+            '#update': btnListener(() => {
                 const children = Array.from(table.children);
                 const length = children.length;
                 let child;
@@ -75,8 +85,8 @@ apply({
                     setValue(child, getValue(child) + ' !!!');
                 }
             }),
-            '#clear': listener(clear),
-            '#swaprows': listener(() => {
+            '#clear': btnListener(clear),
+            '#swaprows': btnListener(() => {
                 const children = Array.from(table.children);
                 const length = children.length;
                 if (length > 998) {

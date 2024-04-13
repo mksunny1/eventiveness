@@ -1,4 +1,5 @@
 import { eventivity, Fragment, apply, onEnter, addEventListener, apriori, sophistry } from '../dist/esm/eventiveness.js';
+import { preventDefault } from '../src/domitory.js';
 
 const accountEventivity = eventivity();
 const e = accountEventivity.event();
@@ -45,7 +46,7 @@ function loginView() {
         '#loginForm': form => {       // show/hide in response to logout/login event using the display_none css class
             apply({
                 input: input => {       // simulate button click when enter is pressed. notice the tag name is the selector here!
-                    onEnter(input, () => login(input.value), true);
+                    onEnter(input, () => login(input.value), {before: [preventDefault]});
                     apply({                         // this is nested in here to create a closure around the input
                         '#loginButton': button => {         // invoke login function when clicked
                             addEventListener(button, 'click', () => login(input.value));

@@ -159,10 +159,10 @@ eventivity.HandlerContext = class extends eventivity.Context {
         this.handlerFunction = handlerFunction;
 
         if (handlerFunction) {
-            if (this.options?.raf) {    // request animation frame
+            if (this.options?.raf || this.options?.requestAnimationFrame) {    // request animation frame
                 const handler2 = handlerFunction;
                 handlerFunction = (arg) => window.requestAnimationFrame(timeStamp => handler2(arg, timeStamp));
-            } else if (this.options?.st) {    // set timeout of 0 secs. have to be explicit with longer periods or setintervals
+            } else if (this.options?.st || this.options?.setTimeout) {    // set timeout of 0 secs. have to be explicit with longer periods or setintervals
                 const handler2 = handlerFunction;
                 handlerFunction = (arg) => setTimeout((...timeoutArgs) => handler2(arg, ...timeoutArgs));
             }
