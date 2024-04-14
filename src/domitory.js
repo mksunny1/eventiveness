@@ -45,44 +45,37 @@ export function querySelectorAll(selectors, element) {
     else return element.querySelectorAll(selectors);
 }
 
-function eventListener(elements, listener, options, attachment) {
-    let handling = false;
 
-    const before = options?.before || options?.be;
-    const after = options?.after || options?.af;
+export function weakMap(keys, values) {
+    const length = keys.length;
+    const result = new WeakMap();
+    for (let i = 0; i < length; i++) result.set(keys[i], values[i]);
+    return result;
+}
 
-    let mixin, ctx;
-    const context = new WeakMap();
-    let hasContext = false;
+export async function eventListener(e, listener, options, handling) {
+    if (handling[0]) return;
+    handling[0] = true;
+    let mixin;
 
-    async function proxyListener(e) {
-        if (handling) return;
-        handling = true;
+    if (options?.hasOwnProperty('before')) for  (mixin of options.before) mixin(e);
+    const result = listener(e);
+    if (options?.hasOwnProperty('after')) for (mixin of options.after) mixin(e);
+    
+    if (result instanceof Promise) result = await result;
 
-        if (hasContext) ctx = context.get(e.target);
-        else ctx = null;
+    if (options?.hasOwnProperty('wait')) setTimeout(() => handling[0] = false, options.wait);
+    else handling[0] = false;
 
-        const allArgs = [e, ctx];
-        if (before) for (mixin of before) mixin(...allArgs);
-        const result = listener(...allArgs);
-        if (after) for (mixin of after) mixin(...allArgs);
-        
-        if (result instanceof Promise) await result;
-        if (options?.wait) {
-            setTimeout(() => handling = false, options.wait);
-        } else handling = false;
-    }
+    return result;
+}
+
+function attachEventListener(elements, listener, options, attachment) {
+    let handling = [false];
+    const pListener = async (e) => eventListener(e, listener, options, handling);
 
     if (!(elements instanceof Array)) elements = [elements];
-    
-    for (let element of elements) {
-        if (element instanceof Array) {
-            [element, ctx] = element;
-            context.set(element, ctx);
-            hasContext = true;
-        }
-        attachment(element, proxyListener);
-    }
+    for (let element of elements) attachment(element, pListener);
 }
 
 /**
@@ -104,13 +97,59 @@ function eventListener(elements, listener, options, attachment) {
  * @param {*} options 
  */
 export function addEventListener(elements, event, listener, options) {
-    return eventListener(elements, listener, options, 
+    return attachEventListener(elements, listener, options, 
         (element, listener) => element.addEventListener(event, listener));
 }
 
+/**
+ * Similar to addEventListener but sets the listener as the only one instead 
+ * of appending it to a list of listeners.
+ * 
+ * @param {*} elements 
+ * @param {*} event 
+ * @param {*} listener 
+ * @param {*} options 
+ * @returns 
+ */
 export function setEventListener(elements, event, listener, options) {
-    return eventListener(elements, listener, options, 
+    return attachEventListener(elements, listener, options, 
         (element, listener) => element['on' + event] = listener);
+}
+
+/**
+ * Takes advantage of event bubbling to listen for events on descendant 
+ * elements to reduce the number of listeners to create.
+ * 
+ * @param {*} event 
+ * @param {*} map 
+ * @param {*} element 
+ */
+export function matchEventListener(event, map, element) {
+    if (!element) element = document.body;
+    let options;
+    const handling = [false];
+    element.addEventListener(event, (e) => {
+        for (let [selector, listener] of map.entries()) {
+            if (listener instanceof Array) [listener, options] = listener;
+            else options = null;
+            if (e.target.matches(selector)) {
+                return eventListener(e, listener, options, handling);
+            }
+        }
+    });
+}
+
+/**
+ * Return the first ancestor that matches the selector.
+ * 
+ * @param {*} element 
+ * @param {*} selector 
+ * @returns 
+ */
+export function parentSelector(element, selector) {
+    let parent = element.parentNode;
+    while (parent && !(parent.matches(selector))) parent = parent.parentNode;
+    return parent;
 }
 
 export const stopPropagation = e => e.stopPropagation();

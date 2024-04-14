@@ -1,4 +1,6 @@
-import { apriori, apply, setEventListener, querySelectorAll, eventivity, applyAll, preventDefault, stopPropagation} from '../src/eventiveness.js';
+import { apriori } from '../src/apriori.js';
+import { apply, setEventListener, querySelectorAll, applyAll, preventDefault, stopPropagation, parentSelector, querySelector} from '../src/domitory.js';
+import { eventivity } from '../src/eventivity.js';
 
 function _random(max) {
     return Math.round(Math.random() * 1000) % max;
@@ -24,20 +26,19 @@ const nouns = ["table", "chair", "house", "bbq", "desk", "car", "pony", "cookie"
 apply({
     'tbody': table => {
         const myEventivity = eventivity();
-        const handler = myEventivity.handler();
-        const event = myEventivity.event();
-        const object = myEventivity.object;
+        const handler = myEventivity.handler;
+        const event = myEventivity.event;
 
         let startIndex = 0, maxStartIndex = 0;
 
-        handler.add($ => addRows($.args));   
+        handler($ => addRows($[0])).handleAll('add');   
 
         function buildData(count) {
             let data = [];
             for (let i = 0; i < count; i++) {
                 data.push(adjectives[_random(adjectives.length)] + " " + colours[_random(colours.length)] + " " + nouns[_random(nouns.length)]);
             }
-            event.add(data);
+            event(data).raiseAll('add');
             startIndex += count;
             maxStartIndex += count;
         }
@@ -50,35 +51,34 @@ apply({
             for (let i = 0; i < length; i++) {
                 label = labels[i];
                 index = maxStartIndex + i + 1;
-                nodes[i].firstElementChild.textContent = index;
+                querySelector('td', nodes[i]).textContent = index;
                 label.textContent = data[i];
             }
         }
 
         function addRows(data) {
             const newRows = [];
-            for (let i = 0; i < data.length; i++) {
-                newRows.push(rowTemplate());
-            }
+            for (let i = 0; i < data.length; i++) newRows.push(rowTemplate());
             table.append(...newRows);
 
-            const removeListener = (e, node) => node.parentNode.removeChild(node);
+            const removeListener = (e) => {
+                const node = parentSelector(e.target, 'tr');
+                node.parentNode.removeChild(node);
+                startIndex -= 1;
+            }
             
-            const selectKey = {};
-
             applyAll({
                 '.lbl': labels => {
                     labels = labels.slice(startIndex);
                     setValues(labels, data, newRows);
-                    setEventListener(labels.map((lbl, i) => [lbl, newRows[i]]), 'click', (lbl, node) => {
-                        object.event([node, node.classList.toggle( 'danger')], selectKey);
-                        object.handler([$ => {
-                            if ($.args[0] !== node) node.className = '';
-                        }, selectKey], selectKey);
+                    setEventListener(labels, 'click', (e) => {
+                        const node = parentSelector(e.target, 'tr');
+                        event(node, node.classList.toggle( 'danger')).raiseAll('select');
+                        handler($ => {if ($[0] !== node) node.className = '';}).handle('select');
                     }, {before: [stopPropagation]});
                 },
                 'span.remove': rems => {
-                    setEventListener(rems.slice(startIndex).map((rem, i) => [rem, newRows[i]]), 
+                    setEventListener(rems.slice(startIndex), 
                     'click', removeListener, {before: [preventDefault, stopPropagation]});
                 }
             }, table);
@@ -94,7 +94,8 @@ apply({
             '#add': btnListener(() => buildData(1000)),
             '#update': btnListener(() => {
                 const children = Array.from(querySelectorAll('.lbl', table));
-                for (let child of children) child.textContent += ' !!!';
+                const length = children.length;
+                for (let i = 0; i < length; i += 10) children[i].textContent += ' !!!';
             }),
             '#clear': btnListener(clear),
             '#swaprows': btnListener(() => {
