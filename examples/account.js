@@ -1,9 +1,8 @@
-import { eventivity, Fragment, apply, onEnter, addEventListener, apriori, sophistry } from '../dist/esm/eventiveness.js';
-import { preventDefault } from '../src/domitory.js';
+import { eventivity, Fragment, apply, onEnter, preventDefault, addEventListener, apriori, sophistry } from '../src/eventiveness.js';
 
 const accountEventivity = eventivity();
-const e = accountEventivity.event();
-const h = accountEventivity.handler();
+const e = accountEventivity.event;
+const h = accountEventivity.handler;
 window.event = e;              // so it can be accessed from other windows if needed.
 window.handler = h;            // so it can be accessed from other windows if needed.
 
@@ -25,11 +24,11 @@ function getView(name, inverse, map) {
     apply(map, frag);
 
     // add this view, simultaneously removing any previously added inverse views.
-    e[name + 'View'](document.getElementsByTagName('main')[0].appendChild(frag));
+    e(document.getElementsByTagName('main')[0].appendChild(frag)).raiseAll(name + 'View');
 
     // ensure this view is removed when inverse view is added. the handler is cleared (removed) after it runs 
     // because it only runs once.
-    h[[inverse + 'View']](() => view.remove(), { own: true });
+    h(() => view.remove()).handle(inverse + 'View');
 
     return view;
 }
@@ -54,14 +53,14 @@ function loginView() {
                     }, form);
                 },
                 // report login error:
-                '#loginErrorBox': box => h.loginNo($ => box.textContent = $.args[0] || 'What happened?')
+                '#loginErrorBox': box => h($ => box.textContent = $[0] || 'What happened?').handleAll('loginNo')
             }, form);
         }
     });
 
     // when login succeeds, show profile view
     // h.loginYes(resp => resp.json().then(j => profileView(j.user)));
-    h.loginYes(j => profileView(j.args[0]), {own: true});
+    h(j => profileView(j[0])).handle('loginYes');
 }
 
 
@@ -93,7 +92,7 @@ function profileView(username) {
     });
 
     // when logout is successful, show login view
-    h.logoutYes(() => loginView(), {own: true});
+    h(() => loginView()).handle('logoutYes');
 }
 
 /**
@@ -116,13 +115,13 @@ apply({
  * @param {*} username 
  */
 async function login(username) {
-    if (Math.round(Math.random())) e.loginYes(username, {esc: true});
-    else e.loginNo('Massive error occured');
+    if (Math.round(Math.random())) e(username).raiseAll('loginYes');
+    else e('Massive error occured').raiseAll('loginNo');
 }
 
 
 async function logout() {
-    e.logoutYes({});
+    e({}).raiseAll('logoutYes');
 }
 
 

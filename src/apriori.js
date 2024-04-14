@@ -27,10 +27,10 @@ export const apriori = async (tree,  createTemplate) => {
     
     if (typeof tree === 'string' && createTemplate) {
         template = arender(tree);
-        result = (...args) => apriori.tree(template(...args)).cloneNode();
+        result = (...args) => aprioriTree(template(...args)).cloneNode();
     }
     else {
-        if (typeof tree === 'string') tree = apriori.tree(tree);
+        if (typeof tree === 'string') tree = aprioriTree(tree);
         result = () => tree.cloneNode(true);
     }
     result.tree = tree;

@@ -17,7 +17,7 @@ function createCommonJsPackage() {
 
 export default [
     {
-      input: './src/eventiveness.js',  // ['./src/arender.js', './src/apriori.js', './src/sophistry.js', './src/eventivity.js', './src/domitory.js', './src/actribute.js'],
+      input: ['./src/eventiveness.js', './src/arender.js', './src/apriori.js', './src/sophistry.js', './src/eventivity.js', './src/domitory.js', './src/actribute.js'],
       plugins: [
         copy({
           targets: [

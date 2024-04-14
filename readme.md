@@ -41,7 +41,7 @@ Actribute provides a more widely supported, flexible and powerful alternative to
 1. Arender
 
 ```js
-    import { arender } from "eventiveness";
+    import { arender } from "eventiveness/arender";
     const template = arender("<div>${arg1}</div>${arg2}", ['arg1', 'arg2']);
     const renderedA = template('Arg 1a', Promise.resolve('Arg 2a'));
     const renderedB = template('Arg 1b', Promise.resolve('Arg 2b'));
@@ -50,7 +50,7 @@ Actribute provides a more widely supported, flexible and powerful alternative to
 2. Apriori
 
 ```js
-    import { apriori } from 'eventiveness'
+    import { apriori } from 'eventiveness/apriori'
     const viewFactory = await apriori(fetch('html-fragment.html'));
     const differentViews = [viewFactory(), viewFactory()];
 ```
@@ -58,7 +58,7 @@ Actribute provides a more widely supported, flexible and powerful alternative to
 3. Sophistry
 
 ```js
-    import { sophistry } from 'eventiveness'
+    import { sophistry } from 'eventiveness/sophistry'
     const mySophistry = sophistry();
     const element = (await apriori(`
     <div>
@@ -73,20 +73,25 @@ Actribute provides a more widely supported, flexible and powerful alternative to
 4. Eventivity
 
 ```js
-    import { eventivity } from 'eventiveness';
+    import { eventivity } from 'eventiveness/eventivity';
     const myEventivity = eventivity();
-    const e = myEventivity.event();
-    const h = myEventivity.handler();
+    const e = myEventivity.event;
+    const h = myEventivity.handler;
     const handlerFunction = (...args) => 'I reacted!';
-    h.eventName(handlerFunction);
+    const event1 = 'event1', event2 = Symbol('event2'), event3 = {};
+    h(handlerFunction).handle(event1).handleAll(event2).handle(event3);  // The handler is called for all the events. It is deleted after the call for events 1 and 3 but not for event 2.
+
     let variable;
-    e.eventName(variable = 'handlerFunction' + 'RunsAfterMe!');
+    e(variable = 'handlerFunction' + 'RunsAfterMe!').raiseAll(event1);  // Invoke all event1 handlers without deletion
+
+     e(variable = 'handlerFunction' + 'RunsAfterMe!').raise(event1);
+     // All handlers are invoked and subsequently deleted.
 ```
 
 5. Domitory
 
 ```js
-    import { Fragment, apply, onEnter, addEventListener } from 'eventiveness';
+    import { apply, onEnter, addEventListener } from 'eventiveness/domitory';
 
     const form = window.myForm;    // form with id myForm.
 
@@ -101,12 +106,15 @@ Actribute provides a more widely supported, flexible and powerful alternative to
         }
     }, form);
 
+    // There are many more useful functions in this module. Checkout the 
+    // exports along with their documentation. Also check out the examples.
+
 ```
 
 6. Actribute
 
 ```js
-import { actribute } from 'eventiveness';
+import { actribute } from 'eventiveness/actribute';
 const fallbackProps = {prop1: 'Fallback', prop4: 'Last resort'};
 const {comp, act} = actribute(fallbackProps);
 act.register('comp1', (node, prop1) => node.textContent = prop1);
