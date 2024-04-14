@@ -45,25 +45,7 @@ export function querySelectorAll(selectors, element) {
     else return element.querySelectorAll(selectors);
 }
 
-/**
- * Ensures that the listener concludes before it can run again. This is most relevant for long-running 
- * listeners that only conclude after promises are resolved. the function passed here should return 
- * promises that must be awaited before the event handling concludes.
- * 
- * This supports passing extra contextual information to the handler 
- * via the 'extras' property of the options object. This feature can help 
- * to reduce the number of similar handlers that have to be created. See the 
- * 'benchmark' example.
- * 
- * Options also enables things like preventDefault and stopPropagation to 
- * be 'pre-configured' rather than called explicitly.
- * 
- * @param {*} elements 
- * @param {*} event 
- * @param {*} listener 
- * @param {*} options 
- */
-export function addEventListener(elements, event, listener, options) {
+function eventListener(elements, listener, options, attachment) {
     let handling = false;
 
     const before = options?.before || options?.be;
@@ -99,9 +81,36 @@ export function addEventListener(elements, event, listener, options) {
             context.set(element, ctx);
             hasContext = true;
         }
-        element.addEventListener(event, proxyListener);
+        attachment(element, proxyListener);
     }
+}
 
+/**
+ * Ensures that the listener concludes before it can run again. This is most relevant for long-running 
+ * listeners that only conclude after promises are resolved. the function passed here should return 
+ * promises that must be awaited before the event handling concludes.
+ * 
+ * This supports passing extra contextual information to the handler 
+ * via the 'extras' property of the options object. This feature can help 
+ * to reduce the number of similar handlers that have to be created. See the 
+ * 'benchmark' example.
+ * 
+ * Options also enables things like preventDefault and stopPropagation to 
+ * be 'pre-configured' rather than called explicitly.
+ * 
+ * @param {*} elements 
+ * @param {*} event 
+ * @param {*} listener 
+ * @param {*} options 
+ */
+export function addEventListener(elements, event, listener, options) {
+    return eventListener(elements, listener, options, 
+        (element, listener) => element.addEventListener(event, listener));
+}
+
+export function setEventListener(elements, event, listener, options) {
+    return eventListener(elements, listener, options, 
+        (element, listener) => element['on' + event] = listener);
 }
 
 export const stopPropagation = e => e.stopPropagation();

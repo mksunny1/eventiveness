@@ -59,25 +59,22 @@ eventivity.Object = class {
     }
     handler(fn, ...objects) {
         const deleters = [];
-        let handlers, hc, deleter, owner;
+        let handlers, hc, deleter, owner, key;
         const owners = this.scope.owners;
         for (let object of objects) {
             this.hc++;
             hc = this.hc;
             if (!this.handlers.has(object)) this.handlers.set(object, {});
             handlers = this.handlers.get(object);
-            handlers[hc] = fn;
-            deleter = () => delete handlers[hc];
-            if (fn instanceof Array && typeof fn[1] === 'object' && fn[1].hasOwnProperty('own')) {
-                owner = fn[1].own;
-                owner = owner?.prefix || owner;
-                
-                if (owner) {
-                    if (!(owners.hasOwnProperty(owner))) owners.set(owner, []);
-                    owners.get(owner).push(deleter);
-                }
+            key = `key-${hc}`;
+            handlers[key] = fn;
+            deleter = () => delete handlers[key];
+            if (fn instanceof Array) {
+                owner = fn[1];
+                if (!(owners.hasOwnProperty(owner))) owners.set(owner, []);
+                owners.get(owner).push(deleter);
             }
-            deleters.push(deleter)
+            deleters.push(deleter);
         }
         return deleters;
     };
@@ -86,14 +83,18 @@ eventivity.Object = class {
         for (let object of objects) {
             if (!this.handlers.has(object)) continue;
             handlers = this.handlers.get(object);
-            for ({key, fn} of Object.entries(handlers)) {
-                if (fn instanceof Array) [fn, ops] = fn;
-                else ops = null;
-                res = fn({args, handler: object});
-                if (ops?.esc && res === 'esc') break;
+            
+            if (handlers) {
+                for ([key, fn] of Object.entries(handlers)) {
+                    if (fn instanceof Array) [fn, ops] = fn;
+                    else ops = null;
+                    res = fn({args, handler: object});
+                    if (ops?.esc && res === 'esc') break;
+                }
             }
             deleters = this.scope.owners.get(object) || [];
             for (deleter of deleters) deleter();
+            deleters.length = 0;
         }
     }
 }
@@ -173,7 +174,7 @@ eventivity.HandlerContext = class extends eventivity.Context {
             let handler;
             if (this.options?.own) { // used for cleanup.
                 let owner = this.options.own;
-                if (typeof owner !== 'string') owner = this.eventName;  // eg true or 1
+                if (typeof owner === 'number' || typeof owner === 'boolean') owner = this.eventName;  // eg true or 1
                 else owner = owner.prefix || owner;
                 const owners = this.scope.owners;
                 if (!(owners.hasOwnProperty(owner))) owners.set(owner, []);
@@ -246,6 +247,7 @@ eventivity.EventContext = class extends eventivity.Context {
             // cleanup handlers 'owned' by this event. nb: 'owned by' different from 'bound to'
             deleters = this.scope.owners.get(event) || [];
             for (deleter of deleters) deleter();
+            deleters.length = 0;
         }
 
         return results;

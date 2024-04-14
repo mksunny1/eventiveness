@@ -1,4 +1,4 @@
-import { apriori, apply, addEventListener, eventivity, applyAll, preventDefault, stopPropagation } from '../src/eventiveness.js';
+import { apriori, apply, setEventListener, eventivity, applyAll, preventDefault, stopPropagation} from '../src/eventiveness.js';
 
 function _random(max) {
     return Math.round(Math.random() * 1000) % max;
@@ -22,11 +22,13 @@ const colours = ["red", "yellow", "blue", "green", "pink", "brown", "purple", "b
 const nouns = ["table", "chair", "house", "bbq", "desk", "car", "pony", "cookie", "sandwich", "burger", "pizza", "mouse", "keyboard"];
 
 apply({
-    '.table': table => {
+    'tbody': table => {
         const myEventivity = eventivity();
         const handler = myEventivity.handler();
         const event = myEventivity.event();
-        let startIndex = 0;
+        const object = myEventivity.object;
+
+        let startIndex = 0, maxStartIndex = 0;
 
         handler.add($ => addRows($.args));   
 
@@ -37,25 +39,19 @@ apply({
             }
             event.add(data);
             startIndex += count;
+            maxStartIndex += count;
         }
 
         function clear() {startIndex = 0; table.innerHTML = ''}
 
-        const values = new WeakMap();
-        function setValues(nodes, data, append, labels) {
+        function setValues(labels, data, nodes) {
             const length = data.length;
-            let label
-            if (labels) {
-                for (let i = 0; i < length; i++) {
-                    label = labels[i];
-                    label.textContent = (!append)? data[i]: label.textContent + data[i];
-                    values.set(nodes[i], label);
-                }
-            } else {
-                for (let i = 0; i < length; i++) {
-                    label = values.get(nodes[i]);
-                    label.textContent = (!append)? data[i]: label.textContent + data[i];
-                }
+            let label, index;
+            for (let i = 0; i < length; i++) {
+                label = labels[i];
+                index = maxStartIndex + i + 1;
+                nodes[i].firstElementChild.textContent = index;
+                label.textContent = data[i];
             }
         }
 
@@ -67,13 +63,22 @@ apply({
             table.append(...newRows);
 
             const removeListener = (e, node) => node.parentNode.removeChild(node);
+            
+            const selectKey = {};
 
             applyAll({
                 '.lbl': labels => {
-                    setValues(newRows, data, false, labels.slice(startIndex));
+                    labels = labels.slice(startIndex);
+                    setValues(labels, data, newRows);
+                    setEventListener(labels.map((lbl, i) => [lbl, newRows[i]]), 'click', (lbl, node) => {
+                        object.event([node, node.classList.toggle( 'danger')], selectKey);
+                        object.handler([$ => {
+                            if ($.args[0] !== node) node.className = '';
+                        }, selectKey], selectKey);
+                    }, {before: [stopPropagation]});
                 },
                 'span.remove': rems => {
-                    addEventListener(rems.slice(startIndex).map((rem, i) => [rem, newRows[i]]), 
+                    setEventListener(rems.slice(startIndex).map((rem, i) => [rem, newRows[i]]), 
                     'click', removeListener, {before: [preventDefault, stopPropagation]});
                 }
             }, table);
@@ -81,29 +86,27 @@ apply({
         }
 
         function runN(n) { clear(); buildData(n); }
-        const btnListener = (fn) => btn => addEventListener(btn, 'click', fn);
+        const btnListener = (fn) => btn => setEventListener(btn, 'click', fn);
 
         apply({
             '#run': btnListener(() => runN(1000)),
             '#runlots': btnListener(() => runN(10000)),
             '#add': btnListener(() => buildData(1000)),
             '#update': btnListener(() => {
-                const children = Array.from(table.children);
-                const length = children.length;
-                let tenth = [], data = [], child;
-                for (let i = 0; i < length; i += 10) {
-                    child = children[i];
-                    tenth.push(child); data.push(' !!!');
-                }
-                setValues(tenth, data, true);
+                const children = Array.from(querySelectorAll('.lbl', table));
+                for (let child of children) child.textContent += ' !!!';
             }),
             '#clear': btnListener(clear),
             '#swaprows': btnListener(() => {
                 const children = Array.from(table.children);
                 const length = children.length;
+                const c1 = children[1], c998 = children[998];
+                const c2 = c1.nextSibling, c999 = c998.nextSibling;
+                
                 if (length > 998) {
-                    setValues([children[1], children[998]], 
-                        [values.get(children[998]).textContent, values.get(children[1]).textContent]);
+                    if (c999) table.insertBefore(c1, c999)
+                    else table.appendChild(c1);
+                    table.insertBefore(c998, c2);
                 }
             })
         });
