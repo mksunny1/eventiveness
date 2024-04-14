@@ -1,4 +1,4 @@
-import { apriori, apply, setEventListener, eventivity, applyAll, preventDefault, stopPropagation} from '../src/eventiveness.js';
+import { apriori, apply, setEventListener, querySelectorAll, eventivity, applyAll, preventDefault, stopPropagation} from '../src/eventiveness.js';
 
 function _random(max) {
     return Math.round(Math.random() * 1000) % max;

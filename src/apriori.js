@@ -39,7 +39,7 @@ export const apriori = async (tree,  createTemplate) => {
 
 };
 
-apriori.tree = function(str) {
+const aprioriTree = function(str) {
     const temp = document.createElement('template');
     temp.innerHTML = str;
     let result = temp.content;

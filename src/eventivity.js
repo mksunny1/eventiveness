@@ -27,7 +27,7 @@ export function eventivity() {
     scope.hc = 0;
 
     scope.handler = (options) => {
-        const h = new (eventivity.HandlerContext)(scope)
+        const h = new (EventivityHandlerContext)(scope)
         h.options = options
         return h.proxy;
     };
@@ -40,18 +40,18 @@ export function eventivity() {
      * @returns 
      */
     scope.event = (options, eventClass) => {
-        const e = new (eventClass || eventivity.EventContext)(scope);
+        const e = new (eventClass || EventivityEventContext)(scope);
         e.options = options
         return e.proxy;
     };
 
     scope.owners = new Map();
 
-    scope.object = new eventivity.Object(scope);  // raise events with objects
+    scope.object = new EventivityObject(scope);  // raise events with objects
     return scope;
 }
 
-eventivity.Object = class {
+const EventivityObject = class {
     handlers = new WeakMap();
     hc = 0;
     constructor(scope) {
@@ -99,7 +99,7 @@ eventivity.Object = class {
     }
 }
 
-eventivity.Context = class {
+const EventivityContext = class {
     scope; options = {}; #createProxy; prefix = null; 
     constructor(scope) {
         this.scope = scope;
@@ -147,7 +147,7 @@ function deleter(handlers, eName, hName) {
 }
 
 
-eventivity.HandlerContext = class extends eventivity.Context {
+const EventivityHandlerContext = class extends EventivityContext {
     eventName = ''; handlerFunction = null; handlerName;
     create(handlerFunction, options) {
         if (handlerFunction === 0) {
@@ -212,7 +212,7 @@ eventivity.HandlerContext = class extends eventivity.Context {
     };
 };
 
-eventivity.EventContext = class extends eventivity.Context {
+const EventivityEventContext = class extends EventivityContext {
     events = []; args = null;
     clone(overrides) {
         const clone = super.clone(overrides);
