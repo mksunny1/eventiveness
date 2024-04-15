@@ -129,6 +129,7 @@ export function matchEventListener(event, map, element) {
     let options;
     const handling = [false];
     element.addEventListener(event, (e) => {
+        // console.log(e.target);
         for (let [selector, listener] of Object.entries(map)) {
             if (listener instanceof Array) [listener, options] = listener;
             else options = null;

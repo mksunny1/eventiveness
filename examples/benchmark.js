@@ -1,6 +1,7 @@
 import { apriori } from '../src/apriori.js';
-import { apply, setEventListener, querySelectorAll, applyAll, preventDefault, stopPropagation, parentSelector, querySelector} from '../src/domitory.js';
+import { apply, setEventListener, matchEventListener, querySelectorAll, applyAll, preventDefault, stopPropagation, parentSelector, querySelector} from '../src/domitory.js';
 import { eventivity } from '../src/eventivity.js';
+
 
 function _random(max) {
     return Math.round(Math.random() * 1000) % max;
@@ -56,33 +57,33 @@ apply({
             }
         }
 
+        const removeListener = (e) => {
+            const node = parentSelector(e.target, 'tr');
+            node.parentNode.removeChild(node);
+            startIndex -= 1;
+        }
+
+        matchEventListener('click', {
+            'a.lbl': e => {
+                const node = e.target.parentNode.parentNode;
+                event(node, node.classList.toggle( 'danger')).raiseAll('select');
+                handler($ => {if ($[0] !== node) node.className = '';}).handle('select');
+            },
+            'span.remove': [removeListener, {before: [preventDefault, stopPropagation]}]
+        }, table);
+
         function addRows(data) {
             const newRows = [];
             for (let i = 0; i < data.length; i++) newRows.push(rowTemplate());
             table.append(...newRows);
-
-            const removeListener = (e) => {
-                const node = parentSelector(e.target, 'tr');
-                node.parentNode.removeChild(node);
-                startIndex -= 1;
-            }
             
             applyAll({
                 '.lbl': labels => {
                     labels = labels.slice(startIndex);
                     setValues(labels, data, newRows);
-                    setEventListener(labels, 'click', (e) => {
-                        const node = parentSelector(e.target, 'tr');
-                        event(node, node.classList.toggle( 'danger')).raiseAll('select');
-                        handler($ => {if ($[0] !== node) node.className = '';}).handle('select');
-                    }, {before: [stopPropagation]});
-                },
-                'span.remove': rems => {
-                    setEventListener(rems.slice(startIndex), 
-                    'click', removeListener, {before: [preventDefault, stopPropagation]});
+                    newRows.length = 0;
                 }
             }, table);
-            return newRows;
         }
 
         function runN(n) { clear(); buildData(n); }
