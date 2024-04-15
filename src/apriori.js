@@ -46,3 +46,6 @@ const aprioriTree = function(str) {
     if (result.children.length === 1) result = result.children[0];
     return result;
 }
+
+apriori.tree = aprioriTree;
+
