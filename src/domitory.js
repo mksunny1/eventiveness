@@ -59,7 +59,7 @@ export async function eventListener(e, listener, options, handling) {
     let mixin;
 
     if (options?.hasOwnProperty('before')) for  (mixin of options.before) mixin(e);
-    const result = listener(e);
+    let result = listener(e);
     if (options?.hasOwnProperty('after')) for (mixin of options.after) mixin(e);
     
     if (result instanceof Promise) result = await result;

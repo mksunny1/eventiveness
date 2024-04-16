@@ -13,26 +13,26 @@
  * @returns 
  */
 export function arender(template, argNames, renderName) {
-    if (!renderName) renderName = 'P';
+    if (!renderName) renderName = 'L';
     if (!(argNames instanceof Array)) argNames = [argNames];
     if (argNames.includes(renderName)) {
         throw new Error(`Render name ${renderName} clashes with the name of one of the arguments. 
         Please change the rendername or the argument name to resolve this.`);
     }
     const mainFunction = Function(renderName, ...argNames, "return " + renderName + "`" + template + "`;")
-    return (...args) => mainFunction(arender.promise, ...args);
+    return (...args) => mainFunction(lit, ...args);
 }
 
 /**
- * This is the template tag that enables the arender to wait for promises to resolve:
+ * This is the template tag that enables arender to wait for promises to resolve:
  * 
- * p`I will wait for this ${Promise.resolve("promise")}!!!`
+ * Lit`I will wait for this ${Promise.resolve("promise")}!!!`
  * 
  * @param {*} strings 
  * @param  {...any} expressions 
  * @returns 
  */
-arender.promise = async function(strings, ...expressions) {
+export async function lit(strings, ...expressions) {
     const promisedExpressions = [];
 
     for (let [i, exp] of expressions.entries()) {

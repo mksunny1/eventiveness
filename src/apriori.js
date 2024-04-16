@@ -27,10 +27,10 @@ export const apriori = async (tree,  createTemplate) => {
     
     if (typeof tree === 'string' && createTemplate) {
         template = arender(tree);
-        result = (...args) => aprioriTree(template(...args)).cloneNode();
+        result = (...args) => createTree(template(...args)).cloneNode();
     }
     else {
-        if (typeof tree === 'string') tree = aprioriTree(tree);
+        if (typeof tree === 'string') tree = createTree(tree);
         result = () => tree.cloneNode(true);
     }
     result.tree = tree;
@@ -39,13 +39,10 @@ export const apriori = async (tree,  createTemplate) => {
 
 };
 
-const aprioriTree = function(str) {
+export const createTree = function(str) {
     const temp = document.createElement('template');
     temp.innerHTML = str;
     let result = temp.content;
     if (result.children.length === 1) result = result.children[0];
     return result;
 }
-
-apriori.tree = aprioriTree;
-

@@ -20,17 +20,15 @@ Sophistry will help with scoping styles whether or not we use shadow DOM.
 
 4. Eventivity
 
-This is the main library of this framework. Eventivity enables simple and explicit reactivity by simply wrapping 
-normal functions and statements with appropriate calls. See the usage notes.
+Eventivity enables simple and explicit reactivity using functions, arrays,  objects and statements which are all provided by the user. A simple example is shown in the usage notes. Some other use-cases can be found in the 'accounts' example.
 
 5. Domitory
 
-Domitory exports a set of pragmatic functions (and a class) for enhancing some traditional DOM apparatus. Some of these 
-may likely be assimilated into the Javascript standard eventually.
+Domitory exports a set of pragmatic functions (and a class) for enhancing some traditional DOM apparatus. Some of these may likely be assimilated into the Javascript standard eventually.
 
 6. Actribute
 
-Actribute provides a more widely supported, flexible and powerful alternative to extending built-in HTML elements.
+Actribute provides a more widely supported, flexible and powerful alternative to extending built-in HTML elements, exposing an almost similar interface.
 
 ## Installation
 
@@ -73,19 +71,15 @@ Actribute provides a more widely supported, flexible and powerful alternative to
 4. Eventivity
 
 ```js
-    import { eventivity } from 'eventiveness/eventivity';
-    const myEventivity = eventivity();
-    const e = myEventivity.event;
-    const h = myEventivity.handler;
-    const handlerFunction = (...args) => 'I reacted!';
-    const event1 = 'event1', event2 = Symbol('event2'), event3 = {};
-    h(handlerFunction).handle(event1).handleAll(event2).handle(event3);  // The handler is called for all the events. It is deleted after the call for events 1 and 3 but not for event 2.
-
+    import { call, set } from 'eventiveness/eventivity';
+    const event1 = [(...args) => 'I reacted!'];
+    const event2 = [event1, () => 'Yet another handler'];
+    
     let variable;
-    e(variable = 'handlerFunction' + 'RunsAfterMe!').raiseAll(event1);  // Invoke all event1 handlers without deletion
+    call(event1, variable = '"I reacteed"' + ' after me!')
+    // 
 
-     e(variable = 'handlerFunction' + 'RunsAfterMe!').raise(event1);
-     // All handlers are invoked and subsequently deleted.
+     call(event2, variable = '"I reacteed" and "Yet another handler"' + ' after me!');
 ```
 
 5. Domitory

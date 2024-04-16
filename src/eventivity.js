@@ -3,117 +3,58 @@
  * performance.
  */
 
-function handle(handler, handlerFunction, ...objects) {
-    let objectHandlers;
-    for (let object of objects) {
-        objectHandlers = handler.scope.handlers.get(object);
-        if (!objectHandlers) {
-            objectHandlers = new Map();
-            handler.scope.handlers.set(object, objectHandlers);
-        }
-        objectHandlers.set(handler.name, handlerFunction);
-    }
-    return handler;
-}
-
-function deleteHandler(objectHandlers, handler, object) {
-    objectHandlers.delete(handler.name);
-    if (!objectHandlers.size) handler.scope.handlers.delete(object);
-}
-
-export class Handler {
-    constructor(scope, handlerFunction) {
-        this.scope = scope;
-        this.reset(handlerFunction);
-    };
-    /**
-     * Effectively like creating a new handler, but will save us the cost.
-     * @param {*} handlerFunction 
-     */
-    reset(handlerFunction) {
-        this.function = handlerFunction;
-        this.once = null;
-        this.name = 'handler' + (this.scope.nHandlers++);
-    }
-    /**
-     * The handler will be executed when any of the objects are used to 
-     * trigger an event. It is then delete. To handle repeatedly, call the 
-     * handleAll method.
-     * 
-     * @param {*} objects 
-     * @returns 
-     */
-    handle(...objects) {
-        if (!this.once) this.once = (args, object, objectHandlers, name) => {
-            setTimeout(() => deleteHandler(objectHandlers, this, object));
-            return this.function(args, object, objectHandlers, name); 
-        };
-        return handle(this, this.once, ...objects);
-    };
-    /**
-     * Invoke the handler everytime any of the objects are used to trigger 
-     * an event.
-     * @param  {...any} objects 
-     */
-    handleAll(...objects) {
-        return handle(this, this.function, ...objects);
-    };
-    /**
-     * Explicitly removes the handler from the events.
-     * @param  {...any} objects 
-     */
-    remove(...objects) {
-        for (let object of objects) {
-            objectHandlers = this.scope.handlers.get(object);
-            deleteHandler(objectHandlers, this, object);
-        }
-    }
-}
-
-export class Event {
-    constructor(scope, statementResults) {
-        this.scope = scope;
-        this.results = statementResults;
-    };
-    /**
-     * Raise the events and delete the handlers.
-     * 
-     * @param  {...any} objects 
-     */
-    raise(...objects) {
-        setTimeout(() => {
-            for (let object of objects) this.scope.handlers.delete(object);
-        });
-        return this.raiseAll(...objects);
-    };
-    /**
-     * Raise the event without deleting the handlers.
-     * 
-     * @param  {...any} objects 
-     */
-    raiseAll(...objects) {
-        let objectHandlers, name, handler;
-        for (let object of objects) {
-            objectHandlers = this.scope.handlers.get(object);
-            if (!objectHandlers) continue;
-            for ([name, handler] of objectHandlers.entries()) handler(this.results, object, objectHandlers, name);
-        }
-        return this.statementResults;
-    }
-}
-
 /**
- * Sets up and returns a new scope shared by event handlers 
- * and triggers.
+ * Supports simple model of reactivity where we compose 
+ * functions into iterables to invoke them simultaneously.
  * 
+ * fuctions are composed in advance as an iterable (typically an array 
+ * or set) and then used allong with call to perform reactive operations:
+ * 
+ * const event = [];
+ * event.push(v => 'First handler');     // function made for the event
+ * event.push([v => 'Recursive second handler 1', v => 'Recursive second handler 2']);
+ * let v;
+ * call(event, v = {...});
+ * 
+ * @param {*} functions 
+ * @param  {...any} args 
  * @returns 
  */
-export function eventivity() {
-    const scope = {
-        handlers: new Map(), owners: new Map(), nHandlers: 0,
-        handler: (handlerFunction) => (new Handler(scope, handlerFunction)),
-        event: (...statementResults) => (new Event(scope, statementResults))
-    };
-    return scope;
+export function call(functions, args) {
+    for (let f of functions) {
+        if (typeof f !== 'function') call(f, args);   // nested events
+        else f(args);
+    }
+    return args;
 }
 
+
+/**
+ * Another simple model of reactivity where we set object properties 
+ * simultaneously based on input. The goal is to minimize function calls 
+ * for this kind of reactivity. 
+ * 
+ * NB: it is good practice to not have too many similar reactive functions.
+ * Either write a single function with parameters or use this function.
+ * 
+ * props is a prepared or composed mapping of the keys in args to object 
+ * fields that should be set to it: 
+ * {arg1: {prop1: [obj1, obj2, ...], prop2: [obj3], ...}, arg2: {...}, ...}
+ * 
+ * rhs are the values to be set, usually supplied inline with the call to set:
+ * {arg1: 'new computation', arg2: await (fetch('something-remote')), 
+ * arg3: call(event, 'we can' + 'also nest things here ', 1, 2, 3)}
+ * 
+ * @param {*} props 
+ * @param {*} args 
+ * @returns 
+ */
+export function set(props, args) {
+    let prop, obj;
+    for (let [key, value] of Object.entries(props)) {
+        for ([prop, obj] of Object.entries(value)) {
+            obj[prop] = args[key];
+        }
+    };
+    return args;
+}

@@ -1,10 +1,7 @@
-import { eventivity, Fragment, apply, onEnter, preventDefault, addEventListener, apriori, sophistry } from '../src/eventiveness.js';
-
-const accountEventivity = eventivity();
-const e = accountEventivity.event;
-const h = accountEventivity.handler;
-window.event = e;              // so it can be accessed from other windows if needed.
-window.handler = h;            // so it can be accessed from other windows if needed.
+import { apriori } from '../src/apriori.js';
+import { sophistry } from '../src/sophistry.js';
+import { call } from '../src/eventivity.js';
+import { Fragment, apply, onEnter, preventDefault, addEventListener } from '../src/domitory.js';
 
 const accountSophistry = sophistry();
 
@@ -12,24 +9,26 @@ const accountSophistry = sophistry();
 // Components (notice the nesting, so easy to declare components elsewhere and reuse here.):
 const views = {};
 
+let currentView;
+const onViewChange = [view => (currentView?.remove() || 1) && (currentView = view)];  // remove existing view when a new one is added
 
-function getView(name, inverse, map) {
+const loginYes = [username => profileView(username)];    // show profile view whenlogged in
+const logoutYes = [() => loginView()];    // show login view when logged out
+
+let loginNo = [];
+
+
+function getView(name, map) {
     const frag = views[name]();
     const view = new Fragment(frag);
 
     // apply styles within
     const styles = accountSophistry(frag);
     for (let style of styles) style.style(frag);
-
     apply(map, frag);
 
     // add this view, simultaneously removing any previously added inverse views.
-    e(document.getElementsByTagName('main')[0].appendChild(frag)).raiseAll(name + 'View');
-
-    // ensure this view is removed when inverse view is added. the handler is cleared (removed) after it runs 
-    // because it only runs once.
-    h(() => view.remove()).handle(inverse + 'View');
-
+    call(onViewChange, document.getElementsByTagName('main')[0].appendChild(frag) && view);
     return view;
 }
 
@@ -41,7 +40,7 @@ function getView(name, inverse, map) {
  */
 function loginView() {
     // create the view
-    const view = getView('login', 'profile', {
+    getView('login', {
         '#loginForm': form => {       // show/hide in response to logout/login event using the display_none css class
             apply({
                 input: input => {       // simulate button click when enter is pressed. notice the tag name is the selector here!
@@ -53,14 +52,10 @@ function loginView() {
                     }, form);
                 },
                 // report login error:
-                '#loginErrorBox': box => h($ => box.textContent = $[0] || 'What happened?').handleAll('loginNo')
+                '#loginErrorBox': box => loginNo = [msg => box.textContent = msg || 'What happened?']
             }, form);
         }
     });
-
-    // when login succeeds, show profile view
-    // h.loginYes(resp => resp.json().then(j => profileView(j.user)));
-    h(j => profileView(j[0])).handle('loginYes');
 }
 
 
@@ -72,7 +67,7 @@ function loginView() {
  * The user argument is used within the view to provide obvious context.
  */
 function profileView(username) {
-    const view = getView('profile', 'login', {
+    getView('profile', {
         '#profileBox': box => {
             // views:
             // code to setup profile info and the 2 tabs.
@@ -90,9 +85,6 @@ function profileView(username) {
             }, box);
         }
     });
-
-    // when logout is successful, show login view
-    h(() => loginView()).handle('logoutYes');
 }
 
 /**
@@ -115,13 +107,13 @@ apply({
  * @param {*} username 
  */
 async function login(username) {
-    if (Math.round(Math.random())) e(username).raiseAll('loginYes');
-    else e('Massive error occured').raiseAll('loginNo');
+    if (Math.round(Math.random())) call(loginYes, username);
+    else call(loginNo, 'Massive error occured');
 }
 
 
 async function logout() {
-    e({}).raiseAll('logoutYes');
+    call(logoutYes);
 }
 
 
