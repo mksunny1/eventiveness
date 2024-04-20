@@ -351,7 +351,7 @@ Use components:
 
 Process components:
 ```js
-    comp({a: 1, b: 2});
+    comp(document.body, {a: 1, b: 2});
 ```
 
 Unregister components:
