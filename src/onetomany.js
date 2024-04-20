@@ -97,16 +97,18 @@ export class One {
         const results = [];
         const length = this.many.length;
         const j = args.length;
-        let iArgs;
+        let iArgs, result;
         if (method !== undefined) {
             for (let i = 0; i < length; i++) {
                 iArgs = args[Math.min(i, j - 1)] || [];
-                results.push(this.many[i][method](...iArgs));
+                result = this.many[i][method](...iArg, result);
+                results.push(result);
             }
         } else {
             for (let i = 0; i < length; i++) {
                 iArgs = args[Math.min(i, j - 1)] || [];
-                results.push(this.many[i](...iArgs));
+                result = this.many[i](...iArgs, result);
+                results.push(result);
             }
         }
         return results;

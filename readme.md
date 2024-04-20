@@ -205,14 +205,34 @@ Call multiple methods:
     // prefer the factory for members
 
     // Call with different sets of args
-    aOne.push([[1, 2, 3, 4, 5], ['a', 'b', 'c']]);   
+    aOne.push([1, 2, 3, 4, 5], ['a', 'b', 'c']);   
 
     // Call with the smae set of args
-    aOne.push([[1, 2, 3, 4, 5, 6, 7]]);   
+    aOne.push([1, 2, 3, 4, 5, 6, 7]);   
 
     // Call with no args.
     aOne.pop();
 ```
+
+
+One passes on the function return values so that they can communicate:
+```js
+    const f1 = (...args) => console.log(args) || 'I ran!';
+    const f2 = (...args, f1Return) => console.log(args) || console.log(f1Return  + ' and I also ran');
+
+    const fOne = new One([f1, f2]);    
+    // use the class for functions.
+
+    // Call with different sets of args
+    fOne.call([['f1', 'f1'], ['f2', 'f2', 2]]);   
+
+    // Call with the smae set of args
+    fOne.call([['f1-2', 'f1-2']]);   
+
+    // Call with no args
+    fOne.call();
+```
+
 
 Get, set and delete multiple properties:
 ```js
