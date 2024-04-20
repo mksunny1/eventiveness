@@ -54,7 +54,7 @@ class Component {
         this.data.push(...this.createLabels(n));
         return [this.data, this.indices, n];
     }
-    create(n) {this.view.create(...this.build(n));}
+    create(n) {this.clear(); this.view.create(...this.build(n));}
     append(n) {this.view.append(...this.build(n));}
     update() {
         const length = this.data.length;
