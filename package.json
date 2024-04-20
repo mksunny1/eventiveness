@@ -1,6 +1,6 @@
 {
   "name": "eventiveness",
-  "version": "0.9.93",
+  "version": "0.9.931",
   "description": "A modular framework for writing accessible and joyfully interactive web applications with traditional HTML, CSS and Javascript.",
   "type": "module",
   "main": "./dist/cjs/eventiveness.js",
