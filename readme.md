@@ -1,6 +1,6 @@
 # Eventiveness
 
-This is bunch of tiny abstractions created with the goal of simplifying the developement of highly interactive web frontends using vanilla HTML, CSS and JavasSript. Everything is exactly the way they look and there is no hidden magic. The framework consists of 7 independent libraries which tackle unique concerns in front-end development. We avoid repeating standard functions in the javascript language and instead focus on new primitives which complement and enhance them. After reading this guide to the framework along with their inline documentation and the attached examples, there is nothing left to learn except more standard HTML, CSS and JavaScript.
+This is bunch of tiny abstractions created with the goal of simplifying the developement of highly interactive web frontends using vanilla HTML, CSS and JavasSript. Everything is exactly the way they look and there is no hidden magic. The framework consists of 7 independent libraries which tackle unique concerns in front-end development. We avoid repeating standard functions in the JavaScript language and instead focus on new primitives which complement and enhance them. After reading this guide to the framework along with their inline documentation and the attached examples, there is nothing left to learn except more standard HTML, CSS and JavaScript.
 
 
 ## The Libraries
@@ -27,7 +27,7 @@ OneToMany provides methods for getting and setting properties on multiple object
 
 4. **Appliance**
 
-Appliance provides a powerful declarative API for manipulating the DOM and for structuring code, providing functionality that matches the benefits of building DOM javascript components, but without many of the limitations. For instance, this also matches and exceeds the benefits of hydration because the document can be created anywhere and with any technology available; there is no need for JavaScript on the backend. 
+Appliance provides a powerful declarative API for manipulating the DOM and for structuring code, providing functionality that matches the benefits of building DOM JavaScript components, but without many of the limitations. For instance, this also matches and exceeds the benefits of hydration because the document can be created anywhere and with any technology available; there is no need for JavaScript on the backend. 
 
 **Accessibility** (both for users and for devs).
 
@@ -49,7 +49,7 @@ Actribute provides a more widely supported, flexible and powerful alternative to
 
 7. **Generational**
 
-Generation is a tiny new addition to the library stack which is intended to provide useful generator functionality to, simplify javascript code, reduce memory footprint and improve performance. The first export is the elusive `range` generator for JavaScript. You are welcome.
+Generation is a tiny new addition to the library stack which is intended to provide useful generator functionality to, simplify JavaScript code, reduce memory footprint and improve performance. The first export is the elusive `range` generator for JavaScript. You are welcome.
 
 
 ## Installation
@@ -317,6 +317,7 @@ Use a shared running context (the handlers *and their long-running tasks* run mu
         'span.remove': eventListener([removeListener, preventDefault, stopPropagation], {})
     }));
 ```
+
 
 6. **Actribute**
 

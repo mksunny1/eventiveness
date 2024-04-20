@@ -1,7 +1,7 @@
 {
   "name": "eventiveness",
-  "version": "0.9.933",
-  "description": "A modular framework for writing accessible and joyfully interactive web applications with traditional HTML, CSS and Javascript.",
+  "version": "0.9.934",
+  "description": "A modular framework for writing accessible and joyfully interactive web applications with traditional HTML, CSS and JavaScript.",
   "type": "module",
   "main": "./dist/cjs/eventiveness.js",
   "module": "./dist/esm/eventiveness.js",
@@ -55,7 +55,7 @@
   "keywords": [
     "HTML",
     "CSS",
-    "Javascript",
+    "JavaScript",
     "vanilla",
     "reactivity",
     "accessibility",
