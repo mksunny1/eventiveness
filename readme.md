@@ -1,6 +1,6 @@
 # Eventiveness
 
-This is bunch of tiny abstractions created with the goal of simplifying the developement of highly interactive web frontends using vanilla HTML, CSS and JavasSript. Everything is exactly the way they look and there is no hidden magic. The framework consists of 7 independent libraries which tackle unique concerns in front-end development. We avoid repeating standard functions in the javascript language and instead focus on new primitives which complement and enhance them. After reading this guide to the framework along with their inline documentation and the attached examples (2), there is nothing left to learn except more standard HTML, CSS and JavaScript.
+This is bunch of tiny abstractions created with the goal of simplifying the developement of highly interactive web frontends using vanilla HTML, CSS and JavasSript. Everything is exactly the way they look and there is no hidden magic. The framework consists of 7 independent libraries which tackle unique concerns in front-end development. We avoid repeating standard functions in the javascript language and instead focus on new primitives which complement and enhance them. After reading this guide to the framework along with their inline documentation and the attached examples, there is nothing left to learn except more standard HTML, CSS and JavaScript.
 
 
 ## The Libraries
@@ -65,7 +65,7 @@ Alternatively, simply clone this repository into your projects that do not use n
 
 Import apriori:
 ```js
-    import { apriori, asyncLiteral as A, asyncTemplate, createTree, LastingFragment } from "eventiveness/arender";
+    import { apriori, asyncLiteral as A, asyncTemplate, createTree, LastingFragment } from "eventiveness/apriori";
 ```
 
 Create a 'raw' async template literal:
