@@ -1,6 +1,6 @@
 {
   "name": "eventiveness",
-  "version": "0.9.937",
+  "version": "0.9.938",
   "description": "A modular framework for writing accessible and joyfully interactive web applications with traditional HTML, CSS and JavaScript.",
   "type": "module",
   "main": "./dist/cjs/eventiveness.js",
@@ -59,7 +59,15 @@
     "vanilla",
     "reactivity",
     "accessibility",
-    "tradition"
+    "tradition",
+    "Eventiveness",
+    "Apriori",
+    "Sophistry",
+    "OneToMany",
+    "Appliance",
+    "Domitory",
+    "Actribute",
+    "Generational"
   ],
   "author": "Mark Sun",
   "license": "MIT",
