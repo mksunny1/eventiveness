@@ -1,6 +1,6 @@
 {
   "name": "eventiveness",
-  "version": "0.9.92",
+  "version": "0.9.93",
   "description": "A modular framework for writing accessible and joyfully interactive web applications with traditional HTML, CSS and Javascript.",
   "type": "module",
   "main": "./dist/cjs/eventiveness.js",
@@ -51,7 +51,7 @@
     "type": "git",
     "url": "https://github.com/markersunny/domitory"
   },
-  "homepage": "https://domitory.com",
+  "homepage": "https://eventivejs.com",
   "keywords": [
     "HTML",
     "CSS",
