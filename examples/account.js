@@ -1,7 +1,8 @@
-import { apriori } from '../src/apriori.js';
+import { apriori, LastingFragment } from '../src/apriori.js';
 import { sophistry } from '../src/sophistry.js';
-import { call } from '../src/eventivity.js';
-import { Fragment, apply, onEnter, preventDefault, addEventListener } from '../src/domitory.js';
+import { One } from '../src/onetomany.js';
+import { apply } from '../src/appliance.js';
+import { onEnter, preventDefault, eventListener } from '../src/eventiveness.js';
 
 const accountSophistry = sophistry();
 
@@ -10,17 +11,17 @@ const accountSophistry = sophistry();
 const views = {};
 
 let currentView;
-const onViewChange = [view => (currentView?.remove() || 1) && (currentView = view)];  // remove existing view when a new one is added
+const onViewChange = new One([view => (currentView?.remove() || 1) && (currentView = view)]);  // remove existing view when a new one is added
 
-const loginYes = [username => profileView(username)];    // show profile view whenlogged in
-const logoutYes = [() => loginView()];    // show login view when logged out
+const loginYes = new One([username => profileView(username)]);    // show profile view whenlogged in
+const logoutYes = new One([() => loginView()]);    // show login view when logged out
 
-let loginNo = [];
+const loginNo = new One([() => console.log('no views yet!')]);
 
 
 function getView(name, map) {
     const frag = views[name]();
-    const view = new Fragment(frag);
+    const view = new LastingFragment(frag);
 
     // apply styles within
     const styles = accountSophistry(frag);
@@ -28,7 +29,7 @@ function getView(name, map) {
     apply(map, frag);
 
     // add this view, simultaneously removing any previously added inverse views.
-    call(onViewChange, document.getElementsByTagName('main')[0].appendChild(frag) && view);
+    onViewChange.call([[document.getElementsByTagName('main')[0].appendChild(frag) && view]]);
     return view;
 }
 
@@ -44,15 +45,15 @@ function loginView() {
         '#loginForm': form => {       // show/hide in response to logout/login event using the display_none css class
             apply({
                 input: input => {       // simulate button click when enter is pressed. notice the tag name is the selector here!
-                    onEnter(input, () => login(input.value), {before: [preventDefault]});
+                    input.onkeyup = eventListener([onEnter, () => login(input.value), preventDefault]);
                     apply({                         // this is nested in here to create a closure around the input
                         '#loginButton': button => {         // invoke login function when clicked
-                            addEventListener(button, 'click', () => login(input.value));
+                            button.onclick = eventListener(() => login(input.value));
                         }
                     }, form);
                 },
                 // report login error:
-                '#loginErrorBox': box => loginNo = [msg => box.textContent = msg || 'What happened?']
+                '#loginErrorBox': box => loginNo.many[0] = msg => box.textContent = msg || 'What happened?'
             }, form);
         }
     });
@@ -80,7 +81,7 @@ function profileView(username) {
                     // bind content. can also bind attributes and if we dont rerender, just wrap with h.loginYes...
                 },
                 '#logoutButton': button => {
-                    addEventListener(button, 'click', logout);
+                    button.onclick = eventListener(logout);
                 }
             }, box);
         }
@@ -107,13 +108,13 @@ apply({
  * @param {*} username 
  */
 async function login(username) {
-    if (Math.round(Math.random())) call(loginYes, username);
-    else call(loginNo, 'Massive error occured');
+    if (Math.round(Math.random())) loginYes.call([[username]]);
+    else loginNo.call('Massive error occured');
 }
 
 
 async function logout() {
-    call(logoutYes);
+    logoutYes.call();
 }
 
 

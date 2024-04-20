@@ -1,2 +1,0 @@
-import { arender } from "./arender";
-

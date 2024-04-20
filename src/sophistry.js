@@ -10,82 +10,78 @@
  */
 export function sophistry() {
     const context = {};
-    const result = (root, replace) => runSophistry(root, context, replace);
+    const result = (root, replace) => run(root, context, replace);
     result.import = (link) => importStyle(link, context);
     result.set = (key, str) => setStyle(key, str, context);
-    result.styles = context;
+    result.context = context;
     return result;
 }
 
-function setStyle(key, str, context) {
-    if (context.hasOwnProperty(key)) context[key].self.replaceSync(str);
+export function setStyle(key, str, context) {
+    if (context.hasOwnProperty(key)) context[key].css.replaceSync(str);
     else {
         const st = document.createElement('style');
         st.innerText = str;
-        context[key] = new sophistry.StyleSheet(st);
+        context[key] = new SophistryStyleSheet(st);
     }
     return context[key];
 }
 
-function runSophistry(root, context, replace) {
-    const css = [];
+export function run(root, context, replace) {
+    const cssStyleSheets = [];
     if (root instanceof HTMLStyleElement || (root instanceof HTMLLinkElement && root.getAttribute('rel') === 'stylesheet')) {
-        const hash = root.getAttribute('o-name') || root.getAttribute('href') || sophistry.hash(root.textContent);
-        if (context.hasOwnProperty(hash) && !replace && !root.hasAttribute('o-replace')) css.push(context[hash]);
+        const rootHash = root.getAttribute('s-ophistry') || root.getAttribute('href') || hash(root.textContent);
+        if (context.hasOwnProperty(rootHash) && !replace) cssStyleSheets.push(context[rootHash]);
         else {
             let st, st2;
-            if (context.hasOwnProperty(hash) ) {
-                st2 = context[hash];
+            if (context.hasOwnProperty(rootHash) ) {
+                st2 = context[rootHash];
                 st = st2.self;
             } else {
                 st = new CSSStyleSheet();
-                st2 = new (sophistry.StyleSheet)(st);
-                context[hash] = st2;
+                st2 = new SophistryStyleSheet(st);
+                context[rootHash] = st2;
             }
-            css.push(st2);
+            cssStyleSheets.push(st2);
             if (root instanceof HTMLStyleElement) st.replaceSync(root.textContent);    // style element
             else fetch(root.getAttribute('href')).then(r => r.text()).then(t => st.replaceSync(t));   // link element
         }
     } else {
-        let node = root.children[0];
-        let node2;
+        let node = root.children[0], node2;
         while (node) {
             node2 = node.nextElementSibling;
-            css.push(...runSophistry(node, context, replace));
+            cssStyleSheets.push(...run(node, context, replace));
             if (node instanceof HTMLStyleElement || (root instanceof HTMLLinkElement && root.getAttribute('rel') === 'stylesheet')) root.removeChild(node);
             node = node2;
         }
     }
-    return css;
+    return cssStyleSheets;
 }
 
 
-const importStyle = function(link, context) {
-    if (context.hasOwnProperty(link)) return context[link];
+export const importStyle = function(link, context, replace) {
+    if (context.hasOwnProperty(link) && !replace) return context[link];
     else {
         const st = new CSSStyleSheet();
-        const st2 = new (sophistry.StyleSheet)(st);
+        const st2 = new SophistryStyleSheet(st);
         context[link] = st2;
         fetch(link).then(r => r.text()).then(t => st.replaceSync(t));
         return st2;
     }
 }
 
-sophistry.hash = (str) => {
-    let hash = 0;
-    let chr;
+const hash = (str) => {
+    let newHash = 0, chr;
     for (let i = 0, len = str.length; i < len; i++) {
         chr = str.charCodeAt(i);
-        hash = (hash << 5) - hash + chr;
-        hash |= 0;    // convert to 32 bit int.
+        newHash = (newHash << 5) - newHash + chr;
+        newHash |= 0;    // convert to 32 bit int.
     }
-    return hash;
+    return newHash;
 };
 
-sophistry.StyleSheet = class{
-    constructor(self) {
-        this.self = self;
-    }
+export class SophistryStyleSheet{
+    constructor(cssStyleSheet) {this.css = cssStyleSheet;}
     /**
      * Adds the CSSStylesheets to the given documents.
      * @param  {...any} documents 
@@ -93,7 +89,7 @@ sophistry.StyleSheet = class{
     style(...documents) {
         let st;
         for (let document of documents) {
-            if (!document.adoptedStyleSheets?.includes(this.self)) document.adoptedStyleSheets = [...(document.adoptedStyleSheets || []), this.self];
+            if (!document.adoptedStyleSheets?.includes(this.css)) document.adoptedStyleSheets = [...(document.adoptedStyleSheets || []), this.css];
         }
     };
     /**
@@ -101,10 +97,12 @@ sophistry.StyleSheet = class{
      * @param {*} documents 
      */
     remove(...documents) {
-        let st;
         for (let document of documents) {
-            if (document.adoptedStyleSheets.includes(this.self)) document.adoptedStyleSheets.splice(document.adoptedStyleSheets.indexOf(this.self));
+            if (document.adoptedStyleSheets.includes(this.css)) document.adoptedStyleSheets.splice(document.adoptedStyleSheets.indexOf(this.css));
         }
     }
 }
 
+export function wrap(cssStyleSheet) {
+    return new SophistryStyleSheet(cssStyleSheet);
+}
