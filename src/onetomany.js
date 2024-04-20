@@ -30,7 +30,10 @@ const oneTrap = {
 }
 
 export class One {
-    constructor(many, recursive, ctor) {this.many = many; this.recursive = recursive, this.ctor = ctor};
+    constructor(many, recursive, ctor) {
+        this.many = many; this.recursive = recursive, this.ctor = ctor;
+        this.context = {};
+    };
     /**
      * Gets corresponding properties from all the objects in many
      * 
@@ -97,17 +100,17 @@ export class One {
         const results = [];
         const length = this.many.length;
         const j = args.length;
-        let iArgs, result, context = {};
+        let iArgs, result;
         if (method !== undefined) {
             for (let i = 0; i < length; i++) {
                 iArgs = args[Math.min(i, j - 1)] || [];
-                result = this.many[i][method](...iArg, context);
+                result = this.many[i][method](...iArgs, this.context);
                 results.push(result);
             }
         } else {
             for (let i = 0; i < length; i++) {
                 iArgs = args[Math.min(i, j - 1)] || [];
-                result = this.many[i](...iArgs, context);
+                result = this.many[i](...iArgs, this.context);
                 results.push(result);
             }
         }
