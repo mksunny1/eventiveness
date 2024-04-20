@@ -61,7 +61,7 @@ Alternatively, simply clone this repository into your projects that do not use n
 
 ## Usage
 
-1. Apriori
+1. **Apriori**
 
 Import apriori:
 ```js
@@ -101,14 +101,14 @@ Create lasting fragments (they won't lose their children on you):
 ```js
     const view = new LastingFragment(tree);
     document.body.append(view.get());   
-    // view  does not lose its treen here
+    // view  does not lose its tree here
     
     view.remove();     
     // view can still act powerfully over its tree!
 ```
 
 
-2. Sophistry
+2. **Sophistry**
 
 Import sophistry:
 ```js
@@ -171,7 +171,7 @@ Remove stylesheet from sophistry:
     delete mySophistry.context.styeName;
 ```
 
-3. Onetomany
+3. **Onetomany**
 
 Import onetomany:
 ```js
@@ -237,7 +237,7 @@ Get, set and delete multiple properties:
 ```
 
 
-4. Appliance
+4. **Appliance**
 
 Import appliaces:
 ```js
@@ -275,7 +275,7 @@ Create a range (one line is better than 3):
 ```
 
 
-5. Domitory
+5. **Domitory**
 
 Import domitory:
 ```js
@@ -318,7 +318,7 @@ Use a shared running context (the handlers *and their long-running tasks* run mu
     }));
 ```
 
-6. Actribute
+6. **Actribute**
 
 Import actribute:
 ```js
@@ -360,7 +360,7 @@ Unregister components:
 ```
 
 
-7. Generational
+7. **Generational**
 
 Import generational:
 ```js
