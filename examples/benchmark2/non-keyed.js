@@ -12,25 +12,44 @@ const nouns = ["table", "chair", "house", "bbq", "desk", "car", "pony", "cookie"
 class View {
     constructor(parent) {this.parent = parent;}
     create(data, index, n) {
-        this.clear();
-        this.append(data, index, n);
+        const dataLength = data.length;
+        const viewLength = this.parent.children.length;
+
+        if (dataLength > viewLength) {
+            if (viewLength) {
+                this.append(data, index, dataLength - viewLength);
+                this.set(range(0, viewLength, 1), data, index);
+            } else this.append(data, index, dataLength);
+        } else {
+            this.set(range(0, dataLength), data, index);
+            if (dataLength < viewLength) {
+                this.removeRange(this.parent.children[dataLength], 
+                    this.parent.lastElementChild);
+            }
+        }
     }
     append(data, index, n) {
-        let markup = [], length = data.length;
-        for (let i = data.length - n; i < length; i++) markup.push(`<tr><td class='col-md-1'>${index[i]}</td><td class='col-md-4'><a class='lbl'>${data[i]}</a></td><td class='col-md-1'><a class='remove'><span class='remove glyphicon glyphicon-remove' aria-hidden='true'></span></a></td><td class='col-md-6'></td></tr>`);
+        let markup = [], length = data.length, start = length - n;
+        for (let i = start; i < length; i++) markup.push(`<tr><td class='col-md-1'>${index[i]}</td><td class='col-md-4'><a class='lbl'>${data[i]}</a></td><td class='col-md-1'><a class='remove'><span class='remove glyphicon glyphicon-remove' aria-hidden='true'></span></a></td><td class='col-md-6'></td></tr>`);
         this.parent.append(createTree(markup.join('')));
+    }
+    set(at, label, index) {
+        this.setIndex(at, index); this.setLabel(at, label);
+    }
+    setIndex(at, index) {
+        return set('td:first-child', at, {textContent: index}, this.parent);
     }
     setLabel(at, data) {
         return set('a.lbl', at, {textContent: data}, this.parent);
     }
-    swap() {
-        const e998 = this.parent.children[998];
-        this.parent.replaceChild(this.parent.children[1], e998);
-        this.parent.insertBefore(e998, this.parent.children[1]);
+    removeRange(start, end) {
+        const range = document.createRange();
+        range.setStart(start, 0);
+        range.setStart(end, 0);
+        range.deleteContents();
     }
     clear() {this.parent.innerHTML = '';}
 }
-
 
 class Component {
     constructor(table) {
@@ -59,13 +78,13 @@ class Component {
     update() {
         const length = this.data.length;
         for (let i = 0; i < length; i += 10) this.data[i] += ' !!!';
-        this.view.setLabel([...range(0, length, 10)], this.data);
+        this.view.setLabel(range(0, length, 10), this.data);
     }
     swap() {
         if (this.data.length >= 999) {
             [this.data[1], this.data[998]] = [this.data[998], this.data[1]];
-            [this.indices[1], this.indices[998]] = [this.indices[998], this.indices[1]]; 
-            this.view.swap();
+            [this.indices[1], this.indices[998]] = [this.indices[998], this.indices[1]]
+            this.view.set([1, 998], this.data, this.indices);
         }
     }
     beforeRemove(element) {
@@ -97,12 +116,12 @@ apply({
             table.removeChild(component.beforeRemove(parentSelector(e.target, 'tr')));
         };
         
-        table.addEventListener('click', matchEventListener({
+        table.onclick = matchEventListener({
             'a.lbl': e => select(e.target.parentNode.parentNode),
-            'span.remove': eventListener([removeListener, preventDefault, stopPropagation], {})
-        }));
+            'span.remove': [removeListener, preventDefault, stopPropagation]
+        }, true);
 
-        const btnListener = (fn) => btn => btn.addEventListener('click', fn);
+        const btnListener = (fn) => btn => btn.onclick = eventListener(fn);
 
         apply({
             '#run': btnListener(() => component.create(1000)),

@@ -215,10 +215,10 @@ Call multiple methods:
 ```
 
 
-One passes on the function return values so that they can communicate:
+The reactive functions can communicate via a context object:
 ```js
-    const f1 = (...args) => console.log(args) || 'I ran!';
-    const f2 = (...args, f1Return) => console.log(args) || console.log(f1Return  + ' and I also ran');
+    const f1 = (...args, context) => console.log(args) || context.text = 'I ran!';
+    const f2 = (...args, context) => console.log(args) || console.log(context.text  + ' and I also ran');
 
     const fOne = new One([f1, f2]);    
     // use the class for functions.

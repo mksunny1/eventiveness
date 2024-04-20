@@ -83,7 +83,7 @@ class Component {
     swap() {
         if (this.data.length >= 999) {
             [this.data[1], this.data[998]] = [this.data[998], this.data[1]];
-            [this.indices[1], this.indices[998]] = [this.indices[998], this.indices[1]]
+            [this.indices[1], this.indices[998]] = [this.indices[998], this.indices[1]];
             this.view.set([1, 998], this.data, this.indices);
         }
     }
