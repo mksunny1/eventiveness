@@ -1,11 +1,21 @@
 
 /**
- * Transmits a call, method dispatch, property get or set applied to the 
- * 'one' object to the 'many' objects. 
- * @param {*} one 
+ * Creates a One object which transmits a call, method dispatch, property 
+ * get or set applied to the 'one' object to the 'many' objects. 
+ * 
+ * The recursive arg is used to ensure that getting properties always 
+ * wraps the array results with One also.
+ * 
+ * The context arg will be passed to all delegated calls. A new object 
+ * is created if it is not provided.
+ * 
+ * @param {*} many 
+ * @param {*} recursive 
+ * @param {*} context 
+ * @returns 
  */
-export function one(many, recursive) {
-    return new Proxy(new One(many, recursive, one), oneTrap);
+export function one(many, recursive, context) {
+    return new Proxy(new One(many, recursiv, contexte, one), oneTrap);
 }
 
 const PURE = Symbol();
@@ -30,9 +40,9 @@ const oneTrap = {
 }
 
 export class One {
-    constructor(many, recursive, ctor) {
+    constructor(many, recursive, context, ctor) {
         this.many = many; this.recursive = recursive, this.ctor = ctor;
-        this.context = {};
+        this.context = context || {};
     };
     /**
      * Gets corresponding properties from all the objects in many
@@ -48,7 +58,7 @@ export class One {
         } else {
             for (let i = 0; i < length; i++) results.push(this.many[i]);
         }
-        return (this.recursive)? (this.ctor || new One)(results, this.recursive, this.ctor): results;
+        return (this.recursive)? (this.ctor || new One)(results, this.recursive, this.context, this.ctor): results;
     };
     /**
      * Sets corresponding property values in the objects in many.
