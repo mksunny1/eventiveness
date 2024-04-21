@@ -396,15 +396,14 @@ To get a greater feel for how eventiveness pans out in practice, have a look at 
 
 ## Contributing
 
-If you like the concept and/or the direction of Eventiveness framework, please contribute to this project. Contribution starts with a simple starring of this repository. Next you can start or join discussions about this project, here or anywhere. You can contribute some of your use-cases to the list of examples. You can still help improve the documentation, complete the site (eventivejs.com),  
-consolidate features and fix bugs. There is still a long development journey ahead for this library.
+If you like the concept and/or the direction of Eventiveness, please contribute to this project. Contribution starts with a simple starring of this repository. Next you can start or join discussions about this project, here or anywhere. You can contribute some of your use-cases to the list of examples. You can still help improve the documentation, complete the site (eventivejs.com), consolidate features and fix bugs. There is still a long development journey ahead for this library.
 
-Another really cool way to contribute is to sponsor the project. You can sponsor the project as a 'thank you' or as a way of showing your support for the direction we have chosen and giving Eventivity the best opportunity to thrive. 
+Another really cool way to contribute is to sponsor the project. You can sponsor the project as a 'thank you' or as a way of showing your support for the direction we have chosen and giving Eventiveness the best opportunity to thrive. 
 
 Thank you for contributing.
 
 
 ## Ongoing Work
 
-Increasing test coverage  and improving the documentation. The API is now stable.
+Increasing test coverage and improving the documentation. The API is now stable.
 
