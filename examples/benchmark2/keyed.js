@@ -68,7 +68,7 @@ function view(table) {
         clear(context) {table.innerHTML = '';},
         swap(context) {
             if (table.children.length >= 999) {
-                replace([table.children[998], table.children[1]], table, [[1, 998], [0, 1]]);
+                replace(table.children, table, [[1, 998], [998, 1]]);
             }
         },
         remove(element, context) {table.removeChild(element);}

@@ -134,7 +134,7 @@ export function set(selectors, index, values, element) {
  * simply calling a function to manage all that, especially when there are 
  * many 'Bs' to move.
  * 
- * This functions makes it ver easy to replace multiple elements in a tree 
+ * This functions makes it very easy to replace multiple elements in a tree 
  * at the same time without any mental overhead.
  * 
  * @param {*} values The replacement nodes.
@@ -143,8 +143,10 @@ export function set(selectors, index, values, element) {
  * @param {*} selectors Selectors for what to replace. Defaults to element children
  */
 export function replace(values, element, index, selectors) {
-    if (!element) element = document.body;
+    if (values instanceof NodeList || values instanceof HTMLCollection) values = Array.from(values);
+    // so that we don't accidentally change what we want to assign somewhere!
 
+    if (!element) element = document.body;
     if (!index || !index.length) index = values.map((v, i) => i);
 
     let children;
@@ -154,20 +156,19 @@ export function replace(values, element, index, selectors) {
     let valueIndex = index;
     if (index.length === 2 && index[0] instanceof Array) [index, valueIndex] = index;
 
-    let i, value, nextSibling, parentNode;
+    let i, value, parentNode, tempElement;
+    const template = document.createElement('template');
     const length = index.length;
-    const nextSiblings = index.map(i => {
+    const temps = index.map(i => {
         value = children[i];
-        nextSibling = value.nextSibling;
         parentNode = value.parentNode;
-        value.parentNode.removeChild(value);
-        return [nextSibling, parentNode];
+        tempElement = template.cloneNode(false);
+        parentNode.replaceChild(tempElement, value);
+        return [tempElement, parentNode];
     });
     for (i = 0; i < length; i++) {
-        value = values[valueIndex[i]];
-        [nextSibling, parentNode] = nextSiblings[i];
-        if (nextSibling) parentNode.insertBefore(value, nextSibling);
-        else parentNode.appendChild(value);
+        [tempElement, parentNode] = temps[i];
+        parentNode.replaceChild(values[valueIndex[i]], tempElement);
     }
 };
 
