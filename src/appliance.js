@@ -97,14 +97,19 @@ export function apply(functions, element, asComponent) {
 export function set(selectors, index, values, element) {
     let member, memberValues, i;
     // index = Array.from(index);
+
+    let valueIndex = index;
+    if (index.length === 2 && index[0] instanceof Array) [index, valueIndex] = index;
+    const indexLength = index.length;
+
     apply({
         [selectors]: (...selected) => {
             if (!index) index = selected.map((s, i) => i);   // just pass 0 to set all items
             for ([member, memberValues] of Object.entries(values)) {
                 if (member.startsWith('_'))  {
                     member = member.slice(1);
-                    for (i of index) {
-                        selected[i].setAttribute(member, memberValues[i]);
+                    for (i = 0; i < indexLength; i++) {
+                        selected[index[i]].setAttribute(member, memberValues[valueIndex[i]]);
                     }
                 } else {
                     for (i of index) selected[i][member] = memberValues[i];
@@ -115,6 +120,65 @@ export function set(selectors, index, values, element) {
     }, element);
 }
 
+
+/**
+ * This method is important to prevent boilerplate in code where 
+ * we need to replace certain elements in a tree with other elements 
+ * within the same tree, such as in 'swap' scenarios.
+ * 
+ * Replacing an element A with another element B will move B to the location 
+ * of A and remove A. If we wanted to set B to another value, such as A, we 
+ * need to store its initial location before the move. We also need to use 
+ * a different method, such as insertBefore to insert the new element in 
+ * B's formar location. This generally requires a lot more attention than 
+ * simply calling a function to manage all that, especially when there are 
+ * many 'Bs' to move.
+ * 
+ * This functions makes it ver easy to replace multiple elements in a tree 
+ * at the same time without any mental overhead.
+ * 
+ * @param {*} values The replacement nodes.
+ * @param {*} element Element containing all the elements to replace. Defaults to document.body.
+ * @param {*} index The children at these indices are replaced with the corresponding values. Can be either index or [index, valueIndex]. Defaults to all indices in values.
+ * @param {*} selectors Selectors for what to replace. Defaults to element children
+ */
+export function replace(values, element, index, selectors) {
+    if (!element) element = document.body;
+
+    if (!index || !index.length) index = values.map((v, i) => i);
+
+    let children;
+    if (selectors) children = Array.from(element.querySelectorAll(selectors));
+    else children = Array.from(element.children);
+
+    let valueIndex = index;
+    if (index.length === 2 && index[0] instanceof Array) [index, valueIndex] = index;
+
+    let i, value, nextSibling, parentNode;
+    const length = index.length;
+    const nextSiblings = index.map(i => {
+        value = children[i];
+        nextSibling = value.nextSibling;
+        parentNode = value.parentNode;
+        value.parentNode.removeChild(value);
+        return [nextSibling, parentNode];
+    });
+    for (i = 0; i < length; i++) {
+        value = values[valueIndex[i]];
+        [nextSibling, parentNode] = nextSiblings[index[i]];
+        if (nextSibling) parentNode.insertBefore(value, nextSibling);
+        else parentNode.appendChild(value);
+    }
+};
+
+
+/**
+ * Returns a DocumentRange between start and end
+ * 
+ * @param {*} start The first element in the range
+ * @param {*} end  The last element in the range
+ * @returns 
+ */
 export function createRange(start, end) {
     const range = document.createRange();
     range.setStart(start, 0);

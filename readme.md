@@ -44,7 +44,7 @@ Domitory is all about DOM event handlers. It exposes API for simplifying and bet
 
 6. **Actribute**
 
-Actribute provides a more widely supported, flexible and powerful alternative to extending built-in HTML elements, exposing an using similar API.
+Actribute provides a more widely supported, flexible and powerful alternative to extending built-in HTML elements, using a similar API.
 
 
 7. **Generational**
@@ -266,17 +266,14 @@ Import appliaces:
 
 Set up components (it is more performant to do things in bulk):
 ```js
-    function app(component) {
-        const btnListener = (fn) => btn => btn.addEventListener('click', fn);
-
+    function app(footerComponent) {
         apply({
-            '#run': btnListener(() => component.create(1000)),
-            '#runlots': btnListener(() => component.create(10000)),
-            '#add': btnListener(() => component.append(1000)),
-            '#update': btnListener(() => component.update()),
-            '#clear': btnListener(() => component.clear()),
-            '#swaprows': btnListener(() => component.swap())
-        });
+            header: (...headers) => SSS.style(...headers),
+            footer: footerComponent   
+            // footerComponent will take care of footers.
+        }, document.body, false);  
+        // both document.body and false are the sensible defaults, so the 
+        // action is the same as if we omit them.
     }
 ```
 
@@ -372,7 +369,7 @@ Use components:
 
 Process components:
 ```js
-    comp(document.body, {a: 1, b: 2});
+    comp(document.body, {prop2: 1, prop3: 2});
 ```
 
 Unregister components:
@@ -392,6 +389,9 @@ Create a range:
 ```js
     for (let i of range(100)) console.log(i);
 ```
+
+
+To get a greater feel for how eventiveness pans out in practice, have a look at the included examples in the repository. You can serve them from any servers. Please make sure the 3rd-party CSS files can be found where they are expected to get the same appearance (the functionality should not be affected).
 
 
 ## Contributing
