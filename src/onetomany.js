@@ -51,7 +51,7 @@ export class One {
      * @returns 
      */
     get(prop) {
-        const results = [];
+        const results = [], vals = '';
         const length = this.many.length;
         if (prop !== undefined) {
             for (let i = 0; i < length; i++) results.push(this.many[i][prop]);
