@@ -165,7 +165,7 @@ export function replace(values, element, index, selectors) {
     });
     for (i = 0; i < length; i++) {
         value = values[valueIndex[i]];
-        [nextSibling, parentNode] = nextSiblings[index[i]];
+        [nextSibling, parentNode] = nextSiblings[i];
         if (nextSibling) parentNode.insertBefore(value, nextSibling);
         else parentNode.appendChild(value);
     }

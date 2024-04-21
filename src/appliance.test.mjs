@@ -1,10 +1,9 @@
 import { apply } from "./appliance.js";
 import { test, describe, it } from 'node:test';
-import { assert } from 'node:console'
 
 
 // mock things:
-global.CSSStyleSheet  = class{
+global.CSSStyleSheet = class{
     cssRules = [
         {cssText: 'p {color: white}'},
         {cssText: '#id {color: blue}'},
@@ -47,8 +46,6 @@ const args2 = {a: [
     {id: 54}
 ]};
 
-console.log(Object.keys(Object.getPrototypeOf(assert)));
-
 test(`apply properly selects the matched objects and 
 runs the correct function`, () => {
     const results1 = {count: 0};
@@ -56,9 +53,7 @@ runs the correct function`, () => {
         b: (...items) => results1.items1 = items,
         unknown: (...items) => results1.items2 = items
     }, elements(args1));
-    // console.assert(!results1.items1.map(i => args1.b.includes(i)).includes(false))
     if (results1.items1.map(i => args1.b.includes(i)).includes(false)) throw new Error(`${results1.items1} is not ${args1.b}`);
-    // console.assert(results1.items2.length === 0);
     if (results1.items2.length !== 0) throw new Error(`${results1.items2.length} is not 0`);
 });
 

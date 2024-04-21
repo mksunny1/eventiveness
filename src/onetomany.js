@@ -15,7 +15,7 @@
  * @returns 
  */
 export function one(many, recursive, context) {
-    return new Proxy(new One(many, recursiv, contexte, one), oneTrap);
+    return new Proxy(new One(many, recursive, context, one), oneTrap);
 }
 
 const PURE = Symbol();

@@ -1,5 +1,5 @@
 import { createTree } from '../../src/apriori.js';
-import { apply, set, parentSelector } from '../../src/appliance.js';
+import { apply, set, parentSelector, replace } from '../../src/appliance.js';
 import { preventDefault, stopPropagation, eventListener, matchEventListener} from '../../src/domitory.js';
 import { one } from '../../src/onetomany.js';
 import {range} from '../../src/generational.js';
@@ -68,9 +68,7 @@ function view(table) {
         clear(context) {table.innerHTML = '';},
         swap(context) {
             if (table.children.length >= 999) {
-                const e998 = table.children[998];
-                table.replaceChild(table.children[1], e998);
-                table.insertBefore(e998, table.children[1]);
+                replace([table.children[998], table.children[1]], table, [[1, 998], [0, 1]]);
             }
         },
         remove(element, context) {table.removeChild(element);}
