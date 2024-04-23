@@ -1,6 +1,6 @@
 {
   "name": "eventiveness",
-  "version": "0.9.942",
+  "version": "0.9.943",
   "description": "A modular framework for writing accessible and joyfully interactive web applications with traditional HTML, CSS and JavaScript.",
   "type": "module",
   "main": "./dist/cjs/eventiveness.js",
@@ -49,7 +49,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/markersunny/eventiveness"
+    "url": "https://github.com/mksunny1/eventiveness"
   },
   "homepage": "https://eventivejs.com",
   "keywords": [
