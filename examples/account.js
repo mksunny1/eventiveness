@@ -1,10 +1,10 @@
-import { apriori, LastingFragment } from '../src/apriori.js';
-import { sophistry } from '../src/sophistry.js';
+import { LastingFragment } from '../src/apriori.js';
+import { Sophistry } from '../src/sophistry.js';
 import { One } from '../src/onetomany.js';
 import { apply } from '../src/appliance.js';
 import { onEnter, preventDefault, eventListener } from '../src/eventiveness.js';
 
-const accountSophistry = sophistry();
+const accountSophistry = new Sophistry();
 
 
 // Components (notice the nesting, so easy to declare components elsewhere and reuse here.):
@@ -24,7 +24,7 @@ function getView(name, map) {
     const view = new LastingFragment(frag);
 
     // apply styles within
-    const styles = accountSophistry(frag);
+    const styles = accountSophistry.process(frag);
     for (let style of styles) style.style(frag);
     apply(map, frag);
 
@@ -93,11 +93,11 @@ function profileView(username) {
  */
 apply({
     '#loginTemplate': async template => {
-        views.login = await apriori(template.content);
+        views.login = () => template.content.cloneNode(true);
         if (!window.page?.username) loginView();
     },
     '#profileTemplate': async template => {
-        views.profile = await apriori(template.content);
+        views.profile = () => template.content.cloneNode(true);
         if (window.page?.username) profileView(window.page.username);
     }
 });

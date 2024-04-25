@@ -9,18 +9,6 @@ const adjectives = ["pretty", "large", "big", "small", "tall", "short", "long", 
 const colours = ["red", "yellow", "blue", "green", "pink", "brown", "purple", "brown", "white", "black", "orange"];
 const nouns = ["table", "chair", "house", "bbq", "desk", "car", "pony", "cookie", "sandwich", "burger", "pizza", "mouse", "keyboard"];
 
-const itemTemplate = arrayTemplate(`
-<tr>
-    <td class='col-md-1'>\${indices[item]}</td>
-    <td class='col-md-4'><a class='lbl'>\${data[item]}</a></td>
-    <td class='col-md-1'>
-        <a class='remove'>
-            <span class='remove glyphicon glyphicon-remove' aria-hidden='true'></span>
-        </a>
-    </td>
-    <td class='col-md-6'></td>
-</tr>
-`, ['indices', 'data']);
 
 function data() {
     return {
@@ -69,9 +57,9 @@ function view(table) {
             this.append(n, context);
         },
         append(n, context) {
-            const length = context.data.length;
-            const renderedItems = itemTemplate(range(length - n, length), context.indices, context.data);
-            table.append(createFragment(renderedItems));
+            let markup = [], length = context.data.length;
+            for (let i = length - n; i < length; i++) markup.push(`<tr><td class='col-md-1'>${context.indices[i]}</td><td class='col-md-4'><a class='lbl'>${context.data[i]}</a></td><td class='col-md-1'><a class='remove'><span class='remove glyphicon glyphicon-remove' aria-hidden='true'></span></a></td><td class='col-md-6'></td></tr>`);
+            table.append(createFragment(markup.join('')));
         },
         update(context) {
             set('a.lbl', [...range(0, context.data.length, 10)], 

@@ -65,32 +65,32 @@ Alternatively, simply clone this repository into your projects that do not use n
 
 Import apriori:
 ```js
-    import { apriori, asyncLiteral as A, asyncTemplate, createTree, LastingFragment } from "eventiveness/apriori";
+    import { get, tag, template, asyncTemplate, createFragment, LastingFragment } from "eventiveness/apriori";
 ```
 
 Create a 'raw' async template literal:
 ```js
-    const text = await A`This text will be returned only after ${Promise.resolve("I")} get resolved `;
+    const text = await tag`This text will be returned only after ${Promise.resolve("I")} get resolved `;
 ```
 
 Create an async template literal from existing text:
 ```js
     const str = 'This text ${arg1} be returned only after ${arg2} get resolved';       // not a template literal.
-    const template = asyncTemplate(str, ['arg1', 'arg2']);  // now a template literal wrapped with a function for reuse.
-    const renderedA = template('will', Promise.resolve("I"));
-    const renderedB = template('shall', Promise.resolve("we"));
+    const at = asyncTemplate(str, ['arg1', 'arg2']);  // now a template literal wrapped with a function for reuse.
+    const renderedA = at('will', Promise.resolve("I"));
+    const renderedB = at('shall', Promise.resolve("we"));
 ```
 
 Create view factories:
 ```js
-    const viewFactory = await apriori(fetch('html-fragment.html'), true);
+    const viewFactory = template(await get('html-fragment.html'), ['arg']);
     const args = [1, 2, 3];
-    const differentViews = [viewFactory(), viewFactory(...args)];
+    const differentViews = [viewFactory(args[0]), viewFactory(args[1])];
 ```
 
 Create DOM trees:
 ```js
-    const tree = createTree(`
+    const tree = createFragment(`
         <h3>Component Label</h3>
         <Article>What's  in this component</article>
     `);
@@ -112,12 +112,12 @@ Create lasting fragments (they won't lose their children on you):
 
 Import sophistry:
 ```js
-    import { sophistry, importStyle, setStyle, wrap } from 'eventiveness/sophistry'
+    import { Sophistry, wrap } from 'eventiveness/sophistry'
 ```
 
 Initialize your sophistry (context for processing and storing stylesheets):
 ```js
-    const mySophistry = sophistry();
+    const mySophistry = new Sophistry();
 ```
 
 Encapsulate stylesheets:
@@ -128,7 +128,7 @@ Encapsulate stylesheets:
         <style>/* encapsulatedd styles */</style>
     </div>
     `)).tree;
-    const styles = mySophistry(element); 
+    const styles = mySophistry.process(element); 
     // the styles will get popped here.
     
     for (let style of styles) style.style(element, document.body.firstElementChild);  
@@ -137,7 +137,7 @@ Encapsulate stylesheets:
 
 Import stylesheets with encapsulation:
 ```js
-    const myLinkStyle = importStyle('./my-style-link.css', mySophistry.context, true);
+    const myLinkStyle = mySophistry.import('./my-style-link.css', true);
 ```
 
 Reuse existing stylesheets:
@@ -147,7 +147,7 @@ Reuse existing stylesheets:
 
 Update or create a stylesheet (Any elements that adopted it will *react naturally*):
 ```js
-    settStyle('myStyle', 'p {font-size: 1000em;}', mySophistry.context);
+    mySophistry.set('myStyle', 'p {font-size: 1000em;}');
 ```
 
 Wrap CSS stylesheet with Sophistry stylesheet (this is important!):
@@ -340,13 +340,13 @@ Use a shared running context (the handlers *and their long-running tasks* run mu
 
 Import actribute:
 ```js
-    import { actribute } from 'eventiveness/actribute';
+    import { Actribute } from 'eventiveness/actribute';
 ```
 
 Initialize actribute:
 ```js
     const fallbackProps = {prop1: 'Fallback', prop4: 'Last resort'};
-    const {comp, act} = actribute(fallbackProps);
+    const act = new Actribute(fallbackProps);
 ```
 
 Register components:
@@ -369,7 +369,7 @@ Use components:
 
 Process components:
 ```js
-    comp(document.body, {prop2: 1, prop3: 2});
+    act.process(document.body, {prop2: 1, prop3: 2});
 ```
 
 Unregister components:

@@ -1,6 +1,7 @@
 /**
  * Functions similarly to querySelectorAll, but for selecting style rules in 
- * a CSS stylesheet object.
+ * a CSS stylesheet object. All rules that start with any of the selectors are 
+ * selected.
  * 
  * @param {*} selectors 
  * @param {*} styleSheet 
@@ -172,18 +173,4 @@ function replace(values, element, index, selectors) {
     }
 }
 
-/**
- * Returns a DocumentRange between start and end
- * 
- * @param {*} start The first element in the range
- * @param {*} end  The last element in the range
- * @returns 
- */
-function createRange(start, end) {
-    const range = document.createRange();
-    range.setStart(start, 0);
-    range.setStart(end, 0);
-    return range;
-}
-
-export { apply, createRange, parentSelector, replace, ruleSelector, ruleSelectorAll, set };
+export { apply, parentSelector, replace, ruleSelector, ruleSelectorAll, set };

@@ -14,20 +14,22 @@ function* range(start, end, step) {
 }
 
 /**
- * A speculative export:
+ * Returns an iterator over the items of all the arrays, starting from 
+ * the zero index to the maximum index of the first argument. The 
+ * effective length of the iterator is the sum of the length of the args.
  * 
- * Can be used to support using generators in place of functions 
- * in high-performance scenarios by:
- * 1. Defining the generator founction to contain a loop that continues 
- * to yield as long as there are args ('undefining' the args before yielding)
- * 2. Calling the function to get the generator object.
- * 3. Alternately setting the args here and calling the generator's next() method
- * ...
+ * Can be used to join arrays in a way no supported by concat, pusg, etc.
  * 
+ * @param  {...any} args 
  */
-const args = [
+function* flat(...args) {
+    const count = args.length;
+    const length = args[0].length;
+    let j;
+    for (let i = 0; i < length; i++) {
+        for (j = 0; j < count; j++) yield args[j][i];
+    }
+}
 
-];
-
-exports.args = args;
+exports.flat = flat;
 exports.range = range;

@@ -1,4 +1,4 @@
-import { createTree } from '../../src/apriori.js';
+import { createFragment } from '../../src/apriori.js';
 import { apply, set, parentSelector } from '../../src/appliance.js';
 import { preventDefault, stopPropagation, eventListener, matchEventListener} from '../../src/domitory.js';
 import { one } from '../../src/onetomany.js';
@@ -18,7 +18,7 @@ class View {
     append(data, index, n) {
         let markup = [], length = data.length;
         for (let i = data.length - n; i < length; i++) markup.push(`<tr><td class='col-md-1'>${index[i]}</td><td class='col-md-4'><a class='lbl'>${data[i]}</a></td><td class='col-md-1'><a class='remove'><span class='remove glyphicon glyphicon-remove' aria-hidden='true'></span></a></td><td class='col-md-6'></td></tr>`);
-        this.parent.append(createTree(markup.join('')));
+        this.parent.append(createFragment(markup.join('')));
     }
     setLabel(at, data) {
         return set('a.lbl', at, {textContent: data}, this.parent);
