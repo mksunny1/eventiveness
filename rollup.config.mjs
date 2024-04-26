@@ -1,5 +1,6 @@
 import dts from 'rollup-plugin-dts'
 import copy from 'rollup-plugin-copy'
+import typescript from '@rollup/plugin-typescript';
 import terser from '@rollup/plugin-terser';
 
 import { writeFile, mkdir } from 'fs/promises'
@@ -17,8 +18,9 @@ function createCommonJsPackage() {
 
 export default [
     {
-      input: ['./src/domitory.js', './src/appliance.js', './src/actribute.js', './src/apriori.js', './src/generational.js', './src/sophistry.js', './src/onetomany.js', './src/eventiveness.js'],
+      input: ['./src/domitory.ts', './src/appliance.ts', './src/actribute.ts', './src/apriori.ts', './src/generational.ts', './src/sophistry.ts', './src/onetomany.ts'],
       plugins: [
+        typescript(), terser(),
         copy({
           targets: [
             { src: './package.json', dest: 'dist' }
@@ -32,12 +34,12 @@ export default [
         { format: 'cjs', dir: './dist/cjs' }
       ]
     },
-    /* {
-      input:  './src/eventiveness.js',  // ['./src/arender.js', './src/apriori.js', './src/sophistry.js', './src/eventivity.js', './src/domitory.js', './src/actribute.js'],
+    {
+      input:  './src/eventiveness.ts', // ['./src/domitory.ts', './src/appliance.ts', './src/actribute.ts', './src/apriori.ts', './src/generational.ts', './src/sophistry.ts', './src/onetomany.ts'],
       plugins: [ dts() ],
       output: {
         format: 'es',
         file: './dist/eventiveness.d.ts' 
       }
-    } */
+    }
   ]

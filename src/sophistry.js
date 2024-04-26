@@ -1,131 +1,175 @@
-
-export class Sophistry {
-    context = {};
+"use strict";
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.wrap = exports.SophistryStyleSheet = exports.Sophistry = void 0;
+var Sophistry = /** @class */ (function () {
+    function Sophistry() {
+        this.context = {};
+    }
     /**
-     * Processes and 'pops' all style tags within the passed root. 
-     * Ensures that the same CSSStyleSheet can be reused across trees instead of 
-     * duplicated even when they have been created declaratively in the trees. 
-     * 
-     * If replace is given, any cached stylesheets with the same name as a 
+     * Processes and 'pops' all style tags within the passed root.
+     * Ensures that the same CSSStyleSheet can be reused across document trees (maindocument
+     * and shadow roots) instead of duplicated even when they have been
+     * created declaratively in the trees.
+     *
+     * If replace is given, any cached stylesheets with the same name as a
      * styleshhet within the root will be replaced (reactively).
-     * 
-     * This resolves the stated issue with adding encapsulated styles to 
-     * elements when using shadow dom as described here; 
+     *
+     * This resolves the stated issue with adding encapsulated styles to
+     * elements when using shadow dom as described here;
      * https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_shadow_DOM.
-     * 
-     * @param {*} root 
-     * @param {*} replace 
-     * @returns 
+     *
+     * @param {T} root
+     * @param {boolean} [replace]
+     * @returns {SophistryStyleSheet[]}
      */
-    process(root, replace) {
-        const cssStyleSheets = [];
-        if (root instanceof HTMLStyleElement || (root instanceof HTMLLinkElement && root.getAttribute('rel') === 'stylesheet')) {
-            const name = root.getAttribute('s-ophistry') || root.getAttribute('href') || hash(root.textContent);
-            if (this.context.hasOwnProperty(name) && !replace) cssStyleSheets.push(this.context[name]);
+    Sophistry.prototype.process = function (root, replace) {
+        var cssStyleSheets = [];
+        if ((root instanceof HTMLLinkElement && root.getAttribute('rel') === 'stylesheet') || (root instanceof HTMLStyleElement)) {
+            var name_1 = root.getAttribute('s-ophistry') || root.getAttribute('href') || hash(root.textContent || '');
+            if (this.context.hasOwnProperty(name_1) && !replace)
+                cssStyleSheets.push(this.context[name_1]);
             else {
-                let st, st2;
-                if (this.context.hasOwnProperty(name) ) {
-                    st2 = this.context[name];
-                    st = st2.self;
-                } else {
-                    st = new CSSStyleSheet();
-                    st2 = new SophistryStyleSheet(st);
-                    this.context[name] = st2;
+                var st_1, st2 = void 0;
+                if (this.context.hasOwnProperty(name_1)) {
+                    st2 = this.context[name_1];
+                    st_1 = st2.css;
+                }
+                else {
+                    if (root instanceof HTMLLinkElement) {
+                        st_1 = new CSSStyleSheet();
+                        fetch(root.getAttribute('href')).then(function (r) { return r.text(); }).then(function (t) { return st_1.replaceSync(t); });
+                    }
+                    else if (root instanceof HTMLStyleElement) {
+                        st_1 = root.sheet;
+                    }
+                    st2 = new SophistryStyleSheet(st_1);
+                    this.context[name_1] = st2;
                 }
                 cssStyleSheets.push(st2);
-                if (root instanceof HTMLStyleElement) st.replaceSync(root.textContent);    // style element
-                else fetch(root.getAttribute('href')).then(r => r.text()).then(t => st.replaceSync(t));   // link element
             }
-        } else {
-            let node = root.children[0], node2;
+        }
+        else {
+            var node = root.children[0], node2 = void 0;
             while (node) {
                 node2 = node.nextElementSibling;
-                cssStyleSheets.push(...this.process(node, replace));
-                if (node instanceof HTMLStyleElement || (root instanceof HTMLLinkElement && root.getAttribute('rel') === 'stylesheet')) root.removeChild(node);
+                cssStyleSheets.push.apply(cssStyleSheets, this.process(node, replace));
+                if (node instanceof HTMLStyleElement || (root instanceof HTMLLinkElement && root.getAttribute('rel') === 'stylesheet'))
+                    root.removeChild(node);
                 node = node2;
             }
         }
         return cssStyleSheets;
     };
+    ;
     /**
      * Import a stylesheet defined in an external CSS file.
-     * 
-     * @param {*} link 
-     * @param {*} replace 
-     * @returns 
+     *
+     * @param {string} link
+     * @param {boolean} [replace]
+     * @returns {SophistryStyleSheet}
      */
-    import(link, replace) {
-        if (this.context.hasOwnProperty(link) && !replace) return this.context[link];
+    Sophistry.prototype.import = function (link, replace) {
+        if (this.context.hasOwnProperty(link) && !replace)
+            return this.context[link];
         else {
-            const st = new CSSStyleSheet();
-            const st2 = new SophistryStyleSheet(st);
+            var st_2 = new CSSStyleSheet();
+            var st2 = new SophistryStyleSheet(st_2);
             this.context[link] = st2;
-            fetch(link).then(r => r.text()).then(t => st.replaceSync(t));
+            fetch(link).then(function (r) { return r.text(); }).then(function (t) { return st_2.replaceSync(t); });
             return st2;
         }
     };
+    ;
     /**
-     * 
-     * @param {*} name 
-     * @param {*} css 
-     * @returns 
+     *
+     * @param {string} name
+     * @param {string} css
+     * @returns
      */
-    set(name, css) {
-        if (this.context.hasOwnProperty(name)) this.context[name].css.replaceSync(css);
+    Sophistry.prototype.set = function (name, css) {
+        if (this.context.hasOwnProperty(name))
+            this.context[name].css.replaceSync(css);
         else {
-            const st = document.createElement('style');
+            var st = document.createElement('style');
             st.innerText = css;
             this.context[name] = new SophistryStyleSheet(st);
         }
         return this.context[name];
     };
-}
-
-
-const hash = (str) => {
-    let newHash = 0, chr;
-    for (let i = 0, len = str.length; i < len; i++) {
+    ;
+    return Sophistry;
+}());
+exports.Sophistry = Sophistry;
+var hash = function (str) {
+    var newHash = 0, chr;
+    for (var i = 0, len = str.length; i < len; i++) {
         chr = str.charCodeAt(i);
         newHash = (newHash << 5) - newHash + chr;
-        newHash |= 0;    // convert to 32 bit int.
+        newHash |= 0; // convert to 32 bit int.
     }
     return newHash;
 };
-
-export class SophistryStyleSheet{
+var SophistryStyleSheet = /** @class */ (function () {
     /**
-     * Creates a new CSS stylesheet which contains convenient methods 
+     * Creates a new CSS stylesheet which contains convenient methods
      * for styling and 'unstyling' elements.
-     * 
-     * @param {*} cssStyleSheet 
+     *
+     * @param {CSSStyleSheet} cssStyleSheet
+     * @constructor
      */
-    constructor(cssStyleSheet) {this.css = cssStyleSheet;}
+    function SophistryStyleSheet(cssStyleSheet) {
+        this.css = cssStyleSheet;
+    }
     /**
      * Adds the CSSStylesheets to the given documents.
-     * @param  {...any} documents 
+     * @param  {...any} documents
      */
-    style(...documents) {
-        let st;
-        for (let document of documents) {
-            if (!document.adoptedStyleSheets?.includes(this.css)) document.adoptedStyleSheets = [...(document.adoptedStyleSheets || []), this.css];
+    SophistryStyleSheet.prototype.style = function () {
+        var _a;
+        var documents = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            documents[_i] = arguments[_i];
+        }
+        for (var _b = 0, documents_1 = documents; _b < documents_1.length; _b++) {
+            var document_1 = documents_1[_b];
+            if (!((_a = document_1.adoptedStyleSheets) === null || _a === void 0 ? void 0 : _a.includes(this.css)))
+                document_1.adoptedStyleSheets = __spreadArray(__spreadArray([], (document_1.adoptedStyleSheets || []), true), [this.css], false);
         }
     };
+    ;
     /**
      * Removes the stylesheets from the documents
-     * @param {*} documents 
+     * @param {*} documents
      */
-    remove(...documents) {
-        for (let document of documents) {
-            if (document.adoptedStyleSheets.includes(this.css)) document.adoptedStyleSheets.splice(document.adoptedStyleSheets.indexOf(this.css));
+    SophistryStyleSheet.prototype.remove = function () {
+        var documents = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            documents[_i] = arguments[_i];
         }
-    }
-}
-
+        for (var _a = 0, documents_2 = documents; _a < documents_2.length; _a++) {
+            var document_2 = documents_2[_a];
+            if (document_2.adoptedStyleSheets.includes(this.css))
+                document_2.adoptedStyleSheets.splice(document_2.adoptedStyleSheets.indexOf(this.css));
+        }
+    };
+    return SophistryStyleSheet;
+}());
+exports.SophistryStyleSheet = SophistryStyleSheet;
 /**
  * Wraps a CSSStyleSheet with a SophistryStyleSheet
- * @param {*} cssStyleSheet 
- * @returns 
+ * @param {CSSStyleSheet} cssStyleSheet
+ * @returns
  */
-export function wrap(cssStyleSheet) {
+function wrap(cssStyleSheet) {
     return new SophistryStyleSheet(cssStyleSheet);
 }
+exports.wrap = wrap;
