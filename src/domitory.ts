@@ -53,8 +53,8 @@ export function matchEventListener(map: FunctionMap2, wrapListeners?: boolean) {
     for (let [selector, args] of Object.entries(map)) {
         if (wrapListeners || args instanceof Array) {
             let args2;
-            if (!(args instanceof Array) || typeof args.at(-1) === 'function') args2 = [args, undefined]
-            listenerMap[selector] = args2? eventListener((args2[0], args2[1])): eventListener(args[0], args[1]);
+            if (!(args instanceof Array) || typeof args.at(-1) === 'function') { args2 = [args, null] }
+            listenerMap[selector] = args2? eventListener(args2[0], args2[1]): eventListener(args[0], args[1]);
         } else listenerMap[selector] = args;
     }
     function listener(e: { target: { matches: (arg0: string) => any; }; }) {

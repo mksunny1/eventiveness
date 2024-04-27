@@ -1,7 +1,5 @@
 'use strict';
 
-var tslib_es6 = require('./tslib.es6-CC9N89Ys.js');
-
 /**
  * Creates a One object which transmits a call, method dispatch, property
  * get or set applied to the 'one' object to the 'many' objects.
@@ -20,7 +18,7 @@ var tslib_es6 = require('./tslib.es6-CC9N89Ys.js');
 function one(many, recursive, context) {
     return new Proxy(new One(many, recursive, context, one), oneTrap);
 }
-var PURE = Symbol();
+const PURE = Symbol();
 /**
  * Return a 'pure' One from a proxied One.
  *
@@ -30,19 +28,13 @@ var PURE = Symbol();
 function unWrap(one) {
     return one[PURE] || one;
 }
-var oneTrap = {
-    get: function (target, p) {
+const oneTrap = {
+    get(target, p) {
         if (p === PURE)
             return target;
-        var result = target.get(p, true);
+        let result = target.get(p, true);
         if (result.length && typeof result[0] === 'function') {
-            return function () {
-                var args = [];
-                for (var _i = 0; _i < arguments.length; _i++) {
-                    args[_i] = arguments[_i];
-                }
-                return target.call(args, p);
-            };
+            return (...args) => target.call(args, p);
         }
         else if (target.recursive) {
             if (target.ctor)
@@ -52,12 +44,16 @@ var oneTrap = {
         }
         return result;
     },
-    set: function (target, p, value) {
+    set(target, p, value) {
         target.set(p, value);
         return true;
     }
 };
-var One = /** @class */ (function () {
+class One {
+    many;
+    recursive;
+    ctor;
+    context;
     /**
      * Creates a new One instance for propagating operations to all the items
      * in many. Property get, set , delete and method call operations are
@@ -70,11 +66,12 @@ var One = /** @class */ (function () {
      * no need to supply an argument.
      * @constructor
      */
-    function One(many, recursive, context, ctor) {
+    constructor(many, recursive, context, ctor) {
         this.many = many;
         this.recursive = recursive, this.ctor = ctor;
         this.context = context || {};
     }
+    ;
     /**
      * Gets corresponding properties from all the objects in many
      *
@@ -82,20 +79,21 @@ var One = /** @class */ (function () {
      * @param {boolean} [forceArray]
      * @returns {any[]|One}
      */
-    One.prototype.get = function (prop, forceArray) {
-        var results = [];
-        var length = this.many.length;
+    get(prop, forceArray) {
+        const results = [];
+        const length = this.many.length;
         if (prop !== undefined && prop !== null) {
-            for (var i = 0; i < length; i++)
+            for (let i = 0; i < length; i++)
                 results.push(this.many[i][prop]);
         }
         else {
-            for (var i = 0; i < length; i++)
+            for (let i = 0; i < length; i++)
                 results.push(this.many[i]);
         }
-        var args = [results, this.recursive, this.context];
-        return (this.recursive) && !forceArray ? (this.ctor) ? this.ctor.apply(this, tslib_es6.__spreadArray(tslib_es6.__spreadArray([], args, false), [this.ctor], false)) : new (One.bind.apply(One, tslib_es6.__spreadArray([void 0], args, false)))() : results;
-    };
+        const args = [results, this.recursive, this.context];
+        return (this.recursive) && !forceArray ? (this.ctor) ? this.ctor(...args, this.ctor) : new One(...args) : results;
+    }
+    ;
     /**
      * Sets corresponding property values in the objects in many.
      * 'values' are treated similarly to 'args' in the call method.
@@ -103,32 +101,32 @@ var One = /** @class */ (function () {
      * @param {string | number | symbol | null} [prop]
      * @param {any[]} [values]
      */
-    One.prototype.set = function (prop, values) {
+    set(prop, values) {
         if (values === undefined)
             return this.set(prop, this.get(prop, true));
         // simply reset existing values, probably to trigger proxy handlers or setters
-        var length = this.many.length;
-        var j = values.length;
+        const length = this.many.length;
+        const j = values.length;
         if (prop !== undefined && prop !== null) {
-            for (var i = 0; i < length; i++)
+            for (let i = 0; i < length; i++)
                 this.many[i][prop] = values[Math.min(i, j - 1)];
         }
         else {
-            for (var i = 0; i < length; i++)
+            for (let i = 0; i < length; i++)
                 this.many[i] = values[Math.min(i, j - 1)];
         }
-    };
+    }
+    ;
     /**
      * Delete the property from all objects in many.
      *
      * @param {string | number | symbol} prop
      */
-    One.prototype.delete = function (prop) {
-        for (var _i = 0, _a = this.many; _i < _a.length; _i++) {
-            var many = _a[_i];
+    delete(prop) {
+        for (let many of this.many)
             delete many[prop];
-        }
-    };
+    }
+    ;
     /**
      * Calls all the items in many (if method is not specified) or the
      * corresponding methods in many (if  method is specified).
@@ -147,32 +145,31 @@ var One = /** @class */ (function () {
      * @param {string | number | symbol} [method]
      * @returns {any[]}
      */
-    One.prototype.call = function (args, method) {
-        var _a, _b;
+    call(args, method) {
         if (args === undefined)
             args = [[]];
-        var results = [];
-        var length = this.many.length;
-        var j = args.length;
-        var iArgs, result;
+        const results = [];
+        const length = this.many.length;
+        const j = args.length;
+        let iArgs, result;
         if (method !== undefined) {
-            for (var i = 0; i < length; i++) {
+            for (let i = 0; i < length; i++) {
                 iArgs = args[Math.min(i, j - 1)] || [];
-                result = (_a = this.many[i])[method].apply(_a, tslib_es6.__spreadArray(tslib_es6.__spreadArray([], iArgs, false), [this.context], false));
+                result = this.many[i][method](...iArgs, this.context);
                 results.push(result);
             }
         }
         else {
-            for (var i = 0; i < length; i++) {
+            for (let i = 0; i < length; i++) {
                 iArgs = args[Math.min(i, j - 1)] || [];
-                result = (_b = this.many)[i].apply(_b, tslib_es6.__spreadArray(tslib_es6.__spreadArray([], iArgs, false), [this.context], false));
+                result = this.many[i](...iArgs, this.context);
                 results.push(result);
             }
         }
         return results;
-    };
-    return One;
-}());
+    }
+    ;
+}
 // nb: need to fix the issue with Symbol index.
 
 exports.One = One;

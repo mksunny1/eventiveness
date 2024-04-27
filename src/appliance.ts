@@ -89,6 +89,7 @@ export function apply(functions: FunctionMap, element?: HTMLElement, asComponent
 }
 
 /**
+ * 
  * A function to select and set specific properties and/or attributes on 
  * elements. The steps are as follows
  * 
@@ -105,6 +106,7 @@ export function apply(functions: FunctionMap, element?: HTMLElement, asComponent
  * In the values map, property names are written normally but attribute 
  * names start with underscore (_).
  * 
+ * 
  * @param {string} selectors 
  * @param {number[]|[number[], number[]]} index
  * @param {ArrayMap} values 
@@ -112,12 +114,15 @@ export function apply(functions: FunctionMap, element?: HTMLElement, asComponent
  */
 export function set(selectors: string, index: number[]|[number[], number[]], values: ArrayMap, element: HTMLElement) {
     let member: string, memberValues: any[], i: number;
-    // index = Array.from(index);
+    if (!(index instanceof Array)) index = Array.from(index as number[]);
 
     let elementIndex: number[], valueIndex: number[];
     if (index.length === 2 && index[0] instanceof Array && index[1] instanceof Array) [elementIndex, valueIndex] = index;
     else elementIndex = valueIndex = index as number[];
     const indexLength = elementIndex.length;
+
+    if (!(elementIndex instanceof Array)) elementIndex = Array.from(elementIndex as number[]);
+    if (!(valueIndex instanceof Array)) valueIndex = Array.from(valueIndex as number[]);
 
     apply({
         [selectors]: (...selected: any[]) => {
@@ -163,8 +168,10 @@ export function set(selectors: string, index: number[]|[number[], number[]], val
  */
 export function replace(values: Array<Node>, element: HTMLElement, index: number[]|[number[], number[]], selectors: string) {
     // nb: the parameter type will already suggest conversion of values to array.
-    if (values instanceof NodeList || values instanceof HTMLCollection) values = Array.from(values);
+    if (!(values instanceof Array)) values = Array.from(values);
     // so that we don't accidentally change what we want to assign somewhere!
+
+    if (!(index instanceof Array)) index = Array.from(index as number[]);
 
     if (!element) element = document.body;
     if (!index || !index.length) index = values.map((v, i) => i);
@@ -176,7 +183,11 @@ export function replace(values: Array<Node>, element: HTMLElement, index: number
     let elementIndex: number[], valueIndex: number[];
     if (index.length === 2 && index[0] instanceof Array && index[1] instanceof Array) [elementIndex, valueIndex] = index;
     else elementIndex = valueIndex = index as number[];
-    const Length = elementIndex.length;
+
+    if (!(elementIndex instanceof Array)) elementIndex = Array.from(elementIndex as number[]);
+    if (!(valueIndex instanceof Array)) valueIndex = Array.from(valueIndex as number[]);
+
+    const length = elementIndex.length;
 
     let i: number, value: Node, parentNode: Node|null, tempElement: Node;
     const template = document.createElement('template');
@@ -187,6 +198,8 @@ export function replace(values: Array<Node>, element: HTMLElement, index: number
         parentNode?.replaceChild(tempElement, value);
         return [tempElement, parentNode];
     });
+
+    
     for (i = 0; i < length; i++) {
         [tempElement, parentNode] = temps[i];
         parentNode?.replaceChild(values[valueIndex[i]], tempElement);

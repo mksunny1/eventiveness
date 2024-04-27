@@ -9,7 +9,7 @@
  * @param  {...any} expressions
  * @returns {Promise<string>}
  */
-async function tag(strings, ...expressions) {
+export async function tag(strings, ...expressions) {
     const promiseExpressions = [];
     for (let [i, exp] of Array.from(expressions.entries())) {
         if (exp instanceof Promise)
@@ -20,6 +20,7 @@ async function tag(strings, ...expressions) {
     const resolvedExpressions = await Promise.all(promiseExpressions);
     return resolvedExpressions.map((exp, i) => `${strings[i]}${exp}`).join('') + strings[resolvedExpressions.length];
 }
+;
 /**
  * Effectively creates a template literal out of an existing template string and wraps it in a function
  * which can be called multiple times to 'render' the template with the given arguments.
@@ -28,7 +29,7 @@ async function tag(strings, ...expressions) {
  * @param {Array<string>} argNames the names of the arguments inside the template literal
  * @returns {(...any): string}
  */
-function template(templateStr, argNames) {
+export function template(templateStr, argNames) {
     if (!argNames)
         argNames = [];
     return Function(...argNames, `return \`${templateStr}\`;`);
@@ -44,7 +45,7 @@ function template(templateStr, argNames) {
  * @param {string} tagName
  * @returns {(...any): string}
  */
-function asyncTemplate(templateStr, argNames, tagName) {
+export function asyncTemplate(templateStr, argNames, tagName) {
     if (!argNames)
         argNames = [];
     if (!tagName)
@@ -75,7 +76,7 @@ function asyncTemplate(templateStr, argNames, tagName) {
  * @param {string} itemSep
  * @returns {ArrayTemplate}
  */
-function arrayTemplate(templateStr, argNames, itemName, itemSep) {
+export function arrayTemplate(templateStr, argNames, itemName, itemSep) {
     if (!argNames)
         argNames = [];
     if (!itemName)
@@ -102,7 +103,7 @@ function arrayTemplate(templateStr, argNames, itemName, itemSep) {
  * @param {string} tagName
  * @returns {ArrayTemplate}
  */
-function asyncArrayTemplate(templateStr, argNames, itemName, itemSep, tagName) {
+export function asyncArrayTemplate(templateStr, argNames, itemName, itemSep, tagName) {
     if (!argNames)
         argNames = [];
     if (!itemName)
@@ -136,7 +137,7 @@ function asyncArrayTemplate(templateStr, argNames, itemName, itemSep, tagName) {
  * @param {RequestInit} [init]
  * @returns {Promise<string>}
  */
-async function get(url, suppressErrors, init) {
+export async function get(url, suppressErrors, init) {
     let result = fetch(url, init).then(r => r.text());
     if (suppressErrors)
         result = result.catch(r => '');
@@ -150,7 +151,7 @@ async function get(url, suppressErrors, init) {
  * @param {string} markup
  * @returns {Node}
  */
-const createFragment = function (markup) {
+export const createFragment = function (markup) {
     const temp = document.createElement('template');
     temp.innerHTML = markup;
     let result = temp.content;
@@ -165,7 +166,7 @@ const createFragment = function (markup) {
  * @param {Node} end  The last element in the range
  * @returns {Range}
  */
-function createRange(start, end) {
+export function createRange(start, end) {
     const range = document.createRange();
     range.setStart(start, 0);
     range.setStart(end, 0);
@@ -175,7 +176,7 @@ function createRange(start, end) {
  * Wraps a document fragment so that it does not lose its children when
  * they are moved from one parent to another.
  */
-class LastingFragment {
+export class LastingFragment {
     nodes;
     /**
      * Creates a new LastingFragment instance with all the input nodes
@@ -212,5 +213,3 @@ class LastingFragment {
             node.parentNode?.removeChild(node);
     }
 }
-
-export { LastingFragment, arrayTemplate, asyncArrayTemplate, asyncTemplate, createFragment, createRange, get, tag, template };

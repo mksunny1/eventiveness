@@ -5,7 +5,7 @@
  * @param {number} end
  * @param {number} step
  */
-function* range(start, end, step) {
+export function* range(start, end, step) {
     if (!step)
         step = 1;
     if (end === undefined && start) {
@@ -24,7 +24,7 @@ function* range(start, end, step) {
  *
  * @param  {...any} args
  */
-function* flat(...args) {
+export function* flat(...args) {
     const count = args.length;
     const length = args[0].length;
     let j;
@@ -33,5 +33,3 @@ function* flat(...args) {
             yield args[j][i];
     }
 }
-
-export { flat, range };

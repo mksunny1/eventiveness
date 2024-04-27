@@ -5,46 +5,43 @@ This is a bunch of tiny abstractions created with the goal of simplifying the de
 ## The Libraries
 
 1. **Apriori**
-Apriori is about things related to building the DOM, including template creation, template rendering and document tree building. There are primitives for building the DOM with either in-page resources or dynamically loaded ones. This gives us the flexibility to choose whatever works best for a project. 
+    Apriori is about things related to building the DOM, including template creation, template rendering and document tree building. There are primitives for building the DOM with either in-page resources or dynamically loaded ones. This gives us the flexibility to choose whatever works best for a project. 
 
-In preveous versions this concern was handled by 2 libraries: apriori and arender. Now they have been merged and the API has become more intuitive and stable.
+    *Note: In preveous versions this concern was handled by 2 libraries: apriori and arender. Now they have been merged and the API has become more intuitive and stable.*
 
 
 2. **Sophistry**
-Sophistry will help with scoping declaratively written styles to specific elements. The library provides an API which simplifies the code needed for such scoping. It will internally create open shadow roots where necessary. It also maintains a cache to avoid reloading or re-processing the same styles (unless we request these).
+    Sophistry will help with scoping declaratively written styles to specific elements. The library provides an API which simplifies the code needed for such scoping. It will internally create open shadow roots where necessary. It also maintains a cache to avoid reloading or re-processing the same styles (unless we request these).
 
 
 3. **OneToMany**
-OneToMany enables a simple and explicit form of 'reactivity' where we perform an operation on one object which propagates the effects to many objects. OneToMany provides methods for getting and setting properties on multiple objects in addition to methods for invoking multiple functions and object methods.
+    OneToMany enables a simple and explicit form of 'reactivity' where we perform an operation on one object which propagates the effects to many objects. OneToMany provides methods for getting and setting properties on multiple objects in addition to methods for invoking multiple functions and object methods.
 
-
-*Note: OneToMany was found to be a cleaner and more versatile abstraction than Eventivity released in some previous versions and therefore replaces it.*
+    *Note: OneToMany was found to be a cleaner and more versatile abstraction than Eventivity released in some previous versions and therefore replaces it.*
 
 
 4. **Appliance**
-Appliance provides a powerful declarative API for manipulating the DOM and for structuring code, providing functionality that matches the benefits of building JavaScript components, but without many of the limitations. We apply component logic through 'hydration' because the documents can be created anywhere and with any technology available. There is no need for JavaScript on the backend. 
+    Appliance provides a powerful declarative API for manipulating the DOM and for structuring code, providing functionality that matches the benefits of building JavaScript components, but without many of the limitations. We apply component logic through 'hydration' because the documents can be created anywhere and with any technology available. There is no need for JavaScript on the backend. 
 
-This model is also good for accessibility (both for users and for devs). Frameworks that limit the use of HTML, CSS and even JavaScript miss out out on big advancements in these technologies in many areas, accessibility being a prime example. It takes a lot to replace natural behavior of the browser with JavaScript code and attempting to do this will bloat the codebase without offering much in return.
+    This model is also good for accessibility (both for users and for devs). Frameworks that limit the use of HTML, CSS and even JavaScript miss out out on big advancements in these technologies in many areas, accessibility being a prime example. It takes a lot to replace natural behavior of the browser with JavaScript code and attempting to do this will bloat the codebase without offering much in return.
+    
+    Appliance also exposes some new `selectors` for style rules and contaaining elements.
 
-Appliance also exposes some new `selectors` for style rules and contaaining elements.
-
-
-*Note: This library used to be a part of *domitory* released earlier, but now the concerns have become more distinctive.*
+    *Note: This library used to be a part of *domitory* released earlier, but now the concerns have become more distinctive.*
 
 
 5. **Domitory**
-Domitory is all about DOM event handlers. It exposes API for simplifying and better structuring efficient event handler code. For example, some handlers create long-running tasks (like promises) and need to briefly 'disable' the DOM until the tasks finish. Some handlers take advantage of event bubbling to increase efficiency of the code. Domitory is meant to provide useful abstractions for simplifying the code in these scenarios.
+    Domitory is all about DOM event handlers. It exposes API for simplifying and better structuring efficient event handler code. For example, some handlers create long-running tasks (like promises) and need to briefly 'disable' the DOM until the tasks finish. Some handlers take advantage of event bubbling to increase efficiency of the code. Domitory is meant to provide useful abstractions for simplifying the code in these scenarios.
 
 
 6. **Actribute**
-Actribute provides a more widely supported, flexible and powerful alternative to extending built-in HTML elements, using a similar API. 
+    Actribute provides a more widely supported, flexible and powerful alternative to extending built-in HTML elements, using a similar API. 
 
-
-*Note: This library should be considered less mature than the others, because it has not been used as much. Currently it exists as a Proof of Concept.*
+    *Note: This library should be considered less mature than the others, because it has not been used as much. Currently it exists as a Proof of Concept.*
 
 
 7. **Generational**
-Generational is a tiny new addition to the stack which is intended to provide useful generator functionality to: simplify JavaScript code, reduce memory footprint and improve performance. The first export is the elusive `range` generator for JavaScript. You are welcome.
+    Generational is a tiny new addition to the stack which is intended to provide useful generator functionality to: simplify JavaScript code, reduce memory footprint and improve performance. The first export is the elusive `range` generator for JavaScript. You are welcome.
 
 
 ## Installation
@@ -55,7 +52,7 @@ Alternatively, clone this repository into your projects that do not use npm depe
 
 ## Usage
 
-1. **Apriori**
+### Apriori
 Import apriori:
 ```js
     import { get, tag, template, asyncTemplate, createFragment, LastingFragment } from "eventiveness/apriori";
@@ -117,7 +114,7 @@ Create lasting fragments (they will not lose their children on you):
 Note that the fragment nodes can be added to different elements but still remain a part of the same fragment, creating many interesting possibilities.
 
 
-2. **Sophistry**
+### Sophistry
 Import sophistry:
 ```js
     import { Sophistry, wrap } from 'eventiveness/sophistry'
@@ -181,7 +178,7 @@ Remove stylesheet from sophistry:
     delete mySophistry.context.styeName;
 ```
 
-3. **Onetomany**
+### Onetomany
 Import onetomany:
 ```js
     import { One, one, unWrap } from 'eventiveness/onetomany';
@@ -266,7 +263,7 @@ Get, set and delete multiple properties:
 ```
 
 
-4. **Appliance**
+### Appliance
 Import appliaces:
 ```js
     import { apply, set, createRange } from 'eventiveness/onetomany';
@@ -300,7 +297,7 @@ Create a range (one line is better than 3):
 ```
 
 
-5. **Domitory**
+### Domitory
 Import domitory:
 ```js
     import { onEnter, eventListener, preventDefault, stopPropagation, matchEventListener } from 'eventiveness/domitory';
@@ -343,7 +340,7 @@ Use a shared running context (the handlers *and their long-running tasks* run mu
 ```
 
 
-6. **Actribute**
+### Actribute
 Import actribute:
 ```js
     import { Actribute } from 'eventiveness/actribute';
@@ -384,7 +381,7 @@ Unregister components:
 ```
 
 
-7. **Generational**
+### Generational
 Import generational:
 ```js
     import { range } from 'eventiveness/generational';

@@ -1,5 +1,3 @@
-'use strict';
-
 const defaultRunContext = { running: false };
 /**
  * Composes a listener from the functions in ops which will prevent
@@ -16,7 +14,7 @@ const defaultRunContext = { running: false };
  * @param {any} runContext
  * @returns
  */
-function eventListener(ops, runContext) {
+export function eventListener(ops, runContext) {
     if (!runContext)
         runContext = defaultRunContext;
     if (!(ops instanceof Array))
@@ -37,7 +35,7 @@ function eventListener(ops, runContext) {
     }
     return listener;
 }
-const END = Symbol();
+export const END = Symbol();
 /**
  * Takes advantage of event bubbling to listen for events on descendant
  * elements to reduce the number of listeners to create.
@@ -45,7 +43,7 @@ const END = Symbol();
  * @param {FunctionMap2} map
  * @param {boolean} wrapListeners
  */
-function matchEventListener(map, wrapListeners) {
+export function matchEventListener(map, wrapListeners) {
     const listenerMap = {};
     for (let [selector, args] of Object.entries(map)) {
         if (wrapListeners || args instanceof Array) {
@@ -66,27 +64,18 @@ function matchEventListener(map, wrapListeners) {
     }
     return listener;
 }
-const stopPropagation = (e) => e.stopPropagation();
-const preventDefault = (e) => e.preventDefault();
+export const stopPropagation = (e) => e.stopPropagation();
+export const preventDefault = (e) => e.preventDefault();
 /**
  * This will stop an event (typically keyup, keydown etc) from continuing
  * if it has not been triggered by the specified key.
  *
  * @returns
  */
-const onKey = (key) => (e) => (e.key !== key) ? END : '';
-const keys = { enter: 'Enter' };
+export const onKey = (key) => (e) => (e.key !== key) ? END : '';
+export const keys = { enter: 'Enter' };
 /**
  * This will stop a key(up or down...) event from continuing if
  * it has not been triggered by the enter key.
  */
-const onEnter = onKey(keys.enter);
-
-exports.END = END;
-exports.eventListener = eventListener;
-exports.keys = keys;
-exports.matchEventListener = matchEventListener;
-exports.onEnter = onEnter;
-exports.onKey = onKey;
-exports.preventDefault = preventDefault;
-exports.stopPropagation = stopPropagation;
+export const onEnter = onKey(keys.enter);

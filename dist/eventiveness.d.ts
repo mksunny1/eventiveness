@@ -119,6 +119,7 @@ declare function parentSelector(node: Node, selector: string): Element | null;
  */
 declare function apply(functions: FunctionMap, element?: HTMLElement, asComponent?: boolean): void;
 /**
+ *
  * A function to select and set specific properties and/or attributes on
  * elements. The steps are as follows
  *
@@ -134,6 +135,7 @@ declare function apply(functions: FunctionMap, element?: HTMLElement, asComponen
  *
  * In the values map, property names are written normally but attribute
  * names start with underscore (_).
+ *
  *
  * @param {string} selectors
  * @param {number[]|[number[], number[]]} index
@@ -494,14 +496,14 @@ declare class SophistryStyleSheet {
     constructor(cssStyleSheet: any);
     /**
      * Adds the CSSStylesheets to the given documents.
-     * @param  {...T} documents
+     * @param  {...T} elements
      */
-    style<T extends (Element)>(...documents: T[]): void;
+    style<T extends (Element | DocumentFragment)>(...elements: T[]): void;
     /**
      * Removes the stylesheets from the documents
-     * @param {*} documents
+     * @param {...T} elements
      */
-    remove<T extends (Document | ShadowRoot)>(...documents: T[]): void;
+    remove<T extends (Element | DocumentFragment)>(...elements: T[]): void;
 }
 /**
  * Wraps a CSSStyleSheet with a SophistryStyleSheet

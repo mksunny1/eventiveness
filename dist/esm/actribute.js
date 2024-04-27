@@ -1,5 +1,3 @@
-import { b as __spreadArray } from './tslib.es6-DpMc_yT1.js';
-
 /**
  * This is a module that was designed to be a dropin replacement for extending built-in elements. It is supposed to be
  * 1. more widely supported (safari does not support 'is' attribute)
@@ -12,7 +10,10 @@ import { b as __spreadArray } from './tslib.es6-DpMc_yT1.js';
  * We have not created examples yet for this.
  *
  */
-var Actribute = /** @class */ (function () {
+class Actribute {
+    registry = {};
+    props;
+    compAttr;
     // component instances are added here
     /**
      * Construct a new Actribute instance with the fallback props and
@@ -34,11 +35,11 @@ var Actribute = /** @class */ (function () {
      * @param {string} compAttrPrefix
      * @constructor
      */
-    function Actribute(props, compAttrPrefix) {
-        this.registry = {};
+    constructor(props, compAttrPrefix) {
         this.props = props || {};
         this.compAttr = compAttrPrefix || 'c-';
     }
+    ;
     /**
      * Registers a function as a component bearing the given name.
      * The components can thus be referenced in processed markup using
@@ -50,10 +51,11 @@ var Actribute = /** @class */ (function () {
      * @param {Function} component
      * @returns {Actribute}
      */
-    Actribute.prototype.register = function (name, component) {
+    register(name, component) {
         this.registry[name] = component;
         return this;
-    };
+    }
+    ;
     /**
      * Recursively processes the node to identify and apply components.
      *
@@ -70,21 +72,18 @@ var Actribute = /** @class */ (function () {
      * @param {any} props
      * @returns {Actribute}
      */
-    Actribute.prototype.process = function (element, props) {
-        var _a;
-        var compProps = [], comp, propKey, propVal, foundAllProps, processed = false;
-        for (var _i = 0, _b = Array.from(element.attributes); _i < _b.length; _i++) {
-            var _c = _b[_i], name_1 = _c.name, value = _c.value;
-            if (name_1.startsWith(this.compAttr)) {
+    process(element, props) {
+        let compProps = [], comp, propKey, propVal, foundAllProps, processed = false;
+        for (let { name, value } of Array.from(element.attributes)) {
+            if (name.startsWith(this.compAttr)) {
                 processed = true;
-                comp = name_1.substring(this.compAttr.length);
+                comp = name.substring(this.compAttr.length);
                 if (this.registry.hasOwnProperty(comp)) {
                     compProps = [];
                     foundAllProps = true;
                     value = value.trim();
                     if (value) {
-                        for (var _d = 0, _e = value.split(' '); _d < _e.length; _d++) {
-                            propKey = _e[_d];
+                        for (propKey of value.split(' ')) {
                             propKey = propKey.trim();
                             if (!propKey)
                                 continue; // just too much space between prop names/keys.
@@ -98,27 +97,24 @@ var Actribute = /** @class */ (function () {
                         }
                     }
                     if (foundAllProps) {
-                        (_a = this.registry)[comp].apply(_a, __spreadArray([element], compProps, false));
+                        this.registry[comp](element, ...compProps);
                     }
                     else {
-                        console.error("Some properties were not found for the component \"".concat(comp, ".\""));
+                        console.error(`Some properties were not found for the component "${comp}."`);
                         break; // break so we know where it stopped.
                     }
                 }
                 else {
-                    console.error("The component  \"".concat(comp, "\" was not found in the registry."));
+                    console.error(`The component  "${comp}" was not found in the registry.`);
                     break; // break so we know where the error occured (instead of printing the element).
                 }
             }
         }
         if (!processed)
-            for (var _f = 0, _g = Array.from(element.children); _f < _g.length; _f++) {
-                _g[_f];
+            for (let child of Array.from(element.children))
                 this.process(element, props);
-            }
         return this;
-    };
-    return Actribute;
-}());
+    }
+}
 
 export { Actribute };

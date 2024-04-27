@@ -1,6 +1,6 @@
 {
   "name": "eventiveness",
-  "version": "0.9.947",
+  "version": "0.9.948",
   "description": "A modular framework for writing accessible and joyfully interactive web applications with traditional HTML, CSS and JavaScript.",
   "type": "module",
   "types": "./dist/eventiveness.d.ts",
@@ -38,7 +38,7 @@
     "test": "node --experimental-modules --test",
     "wtest": "node --experimental-modules --test --watch",
     "doc": "npx typedoc --out ./wiki//documentation ./src/*.ts",
-    "build": "rollup -c",
+    "build": "npx tsc && rollup -c",
     "start": "node server.js"
   },
   "repository": {
@@ -73,6 +73,7 @@
     "rollup-plugin-dts": "^6.1.0",
     "tslib": "^2.6.2",
     "typedoc": "^0.25.13",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "undici-types": "^6.14.1"
   }
 }

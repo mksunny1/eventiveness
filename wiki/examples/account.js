@@ -1,8 +1,8 @@
-import { LastingFragment } from '../src/apriori.js';
-import { Sophistry } from '../src/sophistry.js';
-import { One } from '../src/onetomany.js';
-import { apply } from '../src/appliance.js';
-import { onEnter, preventDefault, eventListener } from '../src/domitory.js';
+import { LastingFragment } from '../../src/apriori.js';
+import { Sophistry } from '../../src/sophistry.js';
+import { One } from '../../src/onetomany.js';
+import { apply } from '../../src/appliance.js';
+import { onEnter, preventDefault, eventListener } from '../../src/domitory.js';
 
 const accountSophistry = new Sophistry();
 
@@ -21,15 +21,15 @@ const loginNo = new One([() => console.log('no views yet!')]);
 
 function getView(name, map) {
     const frag = views[name]();
-    const view = new LastingFragment(frag);
 
     // apply styles within
     const styles = accountSophistry.process(frag);
-    for (let style of styles) style.style(frag);
+    const view = new LastingFragment(frag);
     apply(map, frag);
 
     // add this view, simultaneously removing any previously added inverse views.
     onViewChange.call([[document.getElementsByTagName('main')[0].appendChild(frag) && view]]);
+    for (let style of styles) style.style(...view.nodes.filter(n => n instanceof HTMLElement));
     return view;
 }
 

@@ -1,7 +1,5 @@
 'use strict';
 
-var tslib_es6 = require('./tslib.es6-CC9N89Ys.js');
-
 /**
  * This is a template tag that will resolve only after all
  * interpolated promises have been resolved, finally returning the
@@ -13,31 +11,16 @@ var tslib_es6 = require('./tslib.es6-CC9N89Ys.js');
  * @param  {...any} expressions
  * @returns {Promise<string>}
  */
-function tag(strings) {
-    var expressions = [];
-    for (var _i = 1; _i < arguments.length; _i++) {
-        expressions[_i - 1] = arguments[_i];
+async function tag(strings, ...expressions) {
+    const promiseExpressions = [];
+    for (let [i, exp] of Array.from(expressions.entries())) {
+        if (exp instanceof Promise)
+            promiseExpressions.push(exp);
+        else
+            promiseExpressions.push(Promise.resolve(exp));
     }
-    return tslib_es6.__awaiter(this, void 0, void 0, function () {
-        var promiseExpressions, _a, _b, _c, exp, resolvedExpressions;
-        return tslib_es6.__generator(this, function (_d) {
-            switch (_d.label) {
-                case 0:
-                    promiseExpressions = [];
-                    for (_a = 0, _b = Array.from(expressions.entries()); _a < _b.length; _a++) {
-                        _c = _b[_a], _c[0], exp = _c[1];
-                        if (exp instanceof Promise)
-                            promiseExpressions.push(exp);
-                        else
-                            promiseExpressions.push(Promise.resolve(exp));
-                    }
-                    return [4 /*yield*/, Promise.all(promiseExpressions)];
-                case 1:
-                    resolvedExpressions = _d.sent();
-                    return [2 /*return*/, resolvedExpressions.map(function (exp, i) { return "".concat(strings[i]).concat(exp); }).join('') + strings[resolvedExpressions.length]];
-            }
-        });
-    });
+    const resolvedExpressions = await Promise.all(promiseExpressions);
+    return resolvedExpressions.map((exp, i) => `${strings[i]}${exp}`).join('') + strings[resolvedExpressions.length];
 }
 /**
  * Effectively creates a template literal out of an existing template string and wraps it in a function
@@ -50,7 +33,7 @@ function tag(strings) {
 function template(templateStr, argNames) {
     if (!argNames)
         argNames = [];
-    return Function.apply(void 0, tslib_es6.__spreadArray(tslib_es6.__spreadArray([], argNames, false), ["return `".concat(templateStr, "`;")], false));
+    return Function(...argNames, `return \`${templateStr}\`;`);
 }
 /**
  * Similar to apriori.template but the built template is also 'promise-aware' and will allow them to resolve to string values
@@ -69,16 +52,11 @@ function asyncTemplate(templateStr, argNames, tagName) {
     if (!tagName)
         tagName = 'T';
     if (argNames.includes(tagName)) {
-        throw new Error("The tag name ".concat(tagName, " clashes with the name of one of the arguments. \n        Please change the tag name or the argument name to resolve this."));
+        throw new Error(`The tag name ${tagName} clashes with the name of one of the arguments. 
+        Please change the tag name or the argument name to resolve this.`);
     }
-    var f = Function.apply(void 0, tslib_es6.__spreadArray(tslib_es6.__spreadArray([tagName], argNames, false), ["return ".concat(tagName, "`").concat(templateStr, "`;")], false));
-    return function () {
-        var args = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-            args[_i] = arguments[_i];
-        }
-        return f.apply(void 0, tslib_es6.__spreadArray([tag], args, false));
-    };
+    const f = Function(tagName, ...argNames, `return ${tagName}\`${templateStr}\`;`);
+    return (...args) => f(tag, ...args);
 }
 /**
  * Similar to template, but will render an iterable (such as array) of items together instead
@@ -106,7 +84,13 @@ function arrayTemplate(templateStr, argNames, itemName, itemSep) {
         itemName = 'item';
     if (!itemSep)
         itemSep = '';
-    return Function.apply(void 0, tslib_es6.__spreadArray(tslib_es6.__spreadArray(['arr'], argNames, false), ["\n        const result = [];\n        for (let ".concat(itemName, " of arr) {\n            result.push(`").concat(templateStr, "`);\n        }\n        return result.join('").concat(itemSep, "')\n    ")], false));
+    return Function('arr', ...argNames, `
+        const result = [];
+        for (let ${itemName} of arr) {
+            result.push(\`${templateStr}\`);
+        }
+        return result.join('${itemSep}')
+    `);
 }
 /**
  * Async equivalent of arrayTemplate. The async template tag ('T' by default)
@@ -130,19 +114,21 @@ function asyncArrayTemplate(templateStr, argNames, itemName, itemSep, tagName) {
     if (!tagName)
         tagName = 'T';
     if (itemName === tagName) {
-        throw new Error("The tag name ".concat(tagName, " is the same as the item name. \n        Please change the tag name or the item name to resolve this."));
+        throw new Error(`The tag name ${tagName} is the same as the item name. 
+        Please change the tag name or the item name to resolve this.`);
     }
     if (argNames.includes(tagName)) {
-        throw new Error("The tag name ".concat(tagName, " clashes with the name of one of the arguments. \n        Please change the tag name or the argument name to resolve this."));
+        throw new Error(`The tag name ${tagName} clashes with the name of one of the arguments. 
+        Please change the tag name or the argument name to resolve this.`);
     }
-    var f = Function.apply(void 0, tslib_es6.__spreadArray(tslib_es6.__spreadArray([tagName, 'arr'], argNames, false), ["\n        const result = [];\n        for (let ".concat(itemName, " of arr) {\n            result.push(").concat(tagName, "`").concat(templateStr, "`);\n        }\n        return Promise.all(result).then(resolved => resolved.join('").concat(itemSep, "'));\n    ")], false));
-    return function (arr) {
-        var args = [];
-        for (var _i = 1; _i < arguments.length; _i++) {
-            args[_i - 1] = arguments[_i];
+    const f = Function(tagName, 'arr', ...argNames, `
+        const result = [];
+        for (let ${itemName} of arr) {
+            result.push(${tagName}\`${templateStr}\`);
         }
-        return f.apply(void 0, tslib_es6.__spreadArray([tag, arr], args, false));
-    };
+        return Promise.all(result).then(resolved => resolved.join('${itemSep}'));
+    `);
+    return (arr, ...args) => f(tag, arr, ...args);
 }
 /**
  * Fetches text (typically markup) from the url. Just a shorthand.
@@ -152,16 +138,11 @@ function asyncArrayTemplate(templateStr, argNames, itemName, itemSep, tagName) {
  * @param {RequestInit} [init]
  * @returns {Promise<string>}
  */
-function get(url, suppressErrors, init) {
-    return tslib_es6.__awaiter(this, void 0, void 0, function () {
-        var result;
-        return tslib_es6.__generator(this, function (_a) {
-            result = fetch(url, init).then(function (r) { return r.text(); });
-            if (suppressErrors)
-                result = result.catch(function (r) { return ''; });
-            return [2 /*return*/, result];
-        });
-    });
+async function get(url, suppressErrors, init) {
+    let result = fetch(url, init).then(r => r.text());
+    if (suppressErrors)
+        result = result.catch(r => '');
+    return result;
 }
 /**
  * Shorthand for creating a DocumentFragment from markup. If the
@@ -171,10 +152,10 @@ function get(url, suppressErrors, init) {
  * @param {string} markup
  * @returns {Node}
  */
-var createFragment = function (markup) {
-    var temp = document.createElement('template');
+const createFragment = function (markup) {
+    const temp = document.createElement('template');
     temp.innerHTML = markup;
-    var result = temp.content;
+    let result = temp.content;
     if (result.children.length === 1)
         return result.children[0];
     return result;
@@ -187,7 +168,7 @@ var createFragment = function (markup) {
  * @returns {Range}
  */
 function createRange(start, end) {
-    var range = document.createRange();
+    const range = document.createRange();
     range.setStart(start, 0);
     range.setStart(end, 0);
     return range;
@@ -196,7 +177,8 @@ function createRange(start, end) {
  * Wraps a document fragment so that it does not lose its children when
  * they are moved from one parent to another.
  */
-var LastingFragment = /** @class */ (function () {
+class LastingFragment {
+    nodes;
     /**
      * Creates a new LastingFragment instance with all the input nodes
      * as children. If any of the nodes is a document fragment, all its
@@ -205,17 +187,11 @@ var LastingFragment = /** @class */ (function () {
      * @param  {...Node} nodes
      * @constructor
      */
-    function LastingFragment() {
-        var _a;
-        var nodes = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-            nodes[_i] = arguments[_i];
-        }
+    constructor(...nodes) {
         this.nodes = [];
-        for (var _b = 0, nodes_1 = nodes; _b < nodes_1.length; _b++) {
-            var node = nodes_1[_b];
+        for (let node of nodes) {
             if (node instanceof DocumentFragment)
-                (_a = this.nodes).push.apply(_a, Array.from(node.childNodes));
+                this.nodes.push(...Array.from(node.childNodes));
             else
                 this.nodes.push(node);
         }
@@ -225,23 +201,19 @@ var LastingFragment = /** @class */ (function () {
      * of this fragment.
      * @returns {DocumentFragment}
      */
-    LastingFragment.prototype.get = function () {
-        var fragment = new DocumentFragment();
-        fragment.append.apply(fragment, this.nodes);
+    get() {
+        const fragment = new DocumentFragment();
+        fragment.append(...this.nodes);
         return fragment;
-    };
+    }
     /**
      * Removes the children of this fragment from their current parent
      */
-    LastingFragment.prototype.remove = function () {
-        var _a;
-        for (var _i = 0, _b = this.nodes; _i < _b.length; _i++) {
-            var node = _b[_i];
-            (_a = node.parentNode) === null || _a === void 0 ? void 0 : _a.removeChild(node);
-        }
-    };
-    return LastingFragment;
-}());
+    remove() {
+        for (let node of this.nodes)
+            node.parentNode?.removeChild(node);
+    }
+}
 
 exports.LastingFragment = LastingFragment;
 exports.arrayTemplate = arrayTemplate;

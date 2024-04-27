@@ -1,4 +1,5 @@
 
+
 export class Sophistry {
     context = {};
     /**
@@ -21,7 +22,7 @@ export class Sophistry {
     process<T extends Element>(root: T, replace?: boolean): SophistryStyleSheet[] {
         const cssStyleSheets: SophistryStyleSheet[] = [];
         if ((root instanceof HTMLLinkElement && root.getAttribute('rel') === 'stylesheet') || (root instanceof HTMLStyleElement)) {
-            const name = root.getAttribute('s-ophistry') || root.getAttribute('href') || hash(root.textContent || '');
+            const name = root.getAttribute('s-ophistry') || root.getAttribute('href') || hash(root.outerHTML as string);
             if (this.context.hasOwnProperty(name) && !replace) cssStyleSheets.push(this.context[name]);
             else {
                 let st, st2;
@@ -33,19 +34,20 @@ export class Sophistry {
                         st = new CSSStyleSheet();
                         fetch(root.getAttribute('href') as string).then(r => r.text()).then(t => st.replaceSync(t));
                     } else if (root instanceof HTMLStyleElement) {
-                        st = root.sheet;
+                        st = new CSSStyleSheet();   // root.sheet will not work if style has not been added to DOM!!!
+                        st.replaceSync(root.textContent);
                     }
                     st2 = new SophistryStyleSheet(st);
                     this.context[name] = st2;
                 }
                 cssStyleSheets.push(st2);
             }
+            root.parentNode?.removeChild(root);
         } else {
             let node: Element | null = root.children[0], node2: Element | null;
             while (node) {
                 node2 = node.nextElementSibling;
                 cssStyleSheets.push(...this.process(node, replace));
-                if (node instanceof HTMLStyleElement || (root instanceof HTMLLinkElement && root.getAttribute('rel') === 'stylesheet')) root.removeChild(node);
                 node = node2;
             }
         }
@@ -108,26 +110,43 @@ export class SophistryStyleSheet{
     constructor(cssStyleSheet: any) {this.css = cssStyleSheet;}
     /**
      * Adds the CSSStylesheets to the given documents.
-     * @param  {...T} documents 
+     * @param  {...T} elements 
      */
-    style<T extends (Element)>(...documents: T[]) {
+    style<T extends (Element|DocumentFragment)>(...elements: T[]) {
         let root: Document | ShadowRoot;
-        for (let document of documents) {
-            if (!(document instanceof Document) && !(document instanceof ShadowRoot)) {
-                const childNodes = Array.from(document.childNodes);
-                root = document.attachShadow({mode: 'open'});
-                root.innerHTML = '<slot></slot>';
-            } else root = document;
+        const allElements: Element[] = [];
+        
+        for (let element of elements) {
+            if (element instanceof DocumentFragment) allElements.push(...Array.from(element.children));
+            else allElements.push(element);
+        } 
+
+        for (let element of allElements) {
+            if (!(element instanceof Document) && !(element instanceof ShadowRoot)) {
+                const childNodes = Array.from(element.childNodes);
+                root = element.shadowRoot || element.attachShadow({mode: 'open'});
+                element.innerHTML = '';
+                root.append(...childNodes);
+            } else root = element;
             if (!root.adoptedStyleSheets?.includes(this.css)) root.adoptedStyleSheets = [...(root.adoptedStyleSheets || []), this.css];
         }
     };
     /**
      * Removes the stylesheets from the documents
-     * @param {*} documents 
+     * @param {...T} elements 
      */
-    remove<T extends (Document|ShadowRoot)>(...documents: T[]) {
-        for (let document of documents) {
-            if (document.adoptedStyleSheets.includes(this.css)) document.adoptedStyleSheets.splice(document.adoptedStyleSheets.indexOf(this.css));
+    remove<T extends (Element|DocumentFragment)>(...elements: T[]) {
+        let root;
+        const allElements: Element[] = [];
+        
+        for (let element of elements) {
+            if (element instanceof DocumentFragment) allElements.push(...Array.from(element.children));
+            else allElements.push(element);
+        }
+
+        for (let element of allElements) {
+             root = element.shadowRoot || element;
+            if (root.adoptedStyleSheets.includes(this.css)) root.adoptedStyleSheets.splice(root.adoptedStyleSheets.indexOf(this.css));
         }
     }
 }

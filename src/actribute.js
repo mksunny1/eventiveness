@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * This is a module that was designed to be a dropin replacement for extending built-in elements. It is supposed to be
  * 1. more widely supported (safari does not support 'is' attribute)
@@ -12,7 +10,7 @@
  * We have not created examples yet for this.
  *
  */
-class Actribute {
+export class Actribute {
     registry = {};
     props;
     compAttr;
@@ -118,5 +116,3 @@ class Actribute {
         return this;
     }
 }
-
-exports.Actribute = Actribute;

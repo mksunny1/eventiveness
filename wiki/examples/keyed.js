@@ -80,7 +80,7 @@ function view(table) {
         clear(context) {table.innerHTML = '';},
         swap(context) {
             if (table.children.length >= 999) {
-                replace(table.children, table, [[1, 998], [998, 1]]);
+                replace(Array.from(table.children), table, [[1, 998], [998, 1]]);
             }
         },
         remove(element, context) {table.removeChild(element);}

@@ -1,6 +1,6 @@
 import dts from 'rollup-plugin-dts'
 import copy from 'rollup-plugin-copy'
-import typescript from '@rollup/plugin-typescript';
+// import typescript from '@rollup/plugin-typescript';
 
 import { writeFile, mkdir } from 'fs/promises'
 
@@ -17,9 +17,8 @@ function createCommonJsPackage() {
 
 export default [
     {
-      input: ['./src/domitory.ts', './src/appliance.ts', './src/actribute.ts', './src/apriori.ts', './src/generational.ts', './src/sophistry.ts', './src/onetomany.ts'],
+      input: ['./src/domitory.js', './src/appliance.js', './src/actribute.js', './src/apriori.js', './src/generational.js', './src/sophistry.js', './src/onetomany.js'],
       plugins: [
-        typescript(),
         copy({
           targets: [
             { src: './package.json', dest: 'dist' }
@@ -34,7 +33,7 @@ export default [
       ]
     },
     {
-      input:  './src/eventiveness.ts', // ['./src/domitory.ts', './src/appliance.ts', './src/actribute.ts', './src/apriori.ts', './src/generational.ts', './src/sophistry.ts', './src/onetomany.ts'],
+      input:  './src/eventiveness.ts', 
       plugins: [ dts() ],
       output: {
         format: 'es',

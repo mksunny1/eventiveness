@@ -1,4 +1,4 @@
-class Sophistry {
+export class Sophistry {
     context = {};
     /**
      * Processes and 'pops' all style tags within the passed root.
@@ -102,7 +102,7 @@ const hash = (str) => {
     }
     return newHash;
 };
-class SophistryStyleSheet {
+export class SophistryStyleSheet {
     css;
     /**
      * Creates a new CSS stylesheet which contains convenient methods
@@ -164,8 +164,6 @@ class SophistryStyleSheet {
  * @param {CSSStyleSheet} cssStyleSheet
  * @returns
  */
-function wrap(cssStyleSheet) {
+export function wrap(cssStyleSheet) {
     return new SophistryStyleSheet(cssStyleSheet);
 }
-
-export { Sophistry, SophistryStyleSheet, wrap };

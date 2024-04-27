@@ -13,7 +13,7 @@
  * @param {any} context
  * @returns
  */
-function one(many, recursive, context) {
+export function one(many, recursive, context) {
     return new Proxy(new One(many, recursive, context, one), oneTrap);
 }
 const PURE = Symbol();
@@ -23,7 +23,7 @@ const PURE = Symbol();
  * @param one
  * @returns
  */
-function unWrap(one) {
+export function unWrap(one) {
     return one[PURE] || one;
 }
 const oneTrap = {
@@ -47,7 +47,7 @@ const oneTrap = {
         return true;
     }
 };
-class One {
+export class One {
     many;
     recursive;
     ctor;
@@ -169,5 +169,3 @@ class One {
     ;
 }
 // nb: need to fix the issue with Symbol index.
-
-export { One, one, unWrap };

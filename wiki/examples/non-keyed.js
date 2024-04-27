@@ -78,7 +78,7 @@ class Component {
     update() {
         const length = this.data.length;
         for (let i = 0; i < length; i += 10) this.data[i] += ' !!!';
-        this.view.setLabel(range(0, length, 10), this.data);
+        this.view.setLabel([...range(0, length, 10)], this.data);
     }
     swap() {
         if (this.data.length >= 999) {

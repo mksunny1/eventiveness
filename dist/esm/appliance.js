@@ -9,14 +9,11 @@
  * @returns {Array<CSSRule>}
  */
 function ruleSelectorAll(selectors, styleElement, onlyFirst) {
-    var _a;
-    var arrSelectors = selectors.split(',').map(function (item) { return item.trim(); });
-    var result = [];
-    var selector;
-    for (var _i = 0, _b = Array.from(((_a = styleElement.sheet) === null || _a === void 0 ? void 0 : _a.cssRules) || []); _i < _b.length; _i++) {
-        var rule = _b[_i];
-        for (var _c = 0, arrSelectors_1 = arrSelectors; _c < arrSelectors_1.length; _c++) {
-            selector = arrSelectors_1[_c];
+    const arrSelectors = selectors.split(',').map(item => item.trim());
+    const result = [];
+    let selector;
+    for (let rule of Array.from(styleElement.sheet?.cssRules || [])) {
+        for (selector of arrSelectors) {
             if (rule.cssText.startsWith(selector)) {
                 result.push(rule);
                 if (onlyFirst)
@@ -45,7 +42,7 @@ function ruleSelector(selectors, styleElement) {
  * @returns {Element}
  */
 function parentSelector(node, selector) {
-    var parent = node.parentElement;
+    let parent = node.parentElement;
     while (parent && !(parent.matches(selector)))
         parent = parent.parentElement;
     return parent;
@@ -66,29 +63,23 @@ function parentSelector(node, selector) {
 function apply(functions, element, asComponent) {
     if (!element)
         element = document.body;
-    var elements, fn, e;
-    var selectorAll = (element instanceof HTMLStyleElement) ? function (selectors) { return ruleSelectorAll(selectors, element); } : element.querySelectorAll.bind(element);
-    for (var _i = 0, _a = Object.entries(functions); _i < _a.length; _i++) {
-        var _b = _a[_i], selectors = _b[0], fns = _b[1];
+    let elements, fn, e;
+    const selectorAll = (element instanceof HTMLStyleElement) ? (selectors) => ruleSelectorAll(selectors, element) : element.querySelectorAll.bind(element);
+    for (let [selectors, fns] of Object.entries(functions)) {
         elements = Array.from(selectorAll(selectors));
         if (!(fns instanceof Array))
             fns = [fns];
         if (asComponent)
-            for (var _c = 0, elements_1 = elements; _c < elements_1.length; _c++) {
-                e = elements_1[_c];
-                for (var _d = 0, fns_1 = fns; _d < fns_1.length; _d++) {
-                    fn = fns_1[_d];
+            for (e of elements)
+                for (fn of fns)
                     fn(e);
-                }
-            }
         else
-            for (var _e = 0, fns_2 = fns; _e < fns_2.length; _e++) {
-                fn = fns_2[_e];
-                fn.apply(void 0, elements);
-            }
+            for (fn of fns)
+                fn(...elements);
     }
 }
 /**
+ *
  * A function to select and set specific properties and/or attributes on
  * elements. The steps are as follows
  *
@@ -105,32 +96,31 @@ function apply(functions, element, asComponent) {
  * In the values map, property names are written normally but attribute
  * names start with underscore (_).
  *
+ *
  * @param {string} selectors
  * @param {number[]|[number[], number[]]} index
  * @param {ArrayMap} values
  * @param {HTMLElement} element
  */
 function set(selectors, index, values, element) {
-    var _a;
-    var member, memberValues, i;
-    // index = Array.from(index);
-    var elementIndex, valueIndex;
+    let member, memberValues, i;
+    if (!(index instanceof Array))
+        index = Array.from(index);
+    let elementIndex, valueIndex;
     if (index.length === 2 && index[0] instanceof Array && index[1] instanceof Array)
-        elementIndex = index[0], valueIndex = index[1];
+        [elementIndex, valueIndex] = index;
     else
         elementIndex = valueIndex = index;
-    var indexLength = elementIndex.length;
-    apply((_a = {},
-        _a[selectors] = function () {
-            var _a;
-            var selected = [];
-            for (var _i = 0; _i < arguments.length; _i++) {
-                selected[_i] = arguments[_i];
-            }
+    const indexLength = elementIndex.length;
+    if (!(elementIndex instanceof Array))
+        elementIndex = Array.from(elementIndex);
+    if (!(valueIndex instanceof Array))
+        valueIndex = Array.from(valueIndex);
+    apply({
+        [selectors]: (...selected) => {
             if (!index)
-                index = selected.map(function (s, i) { return i; }); // just pass 0 to set all items
-            for (var _b = 0, _c = Object.entries(values); _b < _c.length; _b++) {
-                _a = _c[_b], member = _a[0], memberValues = _a[1];
+                index = selected.map((s, i) => i); // just pass 0 to set all items
+            for ([member, memberValues] of Object.entries(values)) {
                 if (member.startsWith('_')) {
                     member = member.slice(1);
                     for (i = 0; i < indexLength; i++) {
@@ -144,8 +134,8 @@ function set(selectors, index, values, element) {
                 }
                 selected[i];
             }
-        },
-        _a), element);
+        }
+    }, element);
 }
 /**
  * This method is important to prevent boilerplate in code where
@@ -169,38 +159,43 @@ function set(selectors, index, values, element) {
  * @param {string} selectors Selectors for what to replace. Defaults to element children
  */
 function replace(values, element, index, selectors) {
-    var _a;
     // nb: the parameter type will already suggest conversion of values to array.
-    if (values instanceof NodeList || values instanceof HTMLCollection)
+    if (!(values instanceof Array))
         values = Array.from(values);
     // so that we don't accidentally change what we want to assign somewhere!
+    if (!(index instanceof Array))
+        index = Array.from(index);
     if (!element)
         element = document.body;
     if (!index || !index.length)
-        index = values.map(function (v, i) { return i; });
-    var children;
+        index = values.map((v, i) => i);
+    let children;
     if (selectors)
         children = Array.from(element.querySelectorAll(selectors));
     else
         children = Array.from(element.children);
-    var elementIndex, valueIndex;
+    let elementIndex, valueIndex;
     if (index.length === 2 && index[0] instanceof Array && index[1] instanceof Array)
-        elementIndex = index[0], valueIndex = index[1];
+        [elementIndex, valueIndex] = index;
     else
         elementIndex = valueIndex = index;
-    elementIndex.length;
-    var i, value, parentNode, tempElement;
-    var template = document.createElement('template');
-    var temps = elementIndex.map(function (i) {
+    if (!(elementIndex instanceof Array))
+        elementIndex = Array.from(elementIndex);
+    if (!(valueIndex instanceof Array))
+        valueIndex = Array.from(valueIndex);
+    const length = elementIndex.length;
+    let i, value, parentNode, tempElement;
+    const template = document.createElement('template');
+    const temps = elementIndex.map(i => {
         value = children[i];
         parentNode = value.parentElement;
         tempElement = template.cloneNode(false);
-        parentNode === null || parentNode === void 0 ? void 0 : parentNode.replaceChild(tempElement, value);
+        parentNode?.replaceChild(tempElement, value);
         return [tempElement, parentNode];
     });
     for (i = 0; i < length; i++) {
-        _a = temps[i], tempElement = _a[0], parentNode = _a[1];
-        parentNode === null || parentNode === void 0 ? void 0 : parentNode.replaceChild(values[valueIndex[i]], tempElement);
+        [tempElement, parentNode] = temps[i];
+        parentNode?.replaceChild(values[valueIndex[i]], tempElement);
     }
 }
 

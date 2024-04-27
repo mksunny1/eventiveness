@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * Functions similarly to querySelectorAll, but for selecting style rules in
  * a CSS stylesheet object. All rules that start with any of the selectors are
@@ -10,7 +8,7 @@
  * @param {boolean} onlyFirst
  * @returns {Array<CSSRule>}
  */
-function ruleSelectorAll(selectors, styleElement, onlyFirst) {
+export function ruleSelectorAll(selectors, styleElement, onlyFirst) {
     const arrSelectors = selectors.split(',').map(item => item.trim());
     const result = [];
     let selector;
@@ -33,7 +31,7 @@ function ruleSelectorAll(selectors, styleElement, onlyFirst) {
  * @param {HTMLStyleElement} styleElement
  * @returns {CSSRule}
  */
-function ruleSelector(selectors, styleElement) {
+export function ruleSelector(selectors, styleElement) {
     return ruleSelectorAll(selectors, styleElement, true)[0];
 }
 /**
@@ -43,7 +41,7 @@ function ruleSelector(selectors, styleElement) {
  * @param {string} selector
  * @returns {Element}
  */
-function parentSelector(node, selector) {
+export function parentSelector(node, selector) {
     let parent = node.parentElement;
     while (parent && !(parent.matches(selector)))
         parent = parent.parentElement;
@@ -62,7 +60,7 @@ function parentSelector(node, selector) {
  * @param {HTMLElement} element
  * @param {boolean} asComponent
  */
-function apply(functions, element, asComponent) {
+export function apply(functions, element, asComponent) {
     if (!element)
         element = document.body;
     let elements, fn, e;
@@ -104,7 +102,7 @@ function apply(functions, element, asComponent) {
  * @param {ArrayMap} values
  * @param {HTMLElement} element
  */
-function set(selectors, index, values, element) {
+export function set(selectors, index, values, element) {
     let member, memberValues, i;
     if (!(index instanceof Array))
         index = Array.from(index);
@@ -160,7 +158,7 @@ function set(selectors, index, values, element) {
  * @param {number[]|[number[], number[]]} index The children at these indices are replaced with the corresponding values. Can be either index or [index, valueIndex]. Defaults to all indices in values.
  * @param {string} selectors Selectors for what to replace. Defaults to element children
  */
-function replace(values, element, index, selectors) {
+export function replace(values, element, index, selectors) {
     // nb: the parameter type will already suggest conversion of values to array.
     if (!(values instanceof Array))
         values = Array.from(values);
@@ -200,10 +198,4 @@ function replace(values, element, index, selectors) {
         parentNode?.replaceChild(values[valueIndex[i]], tempElement);
     }
 }
-
-exports.apply = apply;
-exports.parentSelector = parentSelector;
-exports.replace = replace;
-exports.ruleSelector = ruleSelector;
-exports.ruleSelectorAll = ruleSelectorAll;
-exports.set = set;
+;

@@ -1,6 +1,6 @@
-import { createTree } from '../src/apriori.js';
-import { apply, parentSelector } from '../src/appliance.js';
-import { preventDefault, stopPropagation, eventListener, matchEventListener} from '../src/domitory.js';
+import { createFragment } from '../../src/apriori.js';
+import { apply, parentSelector } from '../../src/appliance.js';
+import { preventDefault, stopPropagation, eventListener, matchEventListener} from '../../src/domitory.js';
 
 function _random(max) {return Math.round(Math.random() * 1000) % max;}
 const adjectives = ["pretty", "large", "big", "small", "tall", "short", "long", "handsome", "plain", "quaint", "clean", "elegant", "easy", "angry", "crazy", "helpful", "mushy", "odd", "unsightly", "adorable", "important", "inexpensive", "cheap", "expensive", "fancy"];
@@ -16,7 +16,7 @@ class Component {
         const a = this.index, z = this.index += n;
         const lbl = adjectives[_random(adjectives.length)] + " " + colours[_random(colours.length)] + " " + nouns[_random(nouns.length)];
         for (let i = a; i < z; i++) markup.push(`<tr><td class='col-md-1'>${i}</td><td class='col-md-4'><a class='lbl'>${lbl}</a></td><td class='col-md-1'><a class='remove'><span class='remove glyphicon glyphicon-remove' aria-hidden='true'></span></a></td><td class='col-md-6'></td></tr>`);
-        this.parent.append(createTree(markup.join('')));
+        this.parent.append(createFragment(markup.join('')));
     }
     swap() {
         if (this.parent.children.length >= 999) {

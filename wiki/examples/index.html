@@ -7,18 +7,20 @@
         <style>
             /* implement a simple list of tabs without js, 
             since all the panels will always be rendered. */
+            #benchmarks {
+                overflow: scroll;
+                /* background-color: lightgoldenrodyellow; */
+                border: dotted lightcoral;
+                padding: 1em;
+            }
             #benchmarks>ul {
                 display: flex;
                 flex-flow: row;
                 flex-wrap: nowrap;
-                overflow: scroll;
-                width: 100%;
+                gap: 1em;
+                width: 300%;
                 padding: 0;
-                list-style-type: none;
-            }
-            #benchmark>ul>li {
-                width: 100%;
-                margin: 0;
+                list-style: none;
             }
         </style>
     </head>
@@ -27,13 +29,6 @@
         <p>This page contains links to the current examples that demonstrate the features of Eventiveness</p>
         <main>
             <section>
-                <h2>README</h2>
-                <p>
-                    This page demonstrates all the code included in the README usage section.
-                </p>
-                <a href="./readme.html">Link to README</a>
-            </section>
-            <section>
                 <h2>Accounts</h2>
                 <p>
                     This is an example taken from the 'account' of a discussion site. The page will display 
@@ -41,38 +36,62 @@
                 </p>
                 <a href="./account.html">Link to Account</a>
             </section>
-            <section id="benchmarks">
+            <section>
                 <h2>Benchmarks</h2>
                 <p>
                     These examples show differnt implementations of the kausest JavaScript benchmarks which 
                     has been used for testing and improving the code. There are 3 implementations:
                 </p>
-                <ul>
-                    <li>
-                        <h3>Benchmark</h3>
-                        <p>
-                            This is a stateless implementation where everything exists on the DOM. 
-                            Eventiveness is used here as a convenient way to build and manipulate the DOM.
-                        </p>
-                        <a href="./benchmark.html">Link to Benchmark</a>
-                    </li>
-                    <li>
-                        <h3>Keyed</h3>
-                        <p>
-                            This corresponds to the required keyed implementation of the benchmarks where 
-                            new DOM trees are rebuilt when the data (stored in JavaScript memory) are rebuilt.
-                        </p>
-                        <a href="./benchmark_keyed.html">Link to Keyed</a>
-                    </li>
-                    <li>
-                        <h3>Non-keyed</h3>
-                        <p>
-                            This corresponds to the required non-keyed implementation of the benchmarks where 
-                            existing DOM trees are reused when the data (stored in JavaScript memory) are rebuilt.
-                        </p>
-                        <a href="./benchmark_non_keyed.html">Link to Non-keyed</a>
-                    </li>
-                </ul>
+                <div id="benchmarks">
+                    <ul>
+                        <li>
+                            <h3>Benchmark</h3>
+                            <p>
+                                This is a stateless implementation where everything exists in the DOM. 
+                                Eventiveness is used here as a convenient way to build and manipulate the DOM.
+                            </p>
+                            <a href="./benchmark.html">Link to Benchmark</a>
+                        </li>
+                        <li>
+                            <h3>Keyed</h3>
+                            <p>
+                                This corresponds to the required keyed implementation of the benchmarks where 
+                                new DOM trees are rebuilt when the data (stored in JavaScript memory) are rebuilt.
+                            </p>
+                            <a href="./keyed.html">Link to Keyed</a>
+                        </li>
+                        <li>
+                            <h3>Non-keyed</h3>
+                            <p>
+                                This corresponds to the required non-keyed implementation of the benchmarks where 
+                                existing DOM trees are reused when the data (stored in JavaScript memory) are rebuilt.
+                            </p>
+                            <a href="./non-keyed.html">Link to Non-keyed</a>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+            <section>
+                <h2>README</h2>
+                <p>
+                    This page demonstrates all the code included in the README usage section.
+                </p>
+                <a href="./readme.html">Link to README</a>
+            </section>
+            <section>
+                <h2>TODO List</h2>
+                <p>
+                   No 'framework' is truly complete without showing an implementation of the famous TODO list application. 
+                   Our implementation also includes a <b>counter</b> for number of items.
+                </p>
+                <a href="./todos.html">Link to TODO</a>
+            </section>
+            <section>
+                <h2>Themes</h2>
+                <p>
+                   Here is the index page again with multiple themes to choose from
+                </p>
+                <a href="./theme.html">Link to Themes</a>
             </section>
         </main>
     </body>

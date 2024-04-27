@@ -1,7 +1,5 @@
 'use strict';
 
-var tslib_es6 = require('./tslib.es6-CC9N89Ys.js');
-
 /**
  * Fast and 'costless' range function for javascript based on generators.
  *
@@ -9,31 +7,15 @@ var tslib_es6 = require('./tslib.es6-CC9N89Ys.js');
  * @param {number} end
  * @param {number} step
  */
-function range(start, end, step) {
-    var i;
-    return tslib_es6.__generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                if (!step)
-                    step = 1;
-                if (end === undefined && start) {
-                    end = start;
-                    start = 0;
-                }
-                i = start;
-                _a.label = 1;
-            case 1:
-                if (!(i < end)) return [3 /*break*/, 4];
-                return [4 /*yield*/, i];
-            case 2:
-                _a.sent();
-                _a.label = 3;
-            case 3:
-                i += step;
-                return [3 /*break*/, 1];
-            case 4: return [2 /*return*/];
-        }
-    });
+function* range(start, end, step) {
+    if (!step)
+        step = 1;
+    if (end === undefined && start) {
+        end = start;
+        start = 0;
+    }
+    for (let i = start; i < end; i += step)
+        yield i;
 }
 /**
  * Returns an iterator over the items of all the arrays, starting from
@@ -44,38 +26,14 @@ function range(start, end, step) {
  *
  * @param  {...any} args
  */
-function flat() {
-    var _i, count, length, j, i;
-    var args = [];
-    for (_i = 0; _i < arguments.length; _i++) {
-        args[_i] = arguments[_i];
+function* flat(...args) {
+    const count = args.length;
+    const length = args[0].length;
+    let j;
+    for (let i = 0; i < length; i++) {
+        for (j = 0; j < count; j++)
+            yield args[j][i];
     }
-    return tslib_es6.__generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                count = args.length;
-                length = args[0].length;
-                i = 0;
-                _a.label = 1;
-            case 1:
-                if (!(i < length)) return [3 /*break*/, 6];
-                j = 0;
-                _a.label = 2;
-            case 2:
-                if (!(j < count)) return [3 /*break*/, 5];
-                return [4 /*yield*/, args[j][i]];
-            case 3:
-                _a.sent();
-                _a.label = 4;
-            case 4:
-                j++;
-                return [3 /*break*/, 2];
-            case 5:
-                i++;
-                return [3 /*break*/, 1];
-            case 6: return [2 /*return*/];
-        }
-    });
 }
 
 exports.flat = flat;
