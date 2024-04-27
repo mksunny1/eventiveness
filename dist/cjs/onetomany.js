@@ -1,1 +1,180 @@
-"use strict";var t=require("./tslib.es6-OarTx95B.js");var r=Symbol();var e={get:function(t,e){if(e===r)return t;var i=t.get(e,!0);return i.length&&"function"==typeof i[0]?function(){for(var r=[],n=0;n<arguments.length;n++)r[n]=arguments[n];return t.call(r,e)}:t.recursive?t.ctor?t.ctor(i,!0,t.context,t.ctor):new n(i,!0,t.context):i},set:function(t,r,e){return t.set(r,e),!0}},n=function(){function r(t,r,e,n){this.many=t,this.recursive=r,this.ctor=n,this.context=e||{}}return r.prototype.get=function(e,n){var i=[],s=this.many.length;if(null!=e)for(var o=0;o<s;o++)i.push(this.many[o][e]);else for(o=0;o<s;o++)i.push(this.many[o]);var a=[i,this.recursive,this.context];return this.recursive&&!n?this.ctor?this.ctor.apply(this,t.__spreadArray(t.__spreadArray([],a,!1),[this.ctor],!1)):new(r.bind.apply(r,t.__spreadArray([void 0],a,!1))):i},r.prototype.set=function(t,r){if(void 0===r)return this.set(t,this.get(t,!0));var e=this.many.length,n=r.length;if(null!=t)for(var i=0;i<e;i++)this.many[i][t]=r[Math.min(i,n-1)];else for(i=0;i<e;i++)this.many[i]=r[Math.min(i,n-1)]},r.prototype.delete=function(t){for(var r=0,e=this.many;r<e.length;r++){delete e[r][t]}},r.prototype.call=function(r,e){var n,i;void 0===r&&(r=[[]]);var s,o,a=[],h=this.many.length,u=r.length;if(void 0!==e)for(var c=0;c<h;c++)s=r[Math.min(c,u-1)]||[],o=(n=this.many[c])[e].apply(n,t.__spreadArray(t.__spreadArray([],s,!1),[this.context],!1)),a.push(o);else for(c=0;c<h;c++)s=r[Math.min(c,u-1)]||[],o=(i=this.many)[c].apply(i,t.__spreadArray(t.__spreadArray([],s,!1),[this.context],!1)),a.push(o);return a},r}();exports.One=n,exports.one=function t(r,i,s){return new Proxy(new n(r,i,s,t),e)},exports.unWrap=function(t){return t[r]||t};
+'use strict';
+
+var tslib_es6 = require('./tslib.es6-CC9N89Ys.js');
+
+/**
+ * Creates a One object which transmits a call, method dispatch, property
+ * get or set applied to the 'one' object to the 'many' objects.
+ *
+ * The recursive arg is used to ensure that getting properties always
+ * wraps the array results with One also.
+ *
+ * The context arg will be passed to all delegated calls. A new object
+ * is created if it is not provided.
+ *
+ * @param {any[]} many
+ * @param {boolean} recursive
+ * @param {any} context
+ * @returns
+ */
+function one(many, recursive, context) {
+    return new Proxy(new One(many, recursive, context, one), oneTrap);
+}
+var PURE = Symbol();
+/**
+ * Return a 'pure' One from a proxied One.
+ *
+ * @param one
+ * @returns
+ */
+function unWrap(one) {
+    return one[PURE] || one;
+}
+var oneTrap = {
+    get: function (target, p) {
+        if (p === PURE)
+            return target;
+        var result = target.get(p, true);
+        if (result.length && typeof result[0] === 'function') {
+            return function () {
+                var args = [];
+                for (var _i = 0; _i < arguments.length; _i++) {
+                    args[_i] = arguments[_i];
+                }
+                return target.call(args, p);
+            };
+        }
+        else if (target.recursive) {
+            if (target.ctor)
+                return target.ctor(result, true, target.context, target.ctor);
+            else
+                return new One(result, true, target.context);
+        }
+        return result;
+    },
+    set: function (target, p, value) {
+        target.set(p, value);
+        return true;
+    }
+};
+var One = /** @class */ (function () {
+    /**
+     * Creates a new One instance for propagating operations to all the items
+     * in many. Property get, set , delete and method call operations are
+     * propagated. Each of these operations has a corresponding method in One.
+     *
+     * @param {any[]} many
+     * @param {boolean} [recursive] Whether to wrap the arrays returned by get with another One.
+     * @param {any} context An optional shared context to be passed to all propagated method calls
+     * @param {OneCtor} [ctor] The constructor used to create the recursively created Ones.This parameter is used internally;
+     * no need to supply an argument.
+     * @constructor
+     */
+    function One(many, recursive, context, ctor) {
+        this.many = many;
+        this.recursive = recursive, this.ctor = ctor;
+        this.context = context || {};
+    }
+    /**
+     * Gets corresponding properties from all the objects in many
+     *
+     * @param {string | number | symbol | null} [prop]
+     * @param {boolean} [forceArray]
+     * @returns {any[]|One}
+     */
+    One.prototype.get = function (prop, forceArray) {
+        var results = [];
+        var length = this.many.length;
+        if (prop !== undefined && prop !== null) {
+            for (var i = 0; i < length; i++)
+                results.push(this.many[i][prop]);
+        }
+        else {
+            for (var i = 0; i < length; i++)
+                results.push(this.many[i]);
+        }
+        var args = [results, this.recursive, this.context];
+        return (this.recursive) && !forceArray ? (this.ctor) ? this.ctor.apply(this, tslib_es6.__spreadArray(tslib_es6.__spreadArray([], args, false), [this.ctor], false)) : new (One.bind.apply(One, tslib_es6.__spreadArray([void 0], args, false)))() : results;
+    };
+    /**
+     * Sets corresponding property values in the objects in many.
+     * 'values' are treated similarly to 'args' in the call method.
+     *
+     * @param {string | number | symbol | null} [prop]
+     * @param {any[]} [values]
+     */
+    One.prototype.set = function (prop, values) {
+        if (values === undefined)
+            return this.set(prop, this.get(prop, true));
+        // simply reset existing values, probably to trigger proxy handlers or setters
+        var length = this.many.length;
+        var j = values.length;
+        if (prop !== undefined && prop !== null) {
+            for (var i = 0; i < length; i++)
+                this.many[i][prop] = values[Math.min(i, j - 1)];
+        }
+        else {
+            for (var i = 0; i < length; i++)
+                this.many[i] = values[Math.min(i, j - 1)];
+        }
+    };
+    /**
+     * Delete the property from all objects in many.
+     *
+     * @param {string | number | symbol} prop
+     */
+    One.prototype.delete = function (prop) {
+        for (var _i = 0, _a = this.many; _i < _a.length; _i++) {
+            var many = _a[_i];
+            delete many[prop];
+        }
+    };
+    /**
+     * Calls all the items in many (if method is not specified) or the
+     * corresponding methods in many (if  method is specified).
+     *
+     * args will be (or be coerced into) an array of argument for
+     * corresponding items in many:
+     *
+     * args = [many1Args, many2Args, many3Args, ...].
+     *
+     * When One is created with the one function, the outer array can
+     * be omitted in the calls since there is no explicit need to
+     * secify a method in this case (it is infered by the wrapping proxy)
+     *
+     *
+     * @param {any[]} args
+     * @param {string | number | symbol} [method]
+     * @returns {any[]}
+     */
+    One.prototype.call = function (args, method) {
+        var _a, _b;
+        if (args === undefined)
+            args = [[]];
+        var results = [];
+        var length = this.many.length;
+        var j = args.length;
+        var iArgs, result;
+        if (method !== undefined) {
+            for (var i = 0; i < length; i++) {
+                iArgs = args[Math.min(i, j - 1)] || [];
+                result = (_a = this.many[i])[method].apply(_a, tslib_es6.__spreadArray(tslib_es6.__spreadArray([], iArgs, false), [this.context], false));
+                results.push(result);
+            }
+        }
+        else {
+            for (var i = 0; i < length; i++) {
+                iArgs = args[Math.min(i, j - 1)] || [];
+                result = (_b = this.many)[i].apply(_b, tslib_es6.__spreadArray(tslib_es6.__spreadArray([], iArgs, false), [this.context], false));
+                results.push(result);
+            }
+        }
+        return results;
+    };
+    return One;
+}());
+// nb: need to fix the issue with Symbol index.
+
+exports.One = One;
+exports.one = one;
+exports.unWrap = unWrap;

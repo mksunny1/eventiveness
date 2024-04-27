@@ -1,1 +1,103 @@
-import{_ as n,a as r}from"./tslib.es6-CTwnr_FB.js";var t={running:!1};function e(e,a){return a||(a=t),e instanceof Array||(e=[e]),function(t){return n(this,void 0,void 0,(function(){var n,u,o;return r(this,(function(r){switch(r.label){case 0:if(a.running)return[2];a.running=!0,u=0,o=e,r.label=1;case 1:return u<o.length?[4,(0,o[u])(t,a)]:[3,4];case 2:if((n=r.sent())===i)return[3,4];r.label=3;case 3:return u++,[3,1];case 4:return a.running=!1,[2,n]}}))}))}}var i=Symbol();function a(n,r){for(var t={},i=0,a=Object.entries(n);i<a.length;i++){var u=a[i],o=u[0],c=u[1];if(r||c instanceof Array){var f=void 0;c instanceof Array&&"function"!=typeof c.at(-1)||(f=[c,void 0]),t[o]=f?e((f[0],f[1])):e(c[0],c[1])}else t[o]=c}return function(n){for(var r=0,e=Object.entries(t);r<e.length;r++){var i=e[r],a=i[0],u=i[1];if(n.target.matches(a))return u(n)}}}var u=function(n){return n.stopPropagation()},o=function(n){return n.preventDefault()},c=function(n){return function(r){return r.key!==n?i:""}},f={enter:"Enter"},s=c(f.enter);export{i as END,e as eventListener,f as keys,a as matchEventListener,s as onEnter,c as onKey,o as preventDefault,u as stopPropagation};
+import { _ as __awaiter, a as __generator } from './tslib.es6-DpMc_yT1.js';
+
+var defaultRunContext = { running: false };
+/**
+ * Composes a listener from the functions in ops which will prevent
+ * itself from running multiple times concurrently. This is particularly
+ * useful when promises need to be awaited.
+ *
+ * The function returns an object containing the created listerner and
+ * the monitor for whether it is running
+ *
+ * Note that the ops can communicate with their return value and
+ * second args.
+ *
+ * @param {Function[] | Function} ops
+ * @param {any} runContext
+ * @returns
+ */
+function eventListener(ops, runContext) {
+    if (!runContext)
+        runContext = defaultRunContext;
+    if (!(ops instanceof Array))
+        ops = [ops];
+    var op;
+    function listener(e) {
+        return __awaiter(this, void 0, void 0, function () {
+            var result, _i, _a;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        if (runContext.running)
+                            return [2 /*return*/];
+                        runContext.running = true;
+                        _i = 0, _a = ops;
+                        _b.label = 1;
+                    case 1:
+                        if (!(_i < _a.length)) return [3 /*break*/, 4];
+                        op = _a[_i];
+                        return [4 /*yield*/, op(e, runContext)];
+                    case 2:
+                        result = _b.sent();
+                        if (result === END)
+                            return [3 /*break*/, 4];
+                        _b.label = 3;
+                    case 3:
+                        _i++;
+                        return [3 /*break*/, 1];
+                    case 4:
+                        runContext.running = false;
+                        return [2 /*return*/, result];
+                }
+            });
+        });
+    }
+    return listener;
+}
+var END = Symbol();
+/**
+ * Takes advantage of event bubbling to listen for events on descendant
+ * elements to reduce the number of listeners to create.
+ *
+ * @param {FunctionMap2} map
+ * @param {boolean} wrapListeners
+ */
+function matchEventListener(map, wrapListeners) {
+    var listenerMap = {};
+    for (var _i = 0, _a = Object.entries(map); _i < _a.length; _i++) {
+        var _b = _a[_i], selector = _b[0], args = _b[1];
+        if (wrapListeners || args instanceof Array) {
+            var args2 = void 0;
+            if (!(args instanceof Array) || typeof args.at(-1) === 'function')
+                args2 = [args, undefined];
+            listenerMap[selector] = args2 ? eventListener((args2[0], args2[1])) : eventListener(args[0], args[1]);
+        }
+        else
+            listenerMap[selector] = args;
+    }
+    function listener(e) {
+        for (var _i = 0, _a = Object.entries(listenerMap); _i < _a.length; _i++) {
+            var _b = _a[_i], selector = _b[0], fn = _b[1];
+            if (e.target.matches(selector))
+                return fn(e);
+        }
+    }
+    return listener;
+}
+var stopPropagation = function (e) { return e.stopPropagation(); };
+var preventDefault = function (e) { return e.preventDefault(); };
+/**
+ * This will stop an event (typically keyup, keydown etc) from continuing
+ * if it has not been triggered by the specified key.
+ *
+ * @returns
+ */
+var onKey = function (key) { return function (e) { return (e.key !== key) ? END : ''; }; };
+var keys = { enter: 'Enter' };
+/**
+ * This will stop a key(up or down...) event from continuing if
+ * it has not been triggered by the enter key.
+ */
+var onEnter = onKey(keys.enter);
+
+export { END, eventListener, keys, matchEventListener, onEnter, onKey, preventDefault, stopPropagation };

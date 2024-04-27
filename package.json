@@ -1,16 +1,10 @@
 {
   "name": "eventiveness",
-  "version": "0.9.946",
+  "version": "0.9.947",
   "description": "A modular framework for writing accessible and joyfully interactive web applications with traditional HTML, CSS and JavaScript.",
   "type": "module",
-  "main": "./dist/cjs/eventiveness.js",
-  "module": "./dist/esm/eventiveness.js",
   "types": "./dist/eventiveness.d.ts",
   "exports": {
-    ".": {
-      "require": "./dist/cjs/eventiveness.js",
-      "default": "./dist/esm/eventiveness.js"
-    },
     "./appliance": {
       "require": "./dist/cjs/appliance.js",
       "default": "./dist/esm/appliance.js"
@@ -44,7 +38,6 @@
     "test": "node --experimental-modules --test",
     "wtest": "node --experimental-modules --test --watch",
     "doc": "npx typedoc --out ./wiki//documentation ./src/*.ts",
-    "compile": "npx tsc ./src",
     "build": "rollup -c",
     "start": "node server.js"
   },
@@ -73,10 +66,8 @@
   "author": "Mark Sun",
   "license": "MIT",
   "devDependencies": {
-    "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^11.1.6",
     "express": "^4.19.2",
-    "jsdoc": "^4.0.2",
     "rollup": "^4.14.1",
     "rollup-plugin-copy": "^3.5.0",
     "rollup-plugin-dts": "^6.1.0",

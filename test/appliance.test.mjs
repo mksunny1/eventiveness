@@ -1,4 +1,4 @@
-import { apply } from "./appliance.js";
+import { apply } from "../dist/esm/appliance.js";
 import { test, describe, it } from 'node:test';
 
 

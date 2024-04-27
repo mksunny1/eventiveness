@@ -108,11 +108,17 @@ export class SophistryStyleSheet{
     constructor(cssStyleSheet: any) {this.css = cssStyleSheet;}
     /**
      * Adds the CSSStylesheets to the given documents.
-     * @param  {...any} documents 
+     * @param  {...T} documents 
      */
-    style<T extends (Document|ShadowRoot)>(...documents: T[]) {
+    style<T extends (Element)>(...documents: T[]) {
+        let root: Document | ShadowRoot;
         for (let document of documents) {
-            if (!document.adoptedStyleSheets?.includes(this.css)) document.adoptedStyleSheets = [...(document.adoptedStyleSheets || []), this.css];
+            if (!(document instanceof Document) && !(document instanceof ShadowRoot)) {
+                const childNodes = Array.from(document.childNodes);
+                root = document.attachShadow({mode: 'open'});
+                root.innerHTML = '<slot></slot>';
+            } else root = document;
+            if (!root.adoptedStyleSheets?.includes(this.css)) root.adoptedStyleSheets = [...(root.adoptedStyleSheets || []), this.css];
         }
     };
     /**

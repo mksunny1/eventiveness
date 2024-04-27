@@ -1,68 +1,61 @@
 # Eventiveness
-
-This is bunch of tiny abstractions created with the goal of simplifying the developement of highly interactive web frontends using vanilla HTML, CSS and JavasSript. Everything is exactly the way they look and there is no hidden magic. The framework consists of 7 independent libraries which tackle unique concerns in front-end development. We avoid repeating standard functions in the JavaScript language and instead focus on new primitives which complement and enhance them. After reading this guide to the framework along with the API docs and a few examples (included in the Wiki), there is nothing left to learn except more standard HTML, CSS and JavaScript.
+This is a bunch of tiny abstractions created with the goal of simplifying the developement of interactive web frontends using vanilla HTML, CSS and JavasSript. Everything is the way they look and there is no hidden magic. The framework consists of 7 independent libraries which tackle unique concerns in front-end development. We avoid repeating standard functions in JavaScript and focus on new primitives which complement and enhance them. After reading this guide, the API docs and playing with a few examples (included in the Wiki), there is nothing left to learn except more standard HTML, CSS and JavaScript.
 
 
 ## The Libraries
 
-
 1. **Apriori**
-
-Apriori caters to things related to building the DOM, including template creation, template rendering and document tree building. All the exports are async by default, so that the DOM can be built with either in-page resources or dynamically loaded ones. This gives us the flexibility to choose whatever works best for a project. 
+Apriori is about things related to building the DOM, including template creation, template rendering and document tree building. There are primitives for building the DOM with either in-page resources or dynamically loaded ones. This gives us the flexibility to choose whatever works best for a project. 
 
 In preveous versions this concern was handled by 2 libraries: apriori and arender. Now they have been merged and the API has become more intuitive and stable.
 
 
 2. **Sophistry**
-
-Sophistry will help with scoping styles whether or not we use shadow DOM. The library provides an API which simplifies the code needed to scope declaratively written styles to specific elements.
+Sophistry will help with scoping declaratively written styles to specific elements. The library provides an API which simplifies the code needed for such scoping. It will internally create open shadow roots where necessary. It also maintains a cache to avoid reloading or re-processing the same styles (unless we request these).
 
 
 3. **OneToMany**
+OneToMany enables a simple and explicit form of 'reactivity' where we perform an operation on one object which propagates the effects to many objects. OneToMany provides methods for getting and setting properties on multiple objects in addition to methods for invoking multiple functions and object methods.
 
-OneToMany enables a simple and explicit form of 'reactivity' where we perform an operation on one object which propagates the effects to many objects. It has been found to be a more versatile abstraction than *eventivity* released in previous versions and therefore replaces it. 
 
-OneToMany provides methods for getting and setting properties on multiple objects in addition to methods for invoking multiple functions and object methods.
+*Note: OneToMany was found to be a cleaner and more versatile abstraction than Eventivity released in some previous versions and therefore replaces it.*
 
 
 4. **Appliance**
+Appliance provides a powerful declarative API for manipulating the DOM and for structuring code, providing functionality that matches the benefits of building JavaScript components, but without many of the limitations. We apply component logic through 'hydration' because the documents can be created anywhere and with any technology available. There is no need for JavaScript on the backend. 
 
-Appliance provides a powerful declarative API for manipulating the DOM and for structuring code, providing functionality that matches the benefits of building DOM JavaScript components, but without many of the limitations. For instance, this also matches and exceeds the benefits of hydration because the document can be created anywhere and with any technology available; there is no need for JavaScript on the backend. 
-
-**Accessibility** (both for users and for devs).
+This model is also good for accessibility (both for users and for devs). Frameworks that limit the use of HTML, CSS and even JavaScript miss out out on big advancements in these technologies in many areas, accessibility being a prime example. It takes a lot to replace natural behavior of the browser with JavaScript code and attempting to do this will bloat the codebase without offering much in return.
 
 Appliance also exposes some new `selectors` for style rules and contaaining elements.
 
-This library used to be a part of *domitory* released earlier, but now the concerns have become more distinctive.
+
+*Note: This library used to be a part of *domitory* released earlier, but now the concerns have become more distinctive.*
 
 
 5. **Domitory**
-
-
-Domitory is all about DOM event handlers. It exposes API for simplifying and better structuring efficient event handler code. For example, some handlers create long-running tasks (like promises) and need to briefly 'disable' the DOM until the tasks finish. Some handlers take advantage of event bubbling to increase efficiency of the code. Domitory is meant to provide useful abstractions for simplifying the code in these instances.
+Domitory is all about DOM event handlers. It exposes API for simplifying and better structuring efficient event handler code. For example, some handlers create long-running tasks (like promises) and need to briefly 'disable' the DOM until the tasks finish. Some handlers take advantage of event bubbling to increase efficiency of the code. Domitory is meant to provide useful abstractions for simplifying the code in these scenarios.
 
 
 6. **Actribute**
+Actribute provides a more widely supported, flexible and powerful alternative to extending built-in HTML elements, using a similar API. 
 
-Actribute provides a more widely supported, flexible and powerful alternative to extending built-in HTML elements, using a similar API.
+
+*Note: This library should be considered less mature than the others, because it has not been used as much. Currently it exists as a Proof of Concept.*
 
 
 7. **Generational**
-
-Generation is a tiny new addition to the library stack which is intended to provide useful generator functionality to, simplify JavaScript code, reduce memory footprint and improve performance. The first export is the elusive `range` generator for JavaScript. You are welcome.
+Generational is a tiny new addition to the stack which is intended to provide useful generator functionality to: simplify JavaScript code, reduce memory footprint and improve performance. The first export is the elusive `range` generator for JavaScript. You are welcome.
 
 
 ## Installation
-
 ```npm i eventiveness```
 
-Alternatively, simply clone this repository into your projects that do not use npm dependencies and import any libraries you like from your JavaScript modules using relative paths.
+Alternatively, clone this repository into your projects that do not use npm dependencies and import any libraries you like from your JavaScript modules using relative paths. Note that Eventiveness is more of a namespace than a library or framework. The real libraries are the 7 described earliear and you should import from those modules (as shown in the usage section).
 
 
 ## Usage
 
 1. **Apriori**
-
 Import apriori:
 ```js
     import { get, tag, template, asyncTemplate, createFragment, LastingFragment } from "eventiveness/apriori";
@@ -73,12 +66,19 @@ Create a 'raw' async template literal:
     const text = await tag`This text will be returned only after ${Promise.resolve("I")} get resolved `;
 ```
 
-Create an async template literal from existing text:
+Create an async template literal from existing text (such as text dynamically loaded from HTML files):
 ```js
-    const str = 'This text ${arg1} be returned only after ${arg2} get resolved';       // not a template literal.
-    const at = asyncTemplate(str, ['arg1', 'arg2']);  // now a template literal wrapped with a function for reuse.
-    const renderedA = at('will', Promise.resolve("I"));
+    const str = 'This text ${arg1} be returned only after ${arg2} get resolved';       
+    // not a template literal.
+
+    const at = asyncTemplate(str, ['arg1', 'arg2']);  
+    // now a template literal wrapped with a function for reuse.
+
+    const renderedA = at('will', Promise.resolve("I"));   
+    // returns 'This text will be returned only after I get resolved'
+
     const renderedB = at('shall', Promise.resolve("we"));
+    // returns 'This text shall be returned only after we get resolved'
 ```
 
 Create view factories:
@@ -92,24 +92,32 @@ Create DOM trees:
 ```js
     const tree = createFragment(`
         <h3>Component Label</h3>
-        <Article>What's  in this component</article>
+        <article>What's in this component</article>
     `);
+    // returns a fragment with 2 children: h3 and article
+
+    const element = createFragment(`
+        <article>What's in this component</article>
+    `);
+    // returns the article element. the fragment is unnecessary if it 
+    // has only 1 child, therefore the child is returned instead.
     
 ```
 
-Create lasting fragments (they won't lose their children on you):
+Create lasting fragments (they will not lose their children on you):
 ```js
-    const view = new LastingFragment(tree);
-    document.body.append(view.get());   
+    const lasting = new LastingFragment(tree);
+    document.body.append(lasting.get());   
     // view  does not lose its tree here
     
-    view.remove();     
-    // view can still act powerfully over its tree!
+    lasting.remove();     
+    // view can still act powerfully over its nodes. Here it removes them from their containing elements.
 ```
+
+Note that the fragment nodes can be added to different elements but still remain a part of the same fragment, creating many interesting possibilities.
 
 
 2. **Sophistry**
-
 Import sophistry:
 ```js
     import { Sophistry, wrap } from 'eventiveness/sophistry'
@@ -132,22 +140,24 @@ Encapsulate stylesheets:
     // the styles will get popped here.
     
     for (let style of styles) style.style(element, document.body.firstElementChild);  
-    // uses adopted stylesheets.
+    // uses adopted stylesheets. If the element is not a document (main document or shadow root), one will be created in this call as necessary..
 ```
 
-Import stylesheets with encapsulation:
+Import stylesheets which can be applied to elements:
 ```js
     const myLinkStyle = mySophistry.import('./my-style-link.css', true);
+    myLinkStyle.style(element);
 ```
 
 Reuse existing stylesheets:
 ```js
     const myStyleAlready = mySophistry.context.already;
+    for (let element of tree) myLinkStyle.style(element);
 ```
 
-Update or create a stylesheet (Any elements that adopted it will *react naturally*):
+Update or create a stylesheet (Any elements that adopted an updated stylesheet will *react naturally*):
 ```js
-    mySophistry.set('myStyle', 'p {font-size: 1000em;}');
+    mySophistry.set('./my-style-link.css', (await get('new-style-link.css', true)) || 'p {font-size: 1000em;}');
 ```
 
 Wrap CSS stylesheet with Sophistry stylesheet (this is important!):
@@ -172,7 +182,6 @@ Remove stylesheet from sophistry:
 ```
 
 3. **Onetomany**
-
 Import onetomany:
 ```js
     import { One, one, unWrap } from 'eventiveness/onetomany';
@@ -258,7 +267,6 @@ Get, set and delete multiple properties:
 
 
 4. **Appliance**
-
 Import appliaces:
 ```js
     import { apply, set, createRange } from 'eventiveness/onetomany';
@@ -293,7 +301,6 @@ Create a range (one line is better than 3):
 
 
 5. **Domitory**
-
 Import domitory:
 ```js
     import { onEnter, eventListener, preventDefault, stopPropagation, matchEventListener } from 'eventiveness/domitory';
@@ -337,7 +344,6 @@ Use a shared running context (the handlers *and their long-running tasks* run mu
 
 
 6. **Actribute**
-
 Import actribute:
 ```js
     import { Actribute } from 'eventiveness/actribute';
@@ -379,7 +385,6 @@ Unregister components:
 
 
 7. **Generational**
-
 Import generational:
 ```js
     import { range } from 'eventiveness/generational';
@@ -391,19 +396,19 @@ Create a range:
 ```
 
 
-To get a greater feel for how eventiveness pans out in practice, have a look at the included examples in the repository. You can serve them from any servers. Please make sure the 3rd-party CSS files can be found where they are expected to get the same appearance (the functionality should not be affected).
+*Note: To get a good feel for how eventiveness pans out in practice, have a look at the included examples in the repository. you can play wit them by running the included server with `npm start` and then pointing your browser to the link 'http://localhost/8000/wiki/examples/index.html'.*
 
 
 ## Contributing
+If you like the concept and/or the direction of Eventiveness, feel free to contribute to this project. You can contribute however you want. You can star this repository. You can start or join discussions about the project, here or anywhere. You can contribute some of your use-cases to the list of examples. You can help improve the documentation or complete the site (domitoryjs.com). You can contribute to issues and pull requests. There is still a long development journey ahead for this library. The normal requirement of positiveness and courtesy goes without saying.
 
-If you like the concept and/or the direction of Eventiveness, please contribute to this project. Contribution starts with a simple starring of this repository. Next you can start or join discussions about this project, here or anywhere. You can contribute some of your use-cases to the list of examples. You can still help improve the documentation, complete the site (eventivejs.com), consolidate features and fix bugs. There is still a long development journey ahead for this library.
-
-Another really cool way to contribute is to sponsor the project. You can sponsor the project as a 'thank you' or as a way of showing your support for the direction we have chosen and giving Eventiveness the best opportunity to thrive. 
+Another cool way to contribute is to sponsor the project. You can sponsor us as a 'thank you' or as a way of showing your support for the direction we have chosen and giving Eventiveness the best opportunity to thrive. 
 
 Thank you for contributing.
 
 
-## Ongoing Work
+## Ongoing work
+- Improving test coverage.
+- Ongoing general maintenance.
 
-Increasing test coverage and improving the documentation. The API is now stable.
 

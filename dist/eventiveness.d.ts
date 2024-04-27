@@ -237,10 +237,11 @@ declare function asyncArrayTemplate(templateStr: string, argNames: Array<string>
  * Fetches text (typically markup) from the url. Just a shorthand.
  *
  * @param {string} url
- * @param {RequestInit} init
+ * @param {boolean} [suppressErrors]
+ * @param {RequestInit} [init]
  * @returns {Promise<string>}
  */
-declare function get(url: string, init: RequestInit): Promise<string>;
+declare function get(url: string, suppressErrors?: boolean, init?: RequestInit): Promise<string>;
 /**
  * Shorthand for creating a DocumentFragment from markup. If the
  * fragment has only one child, the child is returned instead.
@@ -493,9 +494,9 @@ declare class SophistryStyleSheet {
     constructor(cssStyleSheet: any);
     /**
      * Adds the CSSStylesheets to the given documents.
-     * @param  {...any} documents
+     * @param  {...T} documents
      */
-    style<T extends (Document | ShadowRoot)>(...documents: T[]): void;
+    style<T extends (Element)>(...documents: T[]): void;
     /**
      * Removes the stylesheets from the documents
      * @param {*} documents

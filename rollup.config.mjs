@@ -1,7 +1,6 @@
 import dts from 'rollup-plugin-dts'
 import copy from 'rollup-plugin-copy'
 import typescript from '@rollup/plugin-typescript';
-import terser from '@rollup/plugin-terser';
 
 import { writeFile, mkdir } from 'fs/promises'
 
@@ -20,7 +19,7 @@ export default [
     {
       input: ['./src/domitory.ts', './src/appliance.ts', './src/actribute.ts', './src/apriori.ts', './src/generational.ts', './src/sophistry.ts', './src/onetomany.ts'],
       plugins: [
-        typescript(), terser(),
+        typescript(),
         copy({
           targets: [
             { src: './package.json', dest: 'dist' }

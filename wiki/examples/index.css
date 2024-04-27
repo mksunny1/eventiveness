@@ -1,0 +1,18 @@
+body {
+    position: absolute;
+    margin: auto;
+}
+main {
+    display: grid;
+    grid-template-columns: 1fr, 1fr;
+}
+p {
+    max-width: 600px;
+}
+
+@media (max-width = 250px) {
+    main {
+        display: flex;
+        flex-flow: column;
+    }
+}

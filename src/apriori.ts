@@ -134,12 +134,14 @@ export function asyncArrayTemplate(templateStr: string, argNames: Array<string>,
  * Fetches text (typically markup) from the url. Just a shorthand.
  * 
  * @param {string} url 
- * @param {RequestInit} init 
+ * @param {boolean} [suppressErrors]
+ * @param {RequestInit} [init] 
  * @returns {Promise<string>}
  */
-export async function get(url: string, init: RequestInit): Promise<string> {
-    const r = await fetch(url, init);
-    return await r.text();
+export async function get(url: string, suppressErrors?: boolean, init?: RequestInit): Promise<string> {
+    let result =  fetch(url, init).then(r => r.text())
+    if (suppressErrors) result = result.catch(r => '');
+    return result;
 }
 
 /**
