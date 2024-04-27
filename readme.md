@@ -135,6 +135,10 @@ Encapsulate stylesheets:
     `)).tree;
     const styles = mySophistry.process(element); 
     // the styles will get popped here.
+
+    document.body.append(element);
+    // you must add elements to the DOM before styling. browsers 
+    // do not allow styling otherwise.
     
     for (let style of styles) style.style(element, document.body.firstElementChild);  
     // uses adopted stylesheets. If the element is not a document (main document or shadow root), one will be created in this call as necessary..
