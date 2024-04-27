@@ -1,6 +1,6 @@
 {
   "name": "eventiveness",
-  "version": "0.9.950",
+  "version": "0.9.951",
   "description": "A modular framework for writing accessible and joyfully interactive web applications with traditional HTML, CSS and JavaScript.",
   "type": "module",
   "types": "./dist/eventiveness.d.ts",
@@ -39,7 +39,7 @@
     "wtest": "node --experimental-modules --test --watch",
     "doc": "npx typedoc --out ./wiki//documentation ./src/*.ts",
     "build": "npx tsc && rollup -c",
-    "start": "node server.js"
+    "start": "node server.cjs"
   },
   "repository": {
     "type": "git",

@@ -397,7 +397,7 @@ Create a range:
 ```
 
 
-*Note: To get a good feel for how eventiveness pans out in practice, have a look at the included examples in the repository. you can play wit them by running the included server with `npm start` and then pointing your browser to the link 'http://localhost/8000/wiki/examples/index.html'.*
+*Note: To get a good feel for how eventiveness pans out in practice, have a look at the included examples in the repository. you can play wit them by running the included server with `npm start` and then pointing your browser to the link 'http://localhost:8000/wiki/examples/index.html'.*
 
 
 ## Contributing
