@@ -1,30 +1,116 @@
 /**
  * Fast and 'costless' range function for javascript based on generators.
  * 
+ * @example
+ * 
+ * 
  * @param {number} start 
- * @param {number} end 
- * @param {number} step 
+ * @param {number} [end] 
+ * @param {number} [step] 
  */
-export function* range(start: number, end: number | undefined, step: number | undefined) {
+export function* range(start: number, end?: number, step?: number) {
     if (!step) step = 1;
-    if (end === undefined && start) {end = start; start = 0;}
+    if ((end === undefined || end === null)  && start) {end = start; start = 0;}
     for (let i = start; i < (end as number); i+=step) yield i;
 }
 
 /**
- * Returns an iterator over the items of all the arrays, starting from 
- * the zero index to the maximum index of the first argument. The 
- * effective length of the iterator is the sum of the length of the args.
+ * Returns a generator which iterates over the subset of the   
+ * 'arrayLike' object that matches the provided index.
  * 
- * Can be used to join arrays in a way no supported by concat, pusg, etc.
+ * @example
  * 
- * @param  {...any} args 
+ * 
+ * @param {any} arrayLike 
+ * @param {Iterable<any>} index 
  */
-export function* flat(...args: any[]) {
-    const count = args.length;
-    const length = args[0].length;
+export function* items(arrayLike: any, index: Iterable<number>) {
+    for (let i of index) yield arrayLike[i];
+}
+
+/**
+ * Call to get the length of an object. The object must either 
+ * have a length property of be previously passed in a call to`setLength`.
+ * 
+ * @example
+ * 
+ * 
+ * @param {any} iter 
+ */
+export function getLength(iter: any) {
+    return iterLengths.get(iter) || (iter as any[]).length;
+}
+
+/**
+ * Stores the 'fake' lenghts of iterables passed in calls to `setLength`.
+ * Can also be modified manually.
+ */
+export const iterLengths = new WeakMap<any, number>();
+
+/**
+ * Attaches a 'fake' length to an object (likely iterable or iterator) 
+ * which does not have a length property, so that it can work well with 
+ * functions that use `getLength`.
+ * 
+ * @example
+ * 
+ * 
+ * @param {any} iter 
+ */
+export function setLength(iter: any, length: number) {
+    iterLengths.set(iter, length);
+    return iter;
+}
+
+/**
+ * Returns an iterator over the items of all the input iterators, starting from 
+ * the zero index to the maximum index of the first argument. The 
+ * effective length of the iterator is the multiple of the length of thr smallest 
+ * iterator and the number of iterators (number of args).
+ * 
+ * Can be used to join arrays in a way no supported by `concat`, `push`, etc. 
+ * To pass an array as an iterator, call array.values().
+ * 
+ * @example
+ * 
+ * 
+ * @param  {...Iterator<any>} args 
+ */
+export function* flat(...args: [Iterator<any>]) {
+    const count = getLength(args);
     let j: number;
-    for (let i = 0; i < length; i++) {
-        for (j = 0; j < count; j++) yield args[j][i];
+    while (true) {
+        for (let i = 0; i < count; i++) {
+            if (args[i].next().done) yield args[i].next().value;
+            else return;
+        }
+    }
+}
+
+/**
+ * Get an iterator over the next 'count' items of the given iterator.
+ * 
+ * @example
+ * 
+ * 
+ * @param iter 
+ * @param count 
+ */
+export function* next(iter: Iterator<any>, count: number) {
+    while (count-- > 0) yield iter.next().value;
+}
+
+/**
+ * Returns an unordered/random iterator over the input array..
+ * 
+ * @example
+ * 
+ * 
+ * @param {any[]} array 
+ */
+export function* uItems(array: any[]) {
+    const arr = [...array];
+    for (let i = arr.length - 1; i >= 0; i--) {
+        yield arr.splice(Math.round(Math.random() * i), 1);
     }
 }

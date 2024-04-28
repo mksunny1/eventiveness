@@ -1,54 +1,70 @@
 /**
- * This is a module that was designed to be a dropin replacement for extending built-in elements. It is supposed to be
- * 1. more widely supported (safari does not support 'is' attribute)
- * 2. more concise and flexible :you can register and unregister components and you can attach multiple components to the same element..
- * 3. easier to pass down props in markup without looking ugly.
+ * This module has been designed to be a drop-in replacement for extending built-in elements. It is supposed to be
+ * 1. More widely supported. Safari does not support 'is' attribute.
+ * 2. More concise and flexible. You can register and unregister components and you can attach multiple components to the same element..
+ * 3. Easier to pass down props in markup without creating ugly markup.
  *
- * The usage pattern is similar to using 'is' attribute but here the attributes name the components and the values
+ * The attributes here name the components and the values
  * are the names of props to pass to them along with the element.
  *
  * We have not created examples yet for this.
  *
  */
 class Actribute {
+    /**
+     * The object that holds all registered components. The keys are the
+     * component names and the values are the component functions.
+     */
     registry = {};
+    /**
+     * This object holds any fallback props which can be referenced
+     * in the markup, in the values of component attributes. Property names
+     * can be referenced similarly to CSS classes.
+     */
     props;
-    compAttr;
-    // component instances are added here
+    /**
+     * This is the attribute prefix that denotes component specifiers in
+     * markup. A component specifier is an attribute where the name (after
+     * the prefix) refers to a component name (in the registery) and the
+     * optional value is a space-separated list of property names.
+     */
+    attrPrefix;
     /**
      * Construct a new Actribute instance with the fallback props and
      * attribute prefix.
      *
      * When it is used to process markup, attributes with names starting
-     * with compAttr ('c-' by default) are assumed to be component specifiers.
-     * A component specifier is of the form [compAttr][componentName]="[propertyName] [propertyName] ..."
+     * with attrPrefix are assumed to be component specifiers.
+     * A component specifier is of the form [attrPrefix][componentName]="[propertyName] [propertyName] ..."
      *
-     * When a component specifier is encountered, the component (registerd with the
-     * 'register' method) will be invoked with the element and any specified
-     * properties as arguments.
+     * When a component specifier is encountered, the component's function will be
+     * invoked with the element and any specified properties as arguments.
      *
-     * The props object passed to this initializer behave like a global
+     * The attribute can be string (where at least 1 property name is specified),
+     * or boolean (where no property is specified).
+     *
+     * The props object passed to this initializer behaves like a global
      * from which component props may be obtained if they are not found in
-     * the props object passed to the 'process' method.
+     * the props object passed to the `process` method.
      *
-     * @param {any} props
-     * @param {string} compAttrPrefix
+     * @param {any} props The value to assign to the props member.
+     * @param {string} attrPrefix The value to assign to attrPrefix. Defaults to 'c-'
      * @constructor
      */
-    constructor(props, compAttrPrefix) {
+    constructor(props, attrPrefix) {
         this.props = props || {};
-        this.compAttr = compAttrPrefix || 'c-';
+        this.attrPrefix = attrPrefix || 'c-';
     }
     ;
     /**
      * Registers a function as a component bearing the given name.
-     * The components can thus be referenced in processed markup using
+     * The component can be referenced in processed markup using
      * the name.
      *
      * Returns the same actribute to support chaining.
      *
-     * @param {string} name
-     * @param {Function} component
+     * @param {string} name The component name
+     * @param {Function} component The component function
      * @returns {Actribute}
      */
     register(name, component) {
@@ -75,9 +91,9 @@ class Actribute {
     process(element, props) {
         let compProps = [], comp, propKey, propVal, foundAllProps, processed = false;
         for (let { name, value } of Array.from(element.attributes)) {
-            if (name.startsWith(this.compAttr)) {
+            if (name.startsWith(this.attrPrefix)) {
                 processed = true;
-                comp = name.substring(this.compAttr.length);
+                comp = name.substring(this.attrPrefix.length);
                 if (this.registry.hasOwnProperty(comp)) {
                     compProps = [];
                     foundAllProps = true;

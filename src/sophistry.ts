@@ -1,25 +1,37 @@
 
-
+/**
+ * An instance of Sophistrory can be used to obtain and cache CSS Stylesheets
+ * which can be shared by multiple DOM elements.
+ * 
+ * @example
+ * 
+ */
 export class Sophistry {
+    /**
+     * An cache for created SophistryStyleSheets.
+     */
     context = {};
     /**
-     * Processes and 'pops' all style tags within the passed root. 
+     * Processes and 'pops' all style tags within the root. 
      * Ensures that the same CSSStyleSheet can be reused across document trees (maindocument 
      * and shadow roots) instead of duplicated even when they have been 
-     * created declaratively in the trees. 
+     * created declaratively. 
      * 
-     * If replace is given, any cached stylesheets with the same name as a 
+     * If replace is truthy, any cached stylesheets with the same name (or hash) as a 
      * styleshhet within the root will be replaced (reactively).
      * 
-     * This resolves the stated issue with adding encapsulated styles to 
-     * elements when using shadow dom as described here; 
+     * This resolves the stated issue with declaratively adding encapsulated 
+     * styles to elements when using shadow DOM as described here; 
      * https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_shadow_DOM.
      * 
-     * @param {T} root 
+     * @example
+     * 
+     * 
+     * @param {Element} root 
      * @param {boolean} [replace] 
      * @returns {SophistryStyleSheet[]}
      */
-    process<T extends Element>(root: T, replace?: boolean): SophistryStyleSheet[] {
+    process(root: Element, replace?: boolean): SophistryStyleSheet[] {
         const cssStyleSheets: SophistryStyleSheet[] = [];
         if ((root instanceof HTMLLinkElement && root.getAttribute('rel') === 'stylesheet') || (root instanceof HTMLStyleElement)) {
             const name = root.getAttribute('s-ophistry') || root.getAttribute('href') || hash(root.outerHTML as string);
@@ -56,6 +68,9 @@ export class Sophistry {
     /**
      * Import a stylesheet defined in an external CSS file.
      * 
+     * @example
+     * 
+     * 
      * @param {string} link 
      * @param {boolean} [replace]
      * @returns {SophistryStyleSheet}
@@ -71,6 +86,10 @@ export class Sophistry {
         }
     };
     /**
+     * Replaces the text of an existing stylesheet. This is reactive.
+     * 
+     * @example
+     * 
      * 
      * @param {string} name 
      * @param {string} css 
@@ -98,18 +117,34 @@ const hash = (str: string) => {
     return newHash;
 };
 
+/**
+ * This is used to wrap a CSSStyleSheet to provide convenient methods 
+ * for styling and 'unstyling' elements.
+ * 
+ * @example
+ * 
+ * 
+ */
 export class SophistryStyleSheet{
+    /**
+     * The wrapped CSS stylesheet.
+     */
     css: CSSStyleSheet;
     /**
-     * Creates a new CSS stylesheet which contains convenient methods 
-     * for styling and 'unstyling' elements.
+     * Creates a new Sophistry stylesheet.
      * 
      * @param {CSSStyleSheet} cssStyleSheet 
      * @constructor
      */
     constructor(cssStyleSheet: any) {this.css = cssStyleSheet;}
     /**
-     * Adds the CSSStylesheets to the given documents.
+     * Styles the elements with the wrapped CSSStylesheets.
+     * If an element is not the document or a shadow root, an open shadow 
+     * root is created for it and then the rrot is styled.
+     * 
+     * @example
+     * 
+     * 
      * @param  {...T} elements 
      */
     style<T extends (Element|DocumentFragment)>(...elements: T[]) {
@@ -132,11 +167,16 @@ export class SophistryStyleSheet{
         }
     };
     /**
-     * Removes the stylesheets from the documents
+     * Removes the wrapped stylesheet from the elements (or their shadow roots).
+     * 
+     * @example
+     * 
+     * 
+     * 
      * @param {...T} elements 
      */
     remove<T extends (Element|DocumentFragment)>(...elements: T[]) {
-        let root;
+        let root: (ShadowRoot|Element|Document);
         const allElements: Element[] = [];
         
         for (let element of elements) {
@@ -145,8 +185,10 @@ export class SophistryStyleSheet{
         }
 
         for (let element of allElements) {
-             root = element.shadowRoot || element;
-            if (root.adoptedStyleSheets.includes(this.css)) root.adoptedStyleSheets.splice(root.adoptedStyleSheets.indexOf(this.css));
+            root = element.shadowRoot || element;
+            if (root instanceof ShadowRoot || root instanceof Document) {
+                if (root.adoptedStyleSheets.includes(this.css)) root.adoptedStyleSheets.splice(root.adoptedStyleSheets.indexOf(this.css));
+            }            
         }
     }
 }

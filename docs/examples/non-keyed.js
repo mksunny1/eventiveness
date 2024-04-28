@@ -1,6 +1,6 @@
 import { createFragment } from '../../src/apriori.js';
 import { apply, set, parentSelector } from '../../src/appliance.js';
-import { preventDefault, stopPropagation, eventListener, matchEventListener} from '../../src/domitory.js';
+import { preventDefault, stopPropagation, eventListener, matchEventListener} from '../../src/eventivity.js';
 import { one } from '../../src/onetomany.js';
 import {range} from '../../src/generational.js';
 

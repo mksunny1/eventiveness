@@ -1,6 +1,6 @@
 import { arrayTemplate, createFragment } from '../../src/apriori.js';
 import { apply, set, parentSelector, replace } from '../../src/appliance.js';
-import { preventDefault, stopPropagation, eventListener, matchEventListener} from '../../src/domitory.js';
+import { preventDefault, stopPropagation, eventListener, matchEventListener} from '../../src/eventivity.js';
 import { one } from '../../src/onetomany.js';
 import {range} from '../../src/generational.js';
 
@@ -80,7 +80,7 @@ function view(table) {
         clear(context) {table.innerHTML = '';},
         swap(context) {
             if (table.children.length >= 999) {
-                replace(Array.from(table.children), table, [[1, 998], [998, 1]]);
+                replace(table.children, table, [[1, 998], [998, 1]]);
             }
         },
         remove(element, context) {table.removeChild(element);}

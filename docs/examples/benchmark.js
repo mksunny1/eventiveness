@@ -1,6 +1,6 @@
 import { createFragment } from '../../src/apriori.js';
 import { apply, parentSelector } from '../../src/appliance.js';
-import { preventDefault, stopPropagation, eventListener, matchEventListener} from '../../src/domitory.js';
+import { preventDefault, stopPropagation, eventListener, matchEventListener} from '../../src/eventivity.js';
 
 function _random(max) {return Math.round(Math.random() * 1000) % max;}
 const adjectives = ["pretty", "large", "big", "small", "tall", "short", "long", "handsome", "plain", "quaint", "clean", "elegant", "easy", "angry", "crazy", "helpful", "mushy", "odd", "unsightly", "adorable", "important", "inexpensive", "cheap", "expensive", "fancy"];

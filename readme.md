@@ -1,5 +1,5 @@
 # Eventiveness
-This is a bunch of tiny abstractions created with the goal of simplifying the developement of interactive web frontends using vanilla HTML, CSS and JavasSript. Everything is the way they look and there is no hidden magic. The framework consists of 7 independent libraries which tackle unique concerns in front-end development. We avoid repeating standard functions in JavaScript and focus on new primitives which complement and enhance them. After reading this guide, the API docs and playing with a few examples (included in the docs folder), there is nothing left to learn except more standard HTML, CSS and JavaScript.
+This is a bunch of tiny abstractions created with the goal of simplifying the developement of interactive web frontends using vanilla HTML, CSS and JavasSript. Everything is the way they look and there is no hidden magic. The framework consists of 7 independent libraries which tackle unique concerns in front-end development. We avoid repeating standard functions in JavaScript and focus on new primitives which complement and enhance them. After reading this guide and looking at a few examples in the docs/examples folder, there is not much left to learn except more standard HTML, CSS and JavaScript. Still the API documentation can be found at https://mksunny1.github.io/eventiveness/docs/api/. You can play with the examples at https://mksunny1.github.io/eventiveness/docs/examples.
 
 
 ## The Libraries
@@ -397,7 +397,7 @@ Create a range:
 ```
 
 
-*Note: To get a good feel for how eventiveness pans out in practice, have a look at the included examples in the repository. you can play wit them by running the included server with `npm start` and then pointing your browser to the link 'http://localhost:8000/docs/examples/index.html'.*
+*Note: To get a good feel for how eventiveness pans out in practice, have a look at the included examples in the repository. you can play wit them by running the included server with `npm start` and then pointing your browser to the link 'http://localhost:8000/docs/examples/index.html'. *
 
 
 ## Contributing

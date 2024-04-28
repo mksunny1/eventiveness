@@ -2,7 +2,7 @@ import { LastingFragment } from '../../src/apriori.js';
 import { Sophistry } from '../../src/sophistry.js';
 import { One } from '../../src/onetomany.js';
 import { apply } from '../../src/appliance.js';
-import { onEnter, preventDefault, eventListener } from '../../src/domitory.js';
+import { onEnter, preventDefault, eventListener } from '../../src/eventivity.js';
 
 const accountSophistry = new Sophistry();
 
