@@ -1,7 +1,7 @@
-import { LastingFragment } from '../../src/apriori.js';
 import { Sophistry } from '../../src/sophistry.js';
 import { One } from '../../src/onetomany.js';
 import { apply } from '../../src/appliance.js';
+import { remove } from '../../src/domitory.js';
 import { onEnter, preventDefault, eventListener } from '../../src/eventivity.js';
 
 const accountSophistry = new Sophistry();
@@ -11,7 +11,7 @@ const accountSophistry = new Sophistry();
 const views = {};
 
 let currentView;
-const onViewChange = new One([view => (currentView?.remove() || 1) && (currentView = view)]);  // remove existing view when a new one is added
+const onViewChange = new One([view => console.log(view), view => ((currentView? remove(currentView): 1) || 1) && (currentView = view)]);  // remove existing view when a new one is added
 
 const loginYes = new One([username => profileView(username)]);    // show profile view whenlogged in
 const logoutYes = new One([() => loginView()]);    // show login view when logged out
@@ -24,12 +24,12 @@ function getView(name, map) {
 
     // apply styles within
     const styles = accountSophistry.process(frag);
-    const view = new LastingFragment(frag);
+    const view = Array.from(frag.children);
     apply(map, frag);
 
     // add this view, simultaneously removing any previously added inverse views.
     onViewChange.call([[document.getElementsByTagName('main')[0].appendChild(frag) && view]]);
-    for (let style of styles) style.style(...view.nodes.filter(n => n instanceof HTMLElement));
+    for (let style of styles) style.style(...view);
     return view;
 }
 

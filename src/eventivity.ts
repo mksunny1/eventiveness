@@ -4,8 +4,6 @@
  * The matching strings (keys) are used to match event targets to trigger 
  * the invocation of their associated handler functions.
  * 
- * @example
- * 
  */
 export interface Matcher {
     [key: string]: Function | Function[];
@@ -35,6 +33,12 @@ const defaultRunContext = {running:false};
  * END symbol.
  * 
  * @example
+ * input.onkeyup = eventListener([onEnter, () => login(input.value), preventDefault]);
+ * apply({                       
+ *     '#loginButton': button => { 
+ *         button.onclick = eventListener(() => login(input.value));
+ *     }
+ * }, form);
  * 
  * 
  * @param {Function[] | Function} ops The function or functions making up the handler
@@ -65,7 +69,7 @@ export function eventListener(ops: Function[] | Function, runContext?: any) {
  * `eventHandler`.
  * 
  * @example
- * 
+ * const keyEventBreaker = (e: KeyboardEvent) => (e.key !== key)? END: '';
  */
 export const END = Symbol();
 
@@ -74,6 +78,10 @@ export const END = Symbol();
  * elements to reduce the number of listeners to create.
  * 
  * @example
+ * table.onclick = matchListener({
+ *     'a.lbl': e => select(e.target.parentNode.parentNode),
+ *     'span.remove': [removeListener, preventDefault, stopPropagation]
+ * }, true);
  * 
  * @param {Matcher} matcher Map of event target matcher to associated handler function
  * @param {boolean} wrapListeners Whether to werap the matcher functions with `eventListener`.

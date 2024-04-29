@@ -21,6 +21,12 @@ const defaultRunContext = { running: false };
  * END symbol.
  *
  * @example
+ * input.onkeyup = eventListener([onEnter, () => login(input.value), preventDefault]);
+ * apply({
+ *     '#loginButton': button => {
+ *         button.onclick = eventListener(() => login(input.value));
+ *     }
+ * }, form);
  *
  *
  * @param {Function[] | Function} ops The function or functions making up the handler
@@ -54,7 +60,7 @@ function eventListener(ops, runContext) {
  * `eventHandler`.
  *
  * @example
- *
+ * const keyEventBreaker = (e: KeyboardEvent) => (e.key !== key)? END: '';
  */
 const END = Symbol();
 /**
@@ -62,6 +68,10 @@ const END = Symbol();
  * elements to reduce the number of listeners to create.
  *
  * @example
+ * table.onclick = matchListener({
+ *     'a.lbl': e => select(e.target.parentNode.parentNode),
+ *     'span.remove': [removeListener, preventDefault, stopPropagation]
+ * }, true);
  *
  * @param {Matcher} matcher Map of event target matcher to associated handler function
  * @param {boolean} wrapListeners Whether to werap the matcher functions with `eventListener`.

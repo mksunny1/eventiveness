@@ -1,8 +1,9 @@
 import { createFragment } from '../../src/apriori.js';
-import { apply, set, parentSelector } from '../../src/appliance.js';
-import { preventDefault, stopPropagation, eventListener, matchEventListener} from '../../src/eventivity.js';
+import { apply, parentSelector } from '../../src/appliance.js';
+import { set } from '../../src/domitory.js';
+import { preventDefault, stopPropagation, eventListener, matchListener} from '../../src/eventivity.js';
 import { one } from '../../src/onetomany.js';
-import {range} from '../../src/generational.js';
+import {range, items} from '../../src/generational.js';
 
 function _random(max) {return Math.round(Math.random() * 1000) % max;}
 const adjectives = ["pretty", "large", "big", "small", "tall", "short", "long", "handsome", "plain", "quaint", "clean", "elegant", "easy", "angry", "crazy", "helpful", "mushy", "odd", "unsightly", "adorable", "important", "inexpensive", "cheap", "expensive", "fancy"];
@@ -37,10 +38,16 @@ class View {
         this.setIndex(at, index); this.setLabel(at, label);
     }
     setIndex(at, index) {
-        return set('td:first-child', at, {textContent: index}, this.parent);
+        at = [...at];
+        apply({
+            'td:first-child': (...tds) => set(items(tds, at), {textContent: items(index, at)})
+        }, this.parent);
     }
     setLabel(at, data) {
-        return set('a.lbl', at, {textContent: data}, this.parent);
+        at = [...at];
+        apply({
+            'a.lbl': (...labels) => set(items(labels, at), {textContent: items(data, at)})
+        }, this.parent);
     }
     removeRange(start, end) {
         const range = document.createRange();
@@ -116,7 +123,7 @@ apply({
             table.removeChild(component.beforeRemove(parentSelector(e.target, 'tr')));
         };
         
-        table.onclick = matchEventListener({
+        table.onclick = matchListener({
             'a.lbl': e => select(e.target.parentNode.parentNode),
             'span.remove': [removeListener, preventDefault, stopPropagation]
         }, true);

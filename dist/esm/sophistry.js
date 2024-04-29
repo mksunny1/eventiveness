@@ -24,7 +24,10 @@ class Sophistry {
      * https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_shadow_DOM.
      *
      * @example
-     *
+     * const element = apriori.createFragment(apriori.get('markup.html'));
+     * const styles = mySophistry.process(element);
+     * document.body.append(element);
+     * for (let style of styles) style.style(element, document.body.firstElementChild);
      *
      * @param {Element} root
      * @param {boolean} [replace]
@@ -73,7 +76,7 @@ class Sophistry {
      * Import a stylesheet defined in an external CSS file.
      *
      * @example
-     *
+     * const style = mySophistry.import('style.css', false);
      *
      * @param {string} link
      * @param {boolean} [replace]
@@ -95,7 +98,7 @@ class Sophistry {
      * Replaces the text of an existing stylesheet. This is reactive.
      *
      * @example
-     *
+     * mySophistry.set('style.css', await apriori.get('new-style.css'));  // override everything.
      *
      * @param {string} name
      * @param {string} css
@@ -127,7 +130,7 @@ const hash = (str) => {
  * for styling and 'unstyling' elements.
  *
  * @example
- *
+ * const sss = new SophistryStyleSheet(css);
  *
  */
 class SophistryStyleSheet {
@@ -148,7 +151,7 @@ class SophistryStyleSheet {
      * root is created for it and then the rrot is styled.
      *
      * @example
-     *
+     * sss.style(...Array.from(document.body.children))
      *
      * @param  {...T} elements
      */
@@ -179,7 +182,7 @@ class SophistryStyleSheet {
      * Removes the wrapped stylesheet from the elements (or their shadow roots).
      *
      * @example
-     *
+     * sss.remove(...Array.from(document.body.children))
      *
      *
      * @param {...T} elements

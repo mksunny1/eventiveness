@@ -4,7 +4,8 @@
  * Fast and 'costless' range function for javascript based on generators.
  *
  * @example
- *
+ * const arr1000 = [...range(0, 1000)];
+ * // creates an array with 1000 items counting from 0 to 999.
  *
  * @param {number} start
  * @param {number} [end]
@@ -25,7 +26,8 @@ function* range(start, end, step) {
  * 'arrayLike' object that matches the provided index.
  *
  * @example
- *
+ * const tenth = items(arr1000, range(0, 1000, 10));
+ * // selects every 10th item in the array.
  *
  * @param {any} arrayLike
  * @param {Iterable<any>} index
@@ -39,7 +41,9 @@ function* items(arrayLike, index) {
  * have a length property of be previously passed in a call to`setLength`.
  *
  * @example
- *
+ * const myRange = range(12);
+ * setLength(myRange, 12);
+ * getLength(myRange);   // returns 12.
  *
  * @param {any} iter
  */
@@ -57,7 +61,9 @@ const iterLengths = new WeakMap();
  * functions that use `getLength`.
  *
  * @example
- *
+ * const myRange = range(12);
+ * setLength(myRange, 12);
+ * getLength(myRange);   // returns 12.
  *
  * @param {any} iter
  */
@@ -75,7 +81,9 @@ function setLength(iter, length) {
  * To pass an array as an iterator, call array.values().
  *
  * @example
- *
+ * for (let i of flat(range(10, range(15)))) {
+ *      console.log(i);    // 0, 0, 1, 1, 2, 2, .... till smallest iterable (10) is exhausted.
+ * }
  *
  * @param  {...Iterator<any>} args
  */
@@ -94,7 +102,7 @@ function* flat(...args) {
  * Get an iterator over the next 'count' items of the given iterator.
  *
  * @example
- *
+ * next([1, 4, 3, 6, 7, 4, 5].values(), 3);  // 1, 4, 3
  *
  * @param iter
  * @param count
@@ -107,7 +115,7 @@ function* next(iter, count) {
  * Returns an unordered/random iterator over the input array..
  *
  * @example
- *
+ * const unOrdered = uItems([1, 2, 3, 4]);  // [4, 1, 3, 2]
  *
  * @param {any[]} array
  */

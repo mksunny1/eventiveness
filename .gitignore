@@ -128,3 +128,8 @@ out
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+
+# project-specific
+readme-older.md
+

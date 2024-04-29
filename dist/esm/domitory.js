@@ -16,6 +16,8 @@
 function insert(elements, values, insertWith) {
     if (elements instanceof Array)
         elements = elements.values();
+    if (values instanceof HTMLCollection || values instanceof NodeList)
+        values = Array.from(values);
     if (!insertWith)
         insertWith = inserter.append; // the default inserter
     for (let value of values)
@@ -43,6 +45,22 @@ const inserter = {
     }
 };
 /**
+ * Creates a DocumentRange between the start and end elements
+ *
+ * @example
+ *
+ *
+ * @param {Node} start The first element in the range
+ * @param {Node} end  The last element in the range
+ * @returns {Range}
+ */
+function createRange(start, end) {
+    const range = document.createRange();
+    range.setStart(start, 0);
+    range.setStart(end, 0);
+    return range;
+}
+/**
  * Set specified properties and/or attributes on the specified elements.
  * Please do not pass the same 'generator' multiple times in values. First
  * convert them to arrays.
@@ -57,7 +75,6 @@ const inserter = {
  *
  * @param {(Element|CSSRule)[]} elements
  * @param {SetMap} values
- * @param {Index} [index]
  */
 function set(elements, values) {
     const localMemberValues = new Set();
@@ -105,6 +122,8 @@ function update(elements, values) {
     let parentNode, tempNode;
     const template = document.createComment(''); // document.createElement('template');
     const temps = [];
+    if (values instanceof HTMLCollection || values instanceof NodeList)
+        values = Array.from(values);
     for (let element of elements) {
         parentNode = element.parentElement;
         tempNode = template.cloneNode(false);
@@ -114,7 +133,7 @@ function update(elements, values) {
     /* at this point we have replaced what we want to replace with temporary values */
     let i = 0;
     for (let value of values) {
-        [tempNode, parentNode] = temps[i];
+        [tempNode, parentNode] = temps[i++];
         parentNode?.replaceChild(value, tempNode);
     }
 }
@@ -133,4 +152,4 @@ function remove(elements) {
     }
 }
 
-export { insert, inserter, remove, set, update };
+export { createRange, insert, inserter, remove, set, update };

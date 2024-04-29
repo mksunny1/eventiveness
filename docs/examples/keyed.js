@@ -1,8 +1,9 @@
 import { arrayTemplate, createFragment } from '../../src/apriori.js';
-import { apply, set, parentSelector, replace } from '../../src/appliance.js';
-import { preventDefault, stopPropagation, eventListener, matchEventListener} from '../../src/eventivity.js';
+import { apply, parentSelector } from '../../src/appliance.js';
+import { set, update } from '../../src/domitory.js';
+import { preventDefault, stopPropagation, eventListener, matchListener} from '../../src/eventivity.js';
 import { one } from '../../src/onetomany.js';
-import {range} from '../../src/generational.js';
+import {range, items} from '../../src/generational.js';
 
 function _random(max) {return Math.round(Math.random() * 1000) % max;}
 const adjectives = ["pretty", "large", "big", "small", "tall", "short", "long", "handsome", "plain", "quaint", "clean", "elegant", "easy", "angry", "crazy", "helpful", "mushy", "odd", "unsightly", "adorable", "important", "inexpensive", "cheap", "expensive", "fancy"];
@@ -57,7 +58,7 @@ function data() {
         },
         remove(element, context) {
             const index = Array.from(element.parentNode.children).indexOf(element);
-            context.indices.splice(index); context.data.splice(index);
+            context.indices.splice(index, 1); context.data.splice(index, 1);
         }
     }
 }
@@ -74,13 +75,17 @@ function view(table) {
             table.append(createFragment(renderedItems));
         },
         update(context) {
-            set('a.lbl', [...range(0, context.data.length, 10)], 
-            {textContent: context.data}, table);
+            apply({
+                'a.lbl': (...labels) => {
+                    const indices = [...range(0, context.data.length, 10)]
+                    set(items(labels, indices), {textContent: items(context.data, indices)})
+                }
+            }, table);
         },
         clear(context) {table.innerHTML = '';},
         swap(context) {
             if (table.children.length >= 999) {
-                replace(table.children, table, [[1, 998], [998, 1]]);
+                update([...items(table.children, [1, 998])], [...items(table.children, [998, 1])]);
             }
         },
         remove(element, context) {table.removeChild(element);}
@@ -89,7 +94,7 @@ function view(table) {
 
 apply({
     'tbody': table => {
-        const component = one([data(), view(table)]);
+        const component = one([data(), view(table)], false, [{}]);
 
         let selected;
         function select(node) {
@@ -106,7 +111,7 @@ apply({
             component.remove([parentSelector(e.target, 'tr')]);
         };
         
-        table.addEventListener('click', matchEventListener({
+        table.addEventListener('click', matchListener({
             'a.lbl': e => select(e.target.parentNode.parentNode),
             'span.remove': eventListener([removeListener, preventDefault, stopPropagation], {})
         }));

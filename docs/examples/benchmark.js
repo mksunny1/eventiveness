@@ -1,6 +1,6 @@
 import { createFragment } from '../../src/apriori.js';
 import { apply, parentSelector } from '../../src/appliance.js';
-import { preventDefault, stopPropagation, eventListener, matchEventListener} from '../../src/eventivity.js';
+import { preventDefault, stopPropagation, eventListener, matchListener} from '../../src/eventivity.js';
 
 function _random(max) {return Math.round(Math.random() * 1000) % max;}
 const adjectives = ["pretty", "large", "big", "small", "tall", "short", "long", "handsome", "plain", "quaint", "clean", "elegant", "easy", "angry", "crazy", "helpful", "mushy", "odd", "unsightly", "adorable", "important", "inexpensive", "cheap", "expensive", "fancy"];
@@ -48,7 +48,7 @@ apply({
             table.removeChild(parentSelector(e.target, 'tr'));
         };
         
-        table.onclick = matchEventListener({
+        table.onclick = matchListener({
             'a.lbl': e => select(e.target.parentNode.parentNode),
             'span.remove': [removeListener, preventDefault, stopPropagation]
         }, true);

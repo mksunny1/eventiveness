@@ -7,8 +7,25 @@
  * The attributes here name the components and the values 
  * are the names of props to pass to them along with the element.
  * 
- * We have not created examples yet for this.
+ * @example
+ * // initialize:
+ * const fallbackProps = {prop1: 'Fallback', prop4: 'Last resort'};
+ * const act = new Actribute(fallbackProps);
  * 
+ * // register components:
+ * act.register('comp1', (node, prop1) => node.textContent = prop1);
+ * act.register('comp2', (node, prop2) => node.style.left = prop2);
+ * 
+ * // use in markup:
+ * // &lt;section o-comp1="prop1"  o-comp2="prop2" &rt;
+ * //       First section
+ * // &lt;/section&gt;
+ * 
+ * / process components:
+ * act.process(document.body, {prop2: 1, prop3: 2});  
+ * 
+ * // unregister a component:
+ * delete act.registry.comp2;
  */
 
 export class Actribute {

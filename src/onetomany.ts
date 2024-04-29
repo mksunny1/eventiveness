@@ -6,18 +6,25 @@
  * The recursive arg is used to ensure that getting properties always 
  * wraps the array results with `one` also.
  * 
- * The context arg will be passed to all delegated calls. A new object 
- * is created if it is not provided.
+ * Items in the context arg will be passed to all delegated calls as the 
+ * final arguments. An empty array is created if not specified. 
+ * 
+ * Sometimes, you may want to pass an array of 1 or more objects to provide a shared 
+ * context for the items in many. Other times you may prefer no context because 
+ * it may affect the behavior of the calls, since the functions or methods may 
+ * be accepting optional arguments there. Passing your own arrays enable you to 
+ * set the behavior however you like (by emptying or populating the array).
  * 
  * @example
- * 
+ * const component = one([data(), view(table)], false, [{}]);
+ * component.create([10000]);
  * 
  * @param {any[]} many An array of objects to delegat actios to
  * @param {boolean} [recursive] Whether to return One instances in `get` calls
- * @param {any} [context] Shared context for the 'many' functions or object methods
+ * @param {any[]} [context] Shared context for the 'many' functions or object methods
  * @returns 
  */
-export function one(many: any[], recursive?: boolean, context?: any) {
+export function one(many: any[], recursive?: boolean, context?: any[]) {
     return new Proxy(new One(many, recursive, context, one), oneTrap);
 }
 
@@ -55,7 +62,7 @@ const oneTrap = {
  * A recursive One constructor. Used internally for recursive 'One's.
  */
 export interface OneConstructor {
-    (many: any[], recursive?: boolean, context?: any, ctor?: OneConstructor): One;
+    (many: any[], recursive?: boolean, context?: any[], ctor?: OneConstructor): One;
 }
 
 /**
@@ -83,9 +90,9 @@ export class One {
 
     /**
      * The context shared by the many functions or methods of the objects in many.
-     * They all receive it as their last argument.
+     * They all receive its items as their last set of arguments.
      */
-    context?: any;
+    context?: any[];
 
     /**
      * Creates a new One instance for propagating operations to all the items 
@@ -93,18 +100,20 @@ export class One {
      * 
      * @param {any[]} many The many objects or functions this One will delegate to.
      * @param {boolean} [recursive] Whether to wrap the arrays returned by `get` with another One.
-     * @param {any} context An optional shared context to be passed to all propagated method or function calls
+     * @param {any[]} context An optional shared context to be passed to all propagated method or function calls. 
+     * This is an array of objects passed as the final arguments in calls. Empty array by default.
      * @param {OneConstructor} [ctor] The constructor used to create the `get` Ones. This parameter is used internally; 
      * no need to supply an argument.
      * 
      * @example
-     * 
+     * const loginYes = new One([username => profileView(username)]); 
+     * loginYes.call([[username]]);
      * 
      * @constructor
      */
-    constructor(many: any[], recursive?: boolean, context?: any, ctor?: OneConstructor) {
+    constructor(many: any[], recursive?: boolean, context?: any[], ctor?: OneConstructor) {
         this.many = many; this.recursive = recursive, this.ctor = ctor;
-        this.context = context || {};
+        this.context = context || [];
     };
     /**
      * Gets corresponding properties from all the objects in many. If this is 
@@ -113,7 +122,8 @@ export class One {
      * is returned instead of the array.
      * 
      * @example
-     * 
+     * const o = new One([{a: 1}, {a: 2}])
+     * o.get('a');  // [1, 2]
      * 
      * @param {string | number | symbol | null} [prop] 
      * @param {boolean} [forceArray]
@@ -136,7 +146,8 @@ export class One {
      * 'values' are treated similarly to 'args' in the call method.
      * 
      * @example
-     * 
+     * const o = new One([{a: 1}, {a: 2}])
+     * o.set('a', [4, 7]);
      * 
      * @param {string | number | symbol | null} [prop] 
      * @param {any[]} [values]
@@ -157,7 +168,8 @@ export class One {
      * Delete the property from all objects in many.
      * 
      * @example
-     * 
+     * const o = new One([{a: 1}, {a: 2}])
+     * o.delete('a');
      * 
      * @param {string | number | symbol} prop 
      */
@@ -167,7 +179,8 @@ export class One {
     /**
      * Calls all the items in many (if method is not specified) or their 
      * corresponding methods (if  method is specified). All the calls will 
-     * receive `this.context` as their final arguments to enable communication.
+     * receive any items in `this.context` as their final arguments to 
+     * enable communication.
      * 
      * args can be specified as follows:
      * `[[a1, a2], [a1, a2], [a1, a2]]`
@@ -188,30 +201,34 @@ export class One {
      * calls to many items.
      * 
      * @example
-     * 
+     * const loginYes = new One([username => profileView(username)]); 
+     * loginYes.call([[username]]);
      * 
      * @param {any[]} args The function or method arguments
      * @param {string | number | symbol} [method] The name of a method to call. 
      * A function call is assumed if not specified.
+     * @param {boolean} [ignoreContext] Set this to a truthy value to prevent the 
+     * shared context from getting passed in this call.
      * 
      * @returns {any[]}
      */
-    call(args?: any[], method?: string | number | symbol): any[] {
+    call(args?: any[], method?: string | number | symbol, ignoreContext?: boolean): any[] {
         if (args === undefined) args = [[]];
         const results: unknown[] = [];
         const length = this.many.length;
         const j = args.length;
         let iArgs: any, result: any;
+
         if (method !== undefined) {
             for (let i = 0; i < length; i++) {
                 iArgs = args[Math.min(i, j - 1)] || [];
-                result = this.many[i][method](...iArgs, this.context);
+                result = this.many[i][method](...iArgs, ...this.context);
                 results.push(result);
             }
         } else {
             for (let i = 0; i < length; i++) {
                 iArgs = args[Math.min(i, j - 1)] || [];
-                result = this.many[i](...iArgs, this.context);
+                result = this.many[i](...iArgs, ...this.context);
                 results.push(result);
             }
         }
@@ -219,3 +236,9 @@ export class One {
     };
 }
 
+/**
+ * Pass this as the first arg in a One call to prevent it from injecting 
+ * a context. This is an alternative to passing a third argument to the 
+ * `call` function
+ */
+export const ignoreContext = Symbol();

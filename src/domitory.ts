@@ -23,6 +23,7 @@ export interface Inserter {(node: Node, target: Node): void;}
  */
 export function insert(elements: Iterator<Node>|Node[], values: Iterable<Node>, insertWith?: Inserter) {
     if (elements instanceof Array) elements = elements.values();
+    if (values instanceof HTMLCollection || values instanceof NodeList) values = Array.from(values);
     if (!insertWith) insertWith = inserter.append;     // the default inserter
     for (let value of values) insertWith(value, elements.next().value)
 };
@@ -47,6 +48,23 @@ export const inserter = {
     append(node: Node, target: Node) {
         target.appendChild(node);
     }
+}
+
+/**
+ * Creates a DocumentRange between the start and end elements
+ * 
+ * @example
+ * 
+ * 
+ * @param {Node} start The first element in the range
+ * @param {Node} end  The last element in the range
+ * @returns {Range}
+ */
+export function createRange(start: Node, end: Node): Range {
+    const range = document.createRange();
+    range.setStart(start, 0);
+    range.setStart(end, 0);
+    return range;
 }
 
 /**
@@ -81,7 +99,6 @@ export interface SetMap {
  * 
  * @param {(Element|CSSRule)[]} elements 
  * @param {SetMap} values 
- * @param {Index} [index] 
  */
 export function set(elements: Iterable<(Element|CSSRule)>, values: SetMap) {
     const localMemberValues = new Set();
@@ -128,6 +145,8 @@ export function update(elements: Iterable<Node>, values: Iterable<Node>) {
     let parentNode: Node|null, tempNode: Node;
     const template = document.createComment('');  // document.createElement('template');
     const temps: [Node, Node|null][] = [];
+
+    if (values instanceof HTMLCollection || values instanceof NodeList) values = Array.from(values);
     
     for (let element of elements) {
         parentNode = element.parentElement;
@@ -139,7 +158,7 @@ export function update(elements: Iterable<Node>, values: Iterable<Node>) {
     /* at this point we have replaced what we want to replace with temporary values */
     let i = 0;
     for (let value of values) {
-        [tempNode, parentNode] = temps[i];
+        [tempNode, parentNode] = temps[i++];
         parentNode?.replaceChild(value, tempNode);
     }
 };

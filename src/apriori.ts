@@ -4,7 +4,8 @@
  * intended string.
  * 
  * @example
- * tag`I will wait for this ${Promise.resolve("promise")}!!!`
+ * const t = tag`I will wait for this ${Promise.resolve("promise")}!!!`
+ * // t === 'I will wait for this promise!!!'
  * 
  * @param {Array<string>} strings 
  * @param  {...any} expressions 
@@ -27,7 +28,8 @@ export async function tag(strings: Array<string>, ...expressions: any[]): Promis
  * which can be called multiple times to 'render' the template with the given arguments.
  * 
  * @example
- * 
+ * const t = await apriori.template('I will render this ${"guy"} immediately!!!')();
+ * // t === 'I will render this guy immediately!!!'
  * 
  * @param {string} templateStr the template string
  * @param {Array<string>} argNames tThe names of the parameters of the returned function (which can be 'seen' inside the template string)
@@ -42,6 +44,8 @@ export function template(templateStr: string, argNames?: Array<string>): ((...an
  * before interpolating them. 
  * 
  * @example
+ * const t = await apriori.asyncTemplate('I will wait for this ${Promise.resolve("promise")}!!!')();
+ * // t === 'I will wait for this promise!!!'
  * 
  * 
  * @param {string} templateStr the template string
@@ -73,7 +77,8 @@ export interface ArrayTemplate {
  * of rendering each item individually. It improves efficiency in these scenarios.
  * 
  * @example
- * 
+ * const t = arrayTemplate('I will render this ${it}/${other} immediately!!!', ['other'], 'it', ' & ')([1, 2, 3, 4, 5], '(shared)');
+ * // t === 'I will render this 1/(shared) immediately!!! & I will render this 2/(shared) immediately!!! & I will render this 3/(shared) immediately!!! & I will render this 4/(shared) immediately!!! & I will render this 5/(shared) immediately!!!'
  * 
  * @param {string} templateStr The template string
  * @param {Array<string>} argNames The names of the parameters (after the iterable) of the returned function (which can be 'seen' inside the template string)
@@ -103,6 +108,10 @@ export function arrayTemplate(templateStr: string, argNames: Array<string>, item
  * among the arguents that will be passed to the returned function.
  * 
  * @example
+ * let t = asyncArrayTemplate('I will async render this ${item}')([1, 2, 3, 4, 5].map(i => Promise.resolve(i)));
+ * console.log(t instanceof Promise);   // true
+ * t = await t
+ * // t === 'I will async render this 1I will async render this 2I will async render this 3I will async render this 4I will async render this 5'
  * 
  * @param {string} templateStr The template string
  * @param {Array<string>} argNames The names of the parameters (after the iterable) of the returned function (which can be 'seen' inside the template string)
@@ -144,6 +153,7 @@ export function asyncArrayTemplate(templateStr: string, argNames: Array<string>,
  * for using `fetch`.
  * 
  * @example
+ * const markup = await apriori.get('./apriori/get.html')
  * 
  * 
  * @param {string} url  The url to pass to `fetch`
@@ -163,7 +173,11 @@ export async function get(url: string, suppressErrors?: boolean, init?: RequestI
  * So this is also a shorthand for creating single elements.
  * 
  * @example
- * 
+ * const frag1 = apriori.createFragment(`
+ *    <p>Para 1</p>
+ *    <p>Para 2</p>
+ *`)
+ * // <p>Para 1</p><p>Para 2</p>
  * 
  * @param {string} markup The `outerHTML` of what to create
  * @returns {Node}
@@ -176,19 +190,3 @@ export const createFragment = function(markup: string): Node {
     return result;
 }
 
-/**
- * Creates a DocumentRange between the start and end elements
- * 
- * @example
- * 
- * 
- * @param {Node} start The first element in the range
- * @param {Node} end  The last element in the range
- * @returns {Range}
- */
-export function createRange(start: Node, end: Node): Range {
-    const range = document.createRange();
-    range.setStart(start, 0);
-    range.setStart(end, 0);
-    return range;
-}

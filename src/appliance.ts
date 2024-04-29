@@ -8,7 +8,7 @@
  * at the same index.
  * 
  * @example
- * myArrayMap = {
+ * myApplyMap = {
  *     span: (...spans) => doSomethingWith(spans);
  *     .btn: (...classedButtons) => doAnotherThingWith(classedButtons)
  * }
@@ -21,6 +21,8 @@ export interface ApplyMap {
  * Functions similarly to querySelectorAll, but for selecting style rules in 
  * a CSS stylesheet object. All rules that start with any of the selectors are 
  * selected.
+ * @example
+ * const firstSpanRule = ruleSelectorAll('span', document.getElementsByTagName('style')[0], true)[0];
  * 
  * @param {string} selectors 
  * @param {HTMLStyleElement} styleElement 
@@ -45,6 +47,9 @@ export function ruleSelectorAll(selectors: string, styleElement: HTMLStyleElemen
 /**
  * Similar to querySelector in the same way ruleSelectorAll is similar to 
  * querySelectorAll.
+ * @example
+ * const firstSpanRule = ruleSelector('span', document.getElementsByTagName('style')[0])
+ * 
  * 
  * @param {string} selectors 
  * @param {HTMLStyleElement} styleElement 
@@ -56,6 +61,10 @@ export function ruleSelector(selectors: string, styleElement: HTMLStyleElement):
 
 /**
  * Return the first ancestor that matches the selector.
+ * @example
+ * const removeListener = (e) => {
+ *     table.removeChild(component.beforeRemove(parentSelector(e.target, 'tr')));
+ * };
  * 
  * @param {Node} node 
  * @param {string} selector 
@@ -75,6 +84,14 @@ export function parentSelector(node: Node, selector: string): Element|null {
  * passed to the functions at once. With the argument given as a truthy value, 
  * the elements are passed one by one, so that the behavior is almost like that 
  * of web components.
+ * @example
+ * apply({
+ *     main: main => {
+ *         const newContent = [...range(101, 120)].map(i => `My index is  now ${i}`);
+ *         const lastChildren = Array.from(main.children).map(c => c.lastElementChild);
+ *         set(lastChildren,  {textContent: newContent});
+ *     }
+ * });
  * 
  * @param {ApplyMap } applyMap 
  * @param {HTMLElement} [containerElement]
@@ -99,6 +116,8 @@ export function apply(applyMap: ApplyMap, containerElement?: HTMLElement, asComp
  * asComponent specifies whether the functions should be applied to each 
  * element. If falsy/not specified, all the elements are passed to the functions 
  * at once. 
+ * @example
+ * applyTo(Array.from(document.body.children), (...bodyChildren) => console.log(bodyChildren.length));
  * 
  * @param {(Element|CSSRule)[]} elements 
  * @param {Function|Function[]} functions 
