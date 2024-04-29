@@ -123,8 +123,9 @@ export function apply(applyMap: ApplyMap, containerElement?: HTMLElement, asComp
  * @param {Function|Function[]} functions 
  * @param {boolean|undefined} [asComponent]
  */
-export function applyTo(elements: (Element|CSSRule)[], functions:Function|Function[], asComponent?: boolean|number|undefined) {
+export function applyTo(elements: (Element|CSSRule)[]|(Element|CSSRule), functions:Function|Function[], asComponent?: boolean|number|undefined) {
     let element: Element|CSSRule, fn: Function;
+    if (elements instanceof Element || elements instanceof CSSRule) elements = [elements];
     if (!(functions instanceof Array)) functions = [functions];
     if (asComponent) for (element of elements) for (fn of functions) fn(element);
     else for (fn of functions) fn(...elements);

@@ -107,6 +107,8 @@ export function apply(applyMap, containerElement, asComponent, firstOnly) {
  */
 export function applyTo(elements, functions, asComponent) {
     let element, fn;
+    if (elements instanceof Element || elements instanceof CSSRule)
+        elements = [elements];
     if (!(functions instanceof Array))
         functions = [functions];
     if (asComponent)

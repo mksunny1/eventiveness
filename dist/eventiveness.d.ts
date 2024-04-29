@@ -190,7 +190,7 @@ declare function apply(applyMap: ApplyMap, containerElement?: HTMLElement, asCom
  * @param {Function|Function[]} functions
  * @param {boolean|undefined} [asComponent]
  */
-declare function applyTo(elements: (Element | CSSRule)[], functions: Function | Function[], asComponent?: boolean | number | undefined): void;
+declare function applyTo(elements: (Element | CSSRule)[] | (Element | CSSRule), functions: Function | Function[], asComponent?: boolean | number | undefined): void;
 
 /**
  * A template tag that will resolve only after all
