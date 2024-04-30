@@ -1,7 +1,5 @@
 # Eventiveness
 
-![Logo](https://github.com/mksunny1/eventiveness/blob/main/docs/assets/logos/logo-svg.svg?raw=true)
-
 This is a group of 8 tiny abstractions created with the goal of simplifying the developement of interactive web frontends using vanilla HTML, CSS and JavasSript. This is an inclusive library which caters to the needs of everyone in web development. 
 
 - Frontend JavaScript developers can develop apps without worrying about control, modularity or maintainance. Not only is the framework flexible, modular and compact, it also strives to align with all the familiar semantics we know and love. You still retain the convenience of a declarative API.
