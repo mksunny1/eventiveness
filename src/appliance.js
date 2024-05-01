@@ -11,19 +11,18 @@
  * @returns {Array<CSSRule>}
  */
 export function ruleSelectorAll(selectors, styleElement, firstOnly) {
-    const arrSelectors = selectors.split(',').map(item => item.trim());
-    const result = [];
-    let selector;
-    for (let rule of Array.from(styleElement.sheet?.cssRules || [])) {
-        for (selector of arrSelectors) {
-            if (rule.cssText.startsWith(selector)) {
-                result.push(rule);
-                if (firstOnly)
-                    return result;
-            }
-        }
+  const arrSelectors = selectors.split(",").map((item) => item.trim());
+  const result = [];
+  let selector;
+  for (let rule of Array.from(styleElement.sheet?.cssRules || [])) {
+    for (selector of arrSelectors) {
+      if (rule.cssText.startsWith(selector)) {
+        result.push(rule);
+        if (firstOnly) return result;
+      }
     }
-    return result;
+  }
+  return result;
 }
 /**
  * Similar to querySelector in the same way ruleSelectorAll is similar to
@@ -37,7 +36,7 @@ export function ruleSelectorAll(selectors, styleElement, firstOnly) {
  * @returns {CSSRule}
  */
 export function ruleSelector(selectors, styleElement) {
-    return ruleSelectorAll(selectors, styleElement, true)[0];
+  return ruleSelectorAll(selectors, styleElement, true)[0];
 }
 /**
  * Return the first ancestor that matches the selector.
@@ -51,10 +50,9 @@ export function ruleSelector(selectors, styleElement) {
  * @returns {Element}
  */
 export function parentSelector(node, selector) {
-    let parent = node.parentElement;
-    while (parent && !(parent.matches(selector)))
-        parent = parent.parentElement;
-    return parent;
+  let parent = node.parentElement;
+  while (parent && !parent.matches(selector)) parent = parent.parentElement;
+  return parent;
 }
 /**
  * Select the elements matching the keys in applyMap and run the functions given by the values over them.
@@ -79,18 +77,22 @@ export function parentSelector(node, selector) {
  * @param {boolean|number} [firstOnly]
  */
 export function apply(applyMap, containerElement, asComponent, firstOnly) {
-    if (!containerElement)
-        containerElement = document.body;
-    let selectorAll;
-    if (!firstOnly) {
-        selectorAll = (containerElement instanceof HTMLStyleElement) ? (selectors) => ruleSelectorAll(selectors, containerElement) : containerElement.querySelectorAll.bind(containerElement);
-    }
-    else {
-        selectorAll = (containerElement instanceof HTMLStyleElement) ? (selectors) => ruleSelector(selectors, containerElement) : containerElement.querySelector.bind(containerElement);
-    }
-    for (let [selectors, functions] of Object.entries(applyMap)) {
-        applyTo(selectorAll(selectors), functions, asComponent);
-    }
+  if (!containerElement) containerElement = document.body;
+  let selectorAll;
+  if (!firstOnly) {
+    selectorAll =
+      containerElement instanceof HTMLStyleElement
+        ? (selectors) => ruleSelectorAll(selectors, containerElement)
+        : containerElement.querySelectorAll.bind(containerElement);
+  } else {
+    selectorAll =
+      containerElement instanceof HTMLStyleElement
+        ? (selectors) => ruleSelector(selectors, containerElement)
+        : containerElement.querySelector.bind(containerElement);
+  }
+  for (let [selectors, functions] of Object.entries(applyMap)) {
+    applyTo(selectorAll(selectors), functions, asComponent);
+  }
 }
 /**
  * Applies the given functions to the specified elements (or CSS rules).
@@ -106,16 +108,10 @@ export function apply(applyMap, containerElement, asComponent, firstOnly) {
  * @param {boolean|undefined} [asComponent]
  */
 export function applyTo(elements, functions, asComponent) {
-    let element, fn;
-    if (elements instanceof Element || elements instanceof CSSRule)
-        elements = [elements];
-    if (!(functions instanceof Array))
-        functions = [functions];
-    if (asComponent)
-        for (element of elements)
-            for (fn of functions)
-                fn(element);
-    else
-        for (fn of functions)
-            fn(...elements);
+  let element, fn;
+  if (elements instanceof Element || elements instanceof CSSRule)
+    elements = [elements];
+  if (!(functions instanceof Array)) functions = [functions];
+  if (asComponent) for (element of elements) for (fn of functions) fn(element);
+  else for (fn of functions) fn(...elements);
 }

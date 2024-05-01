@@ -28,76 +28,76 @@
  * delete act.registry.comp2;
  */
 declare class Actribute {
-    /**
-     * The object that holds all registered components. The keys are the
-     * component names and the values are the component functions.
-     */
-    registry: {};
-    /**
-     * This object holds any fallback props which can be referenced
-     * in the markup, in the values of component attributes. Property names
-     * can be referenced similarly to CSS classes.
-     */
-    props: any;
-    /**
-     * This is the attribute prefix that denotes component specifiers in
-     * markup. A component specifier is an attribute where the name (after
-     * the prefix) refers to a component name (in the registery) and the
-     * optional value is a space-separated list of property names.
-     */
-    attrPrefix: any;
-    /**
-     * Construct a new Actribute instance with the fallback props and
-     * attribute prefix.
-     *
-     * When it is used to process markup, attributes with names starting
-     * with attrPrefix are assumed to be component specifiers.
-     * A component specifier is of the form [attrPrefix][componentName]="[propertyName] [propertyName] ..."
-     *
-     * When a component specifier is encountered, the component's function will be
-     * invoked with the element and any specified properties as arguments.
-     *
-     * The attribute can be string (where at least 1 property name is specified),
-     * or boolean (where no property is specified).
-     *
-     * The props object passed to this initializer behaves like a global
-     * from which component props may be obtained if they are not found in
-     * the props object passed to the `process` method.
-     *
-     * @param {any} props The value to assign to the props member.
-     * @param {string} attrPrefix The value to assign to attrPrefix. Defaults to 'c-'
-     * @constructor
-     */
-    constructor(props: any, attrPrefix: string);
-    /**
-     * Registers a function as a component bearing the given name.
-     * The component can be referenced in processed markup using
-     * the name.
-     *
-     * Returns the same actribute to support chaining.
-     *
-     * @param {string} name The component name
-     * @param {Function} component The component function
-     * @returns {Actribute}
-     */
-    register(name: string, component: Function): Actribute;
-    /**
-     * Recursively processes the node to identify and apply components.
-     *
-     * At elements where any components are encountered, the components
-     * are called with the element and any specified props. The decendants
-     * are not processed.
-     *
-     * At elements without a component, the descendants are processed
-     * recursively.
-     *
-     * Returns the same actribute to support call chaining.
-     *
-     * @param {HTMLElement} element
-     * @param {any} props
-     * @returns {Actribute}
-     */
-    process(element: HTMLElement, props: any): Actribute;
+  /**
+   * The object that holds all registered components. The keys are the
+   * component names and the values are the component functions.
+   */
+  registry: {};
+  /**
+   * This object holds any fallback props which can be referenced
+   * in the markup, in the values of component attributes. Property names
+   * can be referenced similarly to CSS classes.
+   */
+  props: any;
+  /**
+   * This is the attribute prefix that denotes component specifiers in
+   * markup. A component specifier is an attribute where the name (after
+   * the prefix) refers to a component name (in the registery) and the
+   * optional value is a space-separated list of property names.
+   */
+  attrPrefix: any;
+  /**
+   * Construct a new Actribute instance with the fallback props and
+   * attribute prefix.
+   *
+   * When it is used to process markup, attributes with names starting
+   * with attrPrefix are assumed to be component specifiers.
+   * A component specifier is of the form [attrPrefix][componentName]="[propertyName] [propertyName] ..."
+   *
+   * When a component specifier is encountered, the component's function will be
+   * invoked with the element and any specified properties as arguments.
+   *
+   * The attribute can be string (where at least 1 property name is specified),
+   * or boolean (where no property is specified).
+   *
+   * The props object passed to this initializer behaves like a global
+   * from which component props may be obtained if they are not found in
+   * the props object passed to the `process` method.
+   *
+   * @param {any} props The value to assign to the props member.
+   * @param {string} attrPrefix The value to assign to attrPrefix. Defaults to 'c-'
+   * @constructor
+   */
+  constructor(props: any, attrPrefix: string);
+  /**
+   * Registers a function as a component bearing the given name.
+   * The component can be referenced in processed markup using
+   * the name.
+   *
+   * Returns the same actribute to support chaining.
+   *
+   * @param {string} name The component name
+   * @param {Function} component The component function
+   * @returns {Actribute}
+   */
+  register(name: string, component: Function): Actribute;
+  /**
+   * Recursively processes the node to identify and apply components.
+   *
+   * At elements where any components are encountered, the components
+   * are called with the element and any specified props. The decendants
+   * are not processed.
+   *
+   * At elements without a component, the descendants are processed
+   * recursively.
+   *
+   * Returns the same actribute to support call chaining.
+   *
+   * @param {HTMLElement} element
+   * @param {any} props
+   * @returns {Actribute}
+   */
+  process(element: HTMLElement, props: any): Actribute;
 }
 
 /**
@@ -115,7 +115,7 @@ declare class Actribute {
  * }
  */
 interface ApplyMap {
-    [key: string]: Function | Function[];
+  [key: string]: Function | Function[];
 }
 /**
  * Functions similarly to querySelectorAll, but for selecting style rules in
@@ -129,7 +129,11 @@ interface ApplyMap {
  * @param {boolean} [firstOnly]
  * @returns {Array<CSSRule>}
  */
-declare function ruleSelectorAll(selectors: string, styleElement: HTMLStyleElement, firstOnly?: boolean): Array<CSSRule>;
+declare function ruleSelectorAll(
+  selectors: string,
+  styleElement: HTMLStyleElement,
+  firstOnly?: boolean,
+): Array<CSSRule>;
 /**
  * Similar to querySelector in the same way ruleSelectorAll is similar to
  * querySelectorAll.
@@ -141,7 +145,10 @@ declare function ruleSelectorAll(selectors: string, styleElement: HTMLStyleEleme
  * @param {HTMLStyleElement} styleElement
  * @returns {CSSRule}
  */
-declare function ruleSelector(selectors: string, styleElement: HTMLStyleElement): CSSRule;
+declare function ruleSelector(
+  selectors: string,
+  styleElement: HTMLStyleElement,
+): CSSRule;
 /**
  * Return the first ancestor that matches the selector.
  * @example
@@ -176,7 +183,12 @@ declare function parentSelector(node: Node, selector: string): Element | null;
  * @param {boolean|number} [asComponent]
  * @param {boolean|number} [firstOnly]
  */
-declare function apply(applyMap: ApplyMap, containerElement?: HTMLElement, asComponent?: boolean | number, firstOnly?: boolean | number): void;
+declare function apply(
+  applyMap: ApplyMap,
+  containerElement?: HTMLElement,
+  asComponent?: boolean | number,
+  firstOnly?: boolean | number,
+): void;
 /**
  * Applies the given functions to the specified elements (or CSS rules).
  *
@@ -190,7 +202,11 @@ declare function apply(applyMap: ApplyMap, containerElement?: HTMLElement, asCom
  * @param {Function|Function[]} functions
  * @param {boolean|undefined} [asComponent]
  */
-declare function applyTo(elements: (Element | CSSRule)[] | (Element | CSSRule), functions: Function | Function[], asComponent?: boolean | number | undefined): void;
+declare function applyTo(
+  elements: (Element | CSSRule)[] | (Element | CSSRule),
+  functions: Function | Function[],
+  asComponent?: boolean | number | undefined,
+): void;
 
 /**
  * A template tag that will resolve only after all
@@ -205,7 +221,10 @@ declare function applyTo(elements: (Element | CSSRule)[] | (Element | CSSRule), 
  * @param  {...any} expressions
  * @returns {Promise<string>}
  */
-declare function tag(strings: Array<string>, ...expressions: any[]): Promise<string>;
+declare function tag(
+  strings: Array<string>,
+  ...expressions: any[]
+): Promise<string>;
 /**
  * Effectively creates a template literal out of an existing template string and wraps it in a function
  * which can be called multiple times to 'render' the template with the given arguments.
@@ -218,7 +237,10 @@ declare function tag(strings: Array<string>, ...expressions: any[]): Promise<str
  * @param {Array<string>} argNames tThe names of the parameters of the returned function (which can be 'seen' inside the template string)
  * @returns {(...any): string}
  */
-declare function template(templateStr: string, argNames?: Array<string>): ((...any: any[]) => string);
+declare function template(
+  templateStr: string,
+  argNames?: Array<string>,
+): (...any: any[]) => string;
 /**
  * Similar to template but the built template is also 'promise-aware' and will allow them to resolve to string values
  * before interpolating them.
@@ -234,12 +256,16 @@ declare function template(templateStr: string, argNames?: Array<string>): ((...a
  * the default name (T) is present in  argNames.
  * @returns {(...any): string}
  */
-declare function asyncTemplate(templateStr: string, argNames: Array<string>, tagName: string): ((...any: any[]) => string);
+declare function asyncTemplate(
+  templateStr: string,
+  argNames: Array<string>,
+  tagName: string,
+): (...any: any[]) => string;
 /**
  * The return value of a call to arrayTemplate.
  */
 interface ArrayTemplate {
-    (arr: Iterable<any>, ...args: any[]): string;
+  (arr: Iterable<any>, ...args: any[]): string;
 }
 /**
  * Similar to template, but will render an iterable (such as array) of items together instead
@@ -257,7 +283,12 @@ interface ArrayTemplate {
  * Defaults to the empty string.
  * @returns {ArrayTemplate}
  */
-declare function arrayTemplate(templateStr: string, argNames: Array<string>, itemName: string, itemSep: string): ArrayTemplate;
+declare function arrayTemplate(
+  templateStr: string,
+  argNames: Array<string>,
+  itemName: string,
+  itemSep: string,
+): ArrayTemplate;
 /**
  * Async equivalent of arrayTemplate. The async template tag ('T' by default)
  * is applied to the template string. Use this when there are promises
@@ -279,7 +310,13 @@ declare function arrayTemplate(templateStr: string, argNames: Array<string>, ite
  * the default name (T) is present in  argNames.
  * @returns {ArrayTemplate}
  */
-declare function asyncArrayTemplate(templateStr: string, argNames: Array<string>, itemName: string, itemSep: string, tagName: string): ArrayTemplate;
+declare function asyncArrayTemplate(
+  templateStr: string,
+  argNames: Array<string>,
+  itemName: string,
+  itemSep: string,
+  tagName: string,
+): ArrayTemplate;
 /**
  * Fetches text (typically markup) from the url. This is only a shorthand
  * for using `fetch`.
@@ -293,7 +330,11 @@ declare function asyncArrayTemplate(templateStr: string, argNames: Array<string>
  * @param {RequestInit} [init]  The `init` argument for `fetch`
  * @returns {Promise<string>}
  */
-declare function get(url: string, suppressErrors?: boolean, init?: RequestInit): Promise<string>;
+declare function get(
+  url: string,
+  suppressErrors?: boolean,
+  init?: RequestInit,
+): Promise<string>;
 /**
  * Shorthand for creating a DocumentFragment from markup. If the
  * fragment has only one child, the child is returned instead.
@@ -318,7 +359,7 @@ declare const createFragment: (markup: string) => Node;
  * myInserter = (node, target) => target.append(node);
  */
 interface Inserter {
-    (node: Node, target: Node): void;
+  (node: Node, target: Node): void;
 }
 /**
  * Insert the values before the elements.
@@ -335,23 +376,27 @@ interface Inserter {
  * @param {Iterable<Node>} values The new nodes to insert.
  * @param {Inserter} [insertWith] The insertion function
  */
-declare function insert(elements: Iterator<Node> | Node[], values: Iterable<Node>, insertWith?: Inserter): void;
+declare function insert(
+  elements: Iterator<Node> | Node[],
+  values: Iterable<Node>,
+  insertWith?: Inserter,
+): void;
 /**
  * Default inserters for use with `insert`
  */
 declare const inserter: {
-    /**
-     * Inserts the node before the target using `insertBefore`
-     * @param node
-     * @param target
-     */
-    before(node: Node, target: Node): void;
-    /**
-     * Append the node to the target using `appendChild`
-     * @param node
-     * @param target
-     */
-    append(node: Node, target: Node): void;
+  /**
+   * Inserts the node before the target using `insertBefore`
+   * @param node
+   * @param target
+   */
+  before(node: Node, target: Node): void;
+  /**
+   * Append the node to the target using `appendChild`
+   * @param node
+   * @param target
+   */
+  append(node: Node, target: Node): void;
 };
 /**
  * Creates a DocumentRange between the start and end elements
@@ -378,7 +423,7 @@ declare function createRange(start: Node, end: Node): Range;
  * },
  */
 interface SetMap {
-    [key: string]: any[];
+  [key: string]: any[];
 }
 /**
  * Set specified properties and/or attributes on the specified elements.
@@ -396,7 +441,10 @@ interface SetMap {
  * @param {(Element|CSSRule)[]} elements
  * @param {SetMap} values
  */
-declare function set(elements: Iterable<(Element | CSSRule)>, values: SetMap): void;
+declare function set(
+  elements: Iterable<Element | CSSRule>,
+  values: SetMap,
+): void;
 /**
  * Correctly replace the specified nodes with corresponding values.
  *
@@ -426,9 +474,13 @@ declare function remove(elements: Iterable<Node>): void;
  * Base class for EventListener and MatchListener
  */
 declare class Listener {
-    listener: EventListenerOrEventListenerObject;
-    listen(eventName: string, elements: EventTarget[], options?: boolean | AddEventListenerOptions): void;
-    remove(eventName: string, ...elements: EventTarget[]): void;
+  listener: EventListenerOrEventListenerObject;
+  listen(
+    eventName: string,
+    elements: EventTarget[],
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  remove(eventName: string, ...elements: EventTarget[]): void;
 }
 /**
  * Object mapping element mapping strings to event handler functions.
@@ -437,7 +489,7 @@ declare class Listener {
  *
  */
 interface Matcher {
-    [key: string]: Function | Function[];
+  [key: string]: Function | Function[];
 }
 /**
  * Composes a listener function from the functions in ops. ops may be
@@ -473,7 +525,10 @@ interface Matcher {
  * @param {any} [runContext] The optional run context.
  * @returns
  */
-declare function eventListener(ops: Function[] | Function, runContext?: any): (e: any) => Promise<any>;
+declare function eventListener(
+  ops: Function[] | Function,
+  runContext?: any,
+): (e: any) => Promise<any>;
 /**
  * Similar to eventListener function but has methods for attaching
  * and removing itself from multiple elements at the same time.
@@ -482,7 +537,7 @@ declare function eventListener(ops: Function[] | Function, runContext?: any): (e
  * (good practice).
  */
 declare class EventListener extends Listener {
-    constructor(ops: Function[] | Function, runContext?: any);
+  constructor(ops: Function[] | Function, runContext?: any);
 }
 /**
  * Symbol which will terminate event handling if returned by any of
@@ -506,14 +561,15 @@ declare const END: unique symbol;
  * @param {Matcher} matcher Map of event target matcher to associated handler function
  * @param {boolean} wrapListeners Whether to werap the matcher functions with `eventListener`.
  */
-declare function matchListener(matcher: Matcher, wrapListeners?: boolean): (e: {
-    target: MatchEventTarget;
-}) => any;
+declare function matchListener(
+  matcher: Matcher,
+  wrapListeners?: boolean,
+): (e: { target: MatchEventTarget }) => any;
 /**
  * An event target which may have a 'matches' method.
  */
 interface MatchEventTarget extends EventTarget {
-    matches?: (arg0: string) => any;
+  matches?: (arg0: string) => any;
 }
 /**
  * Similar to matchListener function but has methods for attaching
@@ -523,7 +579,7 @@ interface MatchEventTarget extends EventTarget {
  * (good practice).
  */
 declare class MatchListener extends Listener {
-    constructor(matcher: Matcher, wrapListeners?: boolean);
+  constructor(matcher: Matcher, wrapListeners?: boolean);
 }
 /**
  * Simply calls `stopPropagation` on the event. Useful for creating one-liner
@@ -532,9 +588,7 @@ declare class MatchListener extends Listener {
  * @param e The event object
  * @returns
  */
-declare const stopPropagation: (e: {
-    stopPropagation: () => any;
-}) => any;
+declare const stopPropagation: (e: { stopPropagation: () => any }) => any;
 /**
  * Simply calls `preventDefault` on the event. Useful for creating one-liner
  * event handlers.
@@ -542,9 +596,7 @@ declare const stopPropagation: (e: {
  * @param e The event object
  * @returns
  */
-declare const preventDefault: (e: {
-    preventDefault: () => any;
-}) => any;
+declare const preventDefault: (e: { preventDefault: () => any }) => any;
 /**
  * This returns a function which will stop an event handler run (typically for keyup,
  * keydown etc) from continuing if it has not been triggered by the specified key.
@@ -558,7 +610,7 @@ declare const preventDefault: (e: {
  */
 declare const onKey: (key: string) => (e: KeyboardEvent) => "" | typeof END;
 declare const keys: {
-    enter: string;
+  enter: string;
 };
 /**
  * This will stop a key(up or down...) event handler run from continuing if
@@ -577,7 +629,11 @@ declare const onEnter: (e: KeyboardEvent) => "" | typeof END;
  * @param {number} [end]
  * @param {number} [step]
  */
-declare function range(start: number, end?: number, step?: number): Generator<number, void, unknown>;
+declare function range(
+  start: number,
+  end?: number,
+  step?: number,
+): Generator<number, void, unknown>;
 /**
  * Returns a generator which iterates over the subset of the
  * 'arrayLike' object that matches the provided index.
@@ -589,7 +645,10 @@ declare function range(start: number, end?: number, step?: number): Generator<nu
  * @param {any} arrayLike
  * @param {Iterable<any>} index
  */
-declare function items(arrayLike: any, index: Iterable<number>): Generator<any, void, unknown>;
+declare function items(
+  arrayLike: any,
+  index: Iterable<number>,
+): Generator<any, void, unknown>;
 /**
  * Call to get the length of an object. The object must either
  * have a length property of be previously passed in a call to`setLength`.
@@ -646,7 +705,10 @@ declare function flat(...args: [Iterator<any>]): Generator<any, void, unknown>;
  * @param iter
  * @param count
  */
-declare function next(iter: Iterator<any>, count: number): Generator<any, void, unknown>;
+declare function next(
+  iter: Iterator<any>,
+  count: number,
+): Generator<any, void, unknown>;
 /**
  * Returns an unordered/random iterator over the input array..
  *
@@ -694,7 +756,12 @@ declare function unWrap(one: One): any;
  * A recursive One constructor. Used internally for recursive 'One's.
  */
 interface OneConstructor {
-    (many: any[], recursive?: boolean, context?: any[], ctor?: OneConstructor): One;
+  (
+    many: any[],
+    recursive?: boolean,
+    context?: any[],
+    ctor?: OneConstructor,
+  ): One;
 }
 /**
  * An object which delegates actions on it to other objects
@@ -704,115 +771,127 @@ interface OneConstructor {
  *
  */
 declare class One {
-    /**
-     * The many objects this One delegates to.
-     */
-    many: any[];
-    /**
-     * Whether this One will return other 'One's in calls to `get`.
-     */
-    recursive?: boolean;
-    /**
-     * The constructor function used for creating new 'One's in calls to `get`.
-     */
-    ctor?: OneConstructor;
-    /**
-     * The context shared by the many functions or methods of the objects in many.
-     * They all receive its items as their last set of arguments.
-     */
-    context?: any[];
-    /**
-     * Creates a new One instance for propagating operations to all the items
-     * in many.
-     *
-     * @param {any[]} many The many objects or functions this One will delegate to.
-     * @param {boolean} [recursive] Whether to wrap the arrays returned by `get` with another One.
-     * @param {any[]} context An optional shared context to be passed to all propagated method or function calls.
-     * This is an array of objects passed as the final arguments in calls. Empty array by default.
-     * @param {OneConstructor} [ctor] The constructor used to create the `get` Ones. This parameter is used internally;
-     * no need to supply an argument.
-     *
-     * @example
-     * const loginYes = new One([username => profileView(username)]);
-     * loginYes.call([[username]]);
-     *
-     * @constructor
-     */
-    constructor(many: any[], recursive?: boolean, context?: any[], ctor?: OneConstructor);
-    /**
-     * Gets corresponding properties from all the objects in many. If this is
-     * a recursive One and forceArray is falsy, the array result will be
-     * used as the 'many' argument in a call to this.ctor and the created One
-     * is returned instead of the array.
-     *
-     * @example
-     * const o = new One([{a: 1}, {a: 2}])
-     * o.get('a');  // [1, 2]
-     *
-     * @param {string | number | symbol | null} [prop]
-     * @param {boolean} [forceArray]
-     * @returns {any[]|One}
-     */
-    get(prop?: string | number | symbol | null, forceArray?: boolean): any[] | One;
-    /**
-     * Sets corresponding property values in the objects in many.
-     * 'values' are treated similarly to 'args' in the call method.
-     *
-     * @example
-     * const o = new One([{a: 1}, {a: 2}])
-     * o.set('a', [4, 7]);
-     *
-     * @param {string | number | symbol | null} [prop]
-     * @param {any[]} [values]
-     */
-    set(prop?: string | number | symbol | null, values?: any[]): any;
-    /**
-     * Delete the property from all objects in many.
-     *
-     * @example
-     * const o = new One([{a: 1}, {a: 2}])
-     * o.delete('a');
-     *
-     * @param {string | number | symbol} prop
-     */
-    delete(prop: string | number | symbol): void;
-    /**
-     * Calls all the items in many (if method is not specified) or their
-     * corresponding methods (if  method is specified). All the calls will
-     * receive any items in `this.context` as their final arguments to
-     * enable communication.
-     *
-     * args can be specified as follows:
-     * `[[a1, a2], [a1, a2], [a1, a2]]`
-     *
-     * If `this.many` has 3 items, they will receive their own args. If there
-     * are more items in `this.many`, they will all get the last provided args array
-     * (here the one passed to the third item).
-     *
-     * The `one` function wraps created 'One's with a proxy to allow methods
-     * to be called directly on them. Assuming we want to pass the same args
-     * as above to such a method, the call will look like:
-     *
-     * `object.method([a1, a2], [a1, a2], [a1, a2])`.
-     *
-     * There is no need to wrap with the outer array in such cases.
-     *
-     * Call returns an array containing the return values of the individual
-     * calls to many items.
-     *
-     * @example
-     * const loginYes = new One([username => profileView(username)]);
-     * loginYes.call([[username]]);
-     *
-     * @param {any[]} args The function or method arguments
-     * @param {string | number | symbol} [method] The name of a method to call.
-     * A function call is assumed if not specified.
-     * @param {boolean} [ignoreContext] Set this to a truthy value to prevent the
-     * shared context from getting passed in this call.
-     *
-     * @returns {any[]}
-     */
-    call(args?: any[], method?: string | number | symbol, ignoreContext?: boolean): any[];
+  /**
+   * The many objects this One delegates to.
+   */
+  many: any[];
+  /**
+   * Whether this One will return other 'One's in calls to `get`.
+   */
+  recursive?: boolean;
+  /**
+   * The constructor function used for creating new 'One's in calls to `get`.
+   */
+  ctor?: OneConstructor;
+  /**
+   * The context shared by the many functions or methods of the objects in many.
+   * They all receive its items as their last set of arguments.
+   */
+  context?: any[];
+  /**
+   * Creates a new One instance for propagating operations to all the items
+   * in many.
+   *
+   * @param {any[]} many The many objects or functions this One will delegate to.
+   * @param {boolean} [recursive] Whether to wrap the arrays returned by `get` with another One.
+   * @param {any[]} context An optional shared context to be passed to all propagated method or function calls.
+   * This is an array of objects passed as the final arguments in calls. Empty array by default.
+   * @param {OneConstructor} [ctor] The constructor used to create the `get` Ones. This parameter is used internally;
+   * no need to supply an argument.
+   *
+   * @example
+   * const loginYes = new One([username => profileView(username)]);
+   * loginYes.call([[username]]);
+   *
+   * @constructor
+   */
+  constructor(
+    many: any[],
+    recursive?: boolean,
+    context?: any[],
+    ctor?: OneConstructor,
+  );
+  /**
+   * Gets corresponding properties from all the objects in many. If this is
+   * a recursive One and forceArray is falsy, the array result will be
+   * used as the 'many' argument in a call to this.ctor and the created One
+   * is returned instead of the array.
+   *
+   * @example
+   * const o = new One([{a: 1}, {a: 2}])
+   * o.get('a');  // [1, 2]
+   *
+   * @param {string | number | symbol | null} [prop]
+   * @param {boolean} [forceArray]
+   * @returns {any[]|One}
+   */
+  get(
+    prop?: string | number | symbol | null,
+    forceArray?: boolean,
+  ): any[] | One;
+  /**
+   * Sets corresponding property values in the objects in many.
+   * 'values' are treated similarly to 'args' in the call method.
+   *
+   * @example
+   * const o = new One([{a: 1}, {a: 2}])
+   * o.set('a', [4, 7]);
+   *
+   * @param {string | number | symbol | null} [prop]
+   * @param {any[]} [values]
+   */
+  set(prop?: string | number | symbol | null, values?: any[]): any;
+  /**
+   * Delete the property from all objects in many.
+   *
+   * @example
+   * const o = new One([{a: 1}, {a: 2}])
+   * o.delete('a');
+   *
+   * @param {string | number | symbol} prop
+   */
+  delete(prop: string | number | symbol): void;
+  /**
+   * Calls all the items in many (if method is not specified) or their
+   * corresponding methods (if  method is specified). All the calls will
+   * receive any items in `this.context` as their final arguments to
+   * enable communication.
+   *
+   * args can be specified as follows:
+   * `[[a1, a2], [a1, a2], [a1, a2]]`
+   *
+   * If `this.many` has 3 items, they will receive their own args. If there
+   * are more items in `this.many`, they will all get the last provided args array
+   * (here the one passed to the third item).
+   *
+   * The `one` function wraps created 'One's with a proxy to allow methods
+   * to be called directly on them. Assuming we want to pass the same args
+   * as above to such a method, the call will look like:
+   *
+   * `object.method([a1, a2], [a1, a2], [a1, a2])`.
+   *
+   * There is no need to wrap with the outer array in such cases.
+   *
+   * Call returns an array containing the return values of the individual
+   * calls to many items.
+   *
+   * @example
+   * const loginYes = new One([username => profileView(username)]);
+   * loginYes.call([[username]]);
+   *
+   * @param {any[]} args The function or method arguments
+   * @param {string | number | symbol} [method] The name of a method to call.
+   * A function call is assumed if not specified.
+   * @param {boolean} [ignoreContext] Set this to a truthy value to prevent the
+   * shared context from getting passed in this call.
+   *
+   * @returns {any[]}
+   */
+  call(
+    args?: any[],
+    method?: string | number | symbol,
+    ignoreContext?: boolean,
+  ): any[];
 }
 /**
  * Pass this as the first arg in a One call to prevent it from injecting
@@ -829,59 +908,59 @@ declare const ignoreContext: unique symbol;
  *
  */
 declare class Sophistry {
-    /**
-     * An cache for created SophistryStyleSheets.
-     */
-    context: {};
-    /**
-     * Processes and 'pops' all style tags within the root.
-     * Ensures that the same CSSStyleSheet can be reused across document trees (maindocument
-     * and shadow roots) instead of duplicated even when they have been
-     * created declaratively.
-     *
-     * If replace is truthy, any cached stylesheets with the same name (or hash) as a
-     * styleshhet within the root will be replaced (reactively).
-     *
-     * This resolves the stated issue with declaratively adding encapsulated
-     * styles to elements when using shadow DOM as described here;
-     * https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_shadow_DOM.
-     *
-     * @example
-     * const element = apriori.createFragment(apriori.get('markup.html'));
-     * const styles = mySophistry.process(element);
-     * document.body.append(element);
-     * for (let style of styles) style.style(element, document.body.firstElementChild);
-     *
-     * @param {Element} root
-     * @param {boolean} [replace]
-     * @returns {StyleSheet[]}
-     */
-    process(root: Element, replace?: boolean): StyleSheet[];
-    /**
-     * Import a stylesheet defined in an external CSS file. Optionally
-     * specify a name for the imported style in the Scophystry context (cache).
-     * The name will default to the portion of the link before the first
-     * apostrophe...
-     *
-     * @example
-     * const style = mySophistry.import('style.css');
-     *
-     * @param {string} link
-     * @param {string} [name]
-     * @returns {StyleSheet}
-     */
-    import(link: string, name?: string): StyleSheet;
-    /**
-     * Replaces the text of an existing stylesheet. This is reactive.
-     *
-     * @example
-     * mySophistry.set('style.css', await apriori.get('new-style.css'));  // override everything.
-     *
-     * @param {string} name
-     * @param {string} css
-     * @returns
-     */
-    set(name: string, css: string): StyleSheet;
+  /**
+   * An cache for created SophistryStyleSheets.
+   */
+  context: {};
+  /**
+   * Processes and 'pops' all style tags within the root.
+   * Ensures that the same CSSStyleSheet can be reused across document trees (maindocument
+   * and shadow roots) instead of duplicated even when they have been
+   * created declaratively.
+   *
+   * If replace is truthy, any cached stylesheets with the same name (or hash) as a
+   * styleshhet within the root will be replaced (reactively).
+   *
+   * This resolves the stated issue with declaratively adding encapsulated
+   * styles to elements when using shadow DOM as described here;
+   * https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_shadow_DOM.
+   *
+   * @example
+   * const element = apriori.createFragment(apriori.get('markup.html'));
+   * const styles = mySophistry.process(element);
+   * document.body.append(element);
+   * for (let style of styles) style.style(element, document.body.firstElementChild);
+   *
+   * @param {Element} root
+   * @param {boolean} [replace]
+   * @returns {StyleSheet[]}
+   */
+  process(root: Element, replace?: boolean): StyleSheet[];
+  /**
+   * Import a stylesheet defined in an external CSS file. Optionally
+   * specify a name for the imported style in the Scophystry context (cache).
+   * The name will default to the portion of the link before the first
+   * apostrophe...
+   *
+   * @example
+   * const style = mySophistry.import('style.css');
+   *
+   * @param {string} link
+   * @param {string} [name]
+   * @returns {StyleSheet}
+   */
+  import(link: string, name?: string): StyleSheet;
+  /**
+   * Replaces the text of an existing stylesheet. This is reactive.
+   *
+   * @example
+   * mySophistry.set('style.css', await apriori.get('new-style.css'));  // override everything.
+   *
+   * @param {string} name
+   * @param {string} css
+   * @returns
+   */
+  set(name: string, css: string): StyleSheet;
 }
 /**
  * This is used to wrap a CSSStyleSheet to provide convenient methods
@@ -892,38 +971,90 @@ declare class Sophistry {
  *
  */
 declare class StyleSheet {
-    /**
-     * The wrapped CSS stylesheet.
-     */
-    css: CSSStyleSheet;
-    /**
-     * Creates a new Sophistry stylesheet.
-     *
-     * @param {CSSStyleSheet} cssStyleSheet
-     * @constructor
-     */
-    constructor(cssStyleSheet: any);
-    /**
-     * Styles the elements with the wrapped CSSStylesheets.
-     * If an element is not the document or a shadow root, an open shadow
-     * root is created for it and then the rrot is styled.
-     *
-     * @example
-     * sss.style(...Array.from(document.body.children))
-     *
-     * @param  {...T} elements
-     */
-    style<T extends (Element | DocumentFragment)>(...elements: T[]): void;
-    /**
-     * Removes the wrapped stylesheet from the elements (or their shadow roots).
-     *
-     * @example
-     * sss.remove(...Array.from(document.body.children))
-     *
-     *
-     * @param {...T} elements
-     */
-    remove<T extends (Element | DocumentFragment)>(...elements: T[]): void;
+  /**
+   * The wrapped CSS stylesheet.
+   */
+  css: CSSStyleSheet;
+  /**
+   * Creates a new Sophistry stylesheet.
+   *
+   * @param {CSSStyleSheet} cssStyleSheet
+   * @constructor
+   */
+  constructor(cssStyleSheet: any);
+  /**
+   * Styles the elements with the wrapped CSSStylesheets.
+   * If an element is not the document or a shadow root, an open shadow
+   * root is created for it and then the rrot is styled.
+   *
+   * @example
+   * sss.style(...Array.from(document.body.children))
+   *
+   * @param  {...T} elements
+   */
+  style<T extends Element | DocumentFragment>(...elements: T[]): void;
+  /**
+   * Removes the wrapped stylesheet from the elements (or their shadow roots).
+   *
+   * @example
+   * sss.remove(...Array.from(document.body.children))
+   *
+   *
+   * @param {...T} elements
+   */
+  remove<T extends Element | DocumentFragment>(...elements: T[]): void;
 }
 
-export { Actribute, type ApplyMap, type ArrayTemplate, END, EventListener, type Inserter, Listener, type MatchEventTarget, MatchListener, type Matcher, One, type OneConstructor, type SetMap, Sophistry, StyleSheet, apply, applyTo, arrayTemplate, asyncArrayTemplate, asyncTemplate, createFragment, createRange, eventListener, flat, get, getLength, ignoreContext, insert, inserter, items, iterLengths, keys, matchListener, next, onEnter, onKey, one, parentSelector, preventDefault, range, remove, ruleSelector, ruleSelectorAll, set, setLength, stopPropagation, tag, template, uItems, unWrap, update };
+export {
+  Actribute,
+  type ApplyMap,
+  type ArrayTemplate,
+  END,
+  EventListener,
+  type Inserter,
+  Listener,
+  type MatchEventTarget,
+  MatchListener,
+  type Matcher,
+  One,
+  type OneConstructor,
+  type SetMap,
+  Sophistry,
+  StyleSheet,
+  apply,
+  applyTo,
+  arrayTemplate,
+  asyncArrayTemplate,
+  asyncTemplate,
+  createFragment,
+  createRange,
+  eventListener,
+  flat,
+  get,
+  getLength,
+  ignoreContext,
+  insert,
+  inserter,
+  items,
+  iterLengths,
+  keys,
+  matchListener,
+  next,
+  onEnter,
+  onKey,
+  one,
+  parentSelector,
+  preventDefault,
+  range,
+  remove,
+  ruleSelector,
+  ruleSelectorAll,
+  set,
+  setLength,
+  stopPropagation,
+  tag,
+  template,
+  uItems,
+  unWrap,
+  update,
+};

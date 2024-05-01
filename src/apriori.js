@@ -12,17 +12,17 @@
  * @returns {Promise<string>}
  */
 export async function tag(strings, ...expressions) {
-    const promiseExpressions = [];
-    for (let [i, exp] of Array.from(expressions.entries())) {
-        if (exp instanceof Promise)
-            promiseExpressions.push(exp);
-        else
-            promiseExpressions.push(Promise.resolve(exp));
-    }
-    const resolvedExpressions = await Promise.all(promiseExpressions);
-    return resolvedExpressions.map((exp, i) => `${strings[i]}${exp}`).join('') + strings[resolvedExpressions.length];
+  const promiseExpressions = [];
+  for (let [i, exp] of Array.from(expressions.entries())) {
+    if (exp instanceof Promise) promiseExpressions.push(exp);
+    else promiseExpressions.push(Promise.resolve(exp));
+  }
+  const resolvedExpressions = await Promise.all(promiseExpressions);
+  return (
+    resolvedExpressions.map((exp, i) => `${strings[i]}${exp}`).join("") +
+    strings[resolvedExpressions.length]
+  );
 }
-;
 /**
  * Effectively creates a template literal out of an existing template string and wraps it in a function
  * which can be called multiple times to 'render' the template with the given arguments.
@@ -36,9 +36,8 @@ export async function tag(strings, ...expressions) {
  * @returns {(...any): string}
  */
 export function template(templateStr, argNames) {
-    if (!argNames)
-        argNames = [];
-    return Function(...argNames, `return \`${templateStr}\`;`);
+  if (!argNames) argNames = [];
+  return Function(...argNames, `return \`${templateStr}\`;`);
 }
 /**
  * Similar to template but the built template is also 'promise-aware' and will allow them to resolve to string values
@@ -56,16 +55,18 @@ export function template(templateStr, argNames) {
  * @returns {(...any): string}
  */
 export function asyncTemplate(templateStr, argNames, tagName) {
-    if (!argNames)
-        argNames = [];
-    if (!tagName)
-        tagName = 'T';
-    if (argNames.includes(tagName)) {
-        throw new Error(`The tag name ${tagName} clashes with the name of one of the arguments. 
+  if (!argNames) argNames = [];
+  if (!tagName) tagName = "T";
+  if (argNames.includes(tagName)) {
+    throw new Error(`The tag name ${tagName} clashes with the name of one of the arguments. 
         Please change the tag name or the argument name to resolve this.`);
-    }
-    const f = Function(tagName, ...argNames, `return ${tagName}\`${templateStr}\`;`);
-    return (...args) => f(tag, ...args);
+  }
+  const f = Function(
+    tagName,
+    ...argNames,
+    `return ${tagName}\`${templateStr}\`;`,
+  );
+  return (...args) => f(tag, ...args);
 }
 /**
  * Similar to template, but will render an iterable (such as array) of items together instead
@@ -84,19 +85,20 @@ export function asyncTemplate(templateStr, argNames, tagName) {
  * @returns {ArrayTemplate}
  */
 export function arrayTemplate(templateStr, argNames, itemName, itemSep) {
-    if (!argNames)
-        argNames = [];
-    if (!itemName)
-        itemName = 'item';
-    if (!itemSep)
-        itemSep = '';
-    return Function('arr', ...argNames, `
+  if (!argNames) argNames = [];
+  if (!itemName) itemName = "item";
+  if (!itemSep) itemSep = "";
+  return Function(
+    "arr",
+    ...argNames,
+    `
         const result = [];
         for (let ${itemName} of arr) {
             result.push(\`${templateStr}\`);
         }
         return result.join('${itemSep}')
-    `);
+    `,
+  );
 }
 /**
  * Async equivalent of arrayTemplate. The async template tag ('T' by default)
@@ -119,31 +121,38 @@ export function arrayTemplate(templateStr, argNames, itemName, itemSep) {
  * the default name (T) is present in  argNames.
  * @returns {ArrayTemplate}
  */
-export function asyncArrayTemplate(templateStr, argNames, itemName, itemSep, tagName) {
-    if (!argNames)
-        argNames = [];
-    if (!itemName)
-        itemName = 'item';
-    if (!itemSep)
-        itemSep = '';
-    if (!tagName)
-        tagName = 'T';
-    if (itemName === tagName) {
-        throw new Error(`The tag name ${tagName} is the same as the item name. 
+export function asyncArrayTemplate(
+  templateStr,
+  argNames,
+  itemName,
+  itemSep,
+  tagName,
+) {
+  if (!argNames) argNames = [];
+  if (!itemName) itemName = "item";
+  if (!itemSep) itemSep = "";
+  if (!tagName) tagName = "T";
+  if (itemName === tagName) {
+    throw new Error(`The tag name ${tagName} is the same as the item name. 
         Please change the tag name or the item name to resolve this.`);
-    }
-    if (argNames.includes(tagName)) {
-        throw new Error(`The tag name ${tagName} clashes with the name of one of the arguments. 
+  }
+  if (argNames.includes(tagName)) {
+    throw new Error(`The tag name ${tagName} clashes with the name of one of the arguments. 
         Please change the tag name or the argument name to resolve this.`);
-    }
-    const f = Function(tagName, 'arr', ...argNames, `
+  }
+  const f = Function(
+    tagName,
+    "arr",
+    ...argNames,
+    `
         const result = [];
         for (let ${itemName} of arr) {
             result.push(${tagName}\`${templateStr}\`);
         }
         return Promise.all(result).then(resolved => resolved.join('${itemSep}'));
-    `);
-    return (arr, ...args) => f(tag, arr, ...args);
+    `,
+  );
+  return (arr, ...args) => f(tag, arr, ...args);
 }
 /**
  * Fetches text (typically markup) from the url. This is only a shorthand
@@ -159,10 +168,9 @@ export function asyncArrayTemplate(templateStr, argNames, itemName, itemSep, tag
  * @returns {Promise<string>}
  */
 export async function get(url, suppressErrors, init) {
-    let result = fetch(url, init).then(r => r.text());
-    if (suppressErrors)
-        result = result.catch(r => '');
-    return result;
+  let result = fetch(url, init).then((r) => r.text());
+  if (suppressErrors) result = result.catch((r) => "");
+  return result;
 }
 /**
  * Shorthand for creating a DocumentFragment from markup. If the
@@ -180,10 +188,9 @@ export async function get(url, suppressErrors, init) {
  * @returns {Node}
  */
 export const createFragment = function (markup) {
-    const temp = document.createElement('template');
-    temp.innerHTML = markup;
-    let result = temp.content;
-    if (result.children.length === 1)
-        return result.children[0];
-    return result;
+  const temp = document.createElement("template");
+  temp.innerHTML = markup;
+  let result = temp.content;
+  if (result.children.length === 1) return result.children[0];
+  return result;
 };

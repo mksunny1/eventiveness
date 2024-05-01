@@ -1,7 +1,7 @@
 {
-    "compilerOptions": {
-        "target": "ESNext",
-        "moduleResolution": "Bundler"
-    },
-    "include": ["src/*.ts"]
+  "compilerOptions": {
+    "target": "ESNext",
+    "moduleResolution": "Bundler"
+  },
+  "include": ["src/*.ts"]
 }

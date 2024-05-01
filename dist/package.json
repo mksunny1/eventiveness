@@ -1,6 +1,6 @@
 {
   "name": "eventiveness",
-  "version": "0.9.9903",
+  "version": "0.9.9905",
   "description": "A modular framework for writing accessible and joyfully interactive web applications with traditional HTML, CSS and JavaScript.",
   "type": "module",
   "types": "./dist/eventiveness.d.ts",
@@ -44,7 +44,8 @@
     "doc": "npx typedoc --out ./docs//api ./src/*.ts",
     "compile": "npx tsc",
     "build": "npx tsc && rollup -c",
-    "start": "node server.cjs"
+    "start": "node server.cjs",
+    "prepare": "husky"
   },
   "repository": {
     "type": "git",
@@ -70,15 +71,19 @@
   ],
   "author": "Mark Sun",
   "license": "MIT",
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown"
+  },
   "devDependencies": {
     "@rollup/plugin-typescript": "^11.1.6",
     "express": "^4.19.2",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.2",
+    "prettier": "3.2.5",
     "rollup": "^4.14.1",
     "rollup-plugin-copy": "^3.5.0",
     "rollup-plugin-dts": "^6.1.0",
-    "tslib": "^2.6.2",
     "typedoc": "^0.25.13",
-    "typescript": "^5.4.5",
-    "undici-types": "^6.14.1"
+    "typescript": "^5.4.5"
   }
 }

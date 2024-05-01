@@ -2,17 +2,15 @@
  * Base class for EventListener and MatchListener
  */
 class Listener {
-    listener;
-    listen(eventName, elements, options) {
-        for (let element of elements)
-            element.addEventListener(eventName, this.listener, options);
-    }
-    ;
-    remove(eventName, ...elements) {
-        for (let element of elements)
-            element.removeEventListener(eventName, this.listener);
-    }
-    ;
+  listener;
+  listen(eventName, elements, options) {
+    for (let element of elements)
+      element.addEventListener(eventName, this.listener, options);
+  }
+  remove(eventName, ...elements) {
+    for (let element of elements)
+      element.removeEventListener(eventName, this.listener);
+  }
 }
 const defaultRunContext = { running: false };
 /**
@@ -50,25 +48,21 @@ const defaultRunContext = { running: false };
  * @returns
  */
 function eventListener(ops, runContext) {
-    if (!runContext)
-        runContext = defaultRunContext;
-    if (!(ops instanceof Array))
-        ops = [ops];
-    let op;
-    async function listener(e) {
-        if (runContext.running)
-            return;
-        runContext.running = true;
-        let result;
-        for (op of ops) {
-            result = await op(e, runContext);
-            if (result === END)
-                break;
-        }
-        runContext.running = false;
-        return result;
+  if (!runContext) runContext = defaultRunContext;
+  if (!(ops instanceof Array)) ops = [ops];
+  let op;
+  async function listener(e) {
+    if (runContext.running) return;
+    runContext.running = true;
+    let result;
+    for (op of ops) {
+      result = await op(e, runContext);
+      if (result === END) break;
     }
-    return listener;
+    runContext.running = false;
+    return result;
+  }
+  return listener;
 }
 /**
  * Similar to eventListener function but has methods for attaching
@@ -78,11 +72,10 @@ function eventListener(ops, runContext) {
  * (good practice).
  */
 class EventListener extends Listener {
-    constructor(ops, runContext) {
-        super();
-        this.listener = eventListener(ops, runContext);
-    }
-    ;
+  constructor(ops, runContext) {
+    super();
+    this.listener = eventListener(ops, runContext);
+  }
 }
 /**
  * Symbol which will terminate event handling if returned by any of
@@ -107,25 +100,24 @@ const END = Symbol();
  * @param {boolean} wrapListeners Whether to werap the matcher functions with `eventListener`.
  */
 function matchListener(matcher, wrapListeners) {
-    const listenerMap = {};
-    for (let [selector, args] of Object.entries(matcher)) {
-        if (wrapListeners || args instanceof Array) {
-            let args2;
-            if (!(args instanceof Array) || typeof args.at(-1) === 'function') {
-                args2 = [args, null];
-            }
-            listenerMap[selector] = args2 ? eventListener(args2[0], args2[1]) : eventListener(args[0], args[1]);
-        }
-        else
-            listenerMap[selector] = args;
+  const listenerMap = {};
+  for (let [selector, args] of Object.entries(matcher)) {
+    if (wrapListeners || args instanceof Array) {
+      let args2;
+      if (!(args instanceof Array) || typeof args.at(-1) === "function") {
+        args2 = [args, null];
+      }
+      listenerMap[selector] = args2
+        ? eventListener(args2[0], args2[1])
+        : eventListener(args[0], args[1]);
+    } else listenerMap[selector] = args;
+  }
+  function listener(e) {
+    for (let [selector, fn] of Object.entries(listenerMap)) {
+      if (e.target.matches && e.target.matches(selector)) return fn(e);
     }
-    function listener(e) {
-        for (let [selector, fn] of Object.entries(listenerMap)) {
-            if (e.target.matches && e.target.matches(selector))
-                return fn(e);
-        }
-    }
-    return listener;
+  }
+  return listener;
 }
 /**
  * Similar to matchListener function but has methods for attaching
@@ -135,11 +127,10 @@ function matchListener(matcher, wrapListeners) {
  * (good practice).
  */
 class MatchListener extends Listener {
-    constructor(matcher, wrapListeners) {
-        super();
-        this.listener = matchListener(matcher, wrapListeners);
-    }
-    ;
+  constructor(matcher, wrapListeners) {
+    super();
+    this.listener = matchListener(matcher, wrapListeners);
+  }
 }
 /**
  * Simply calls `stopPropagation` on the event. Useful for creating one-liner
@@ -168,12 +159,24 @@ const preventDefault = (e) => e.preventDefault();
  *
  * @returns {Function}
  */
-const onKey = (key) => (e) => (e.key !== key) ? END : '';
-const keys = { enter: 'Enter' };
+const onKey = (key) => (e) => (e.key !== key ? END : "");
+const keys = { enter: "Enter" };
 /**
  * This will stop a key(up or down...) event handler run from continuing if
  * it has not been triggered by the enter key.
  */
 const onEnter = onKey(keys.enter);
 
-export { END, EventListener, Listener, MatchListener, eventListener, keys, matchListener, onEnter, onKey, preventDefault, stopPropagation };
+export {
+  END,
+  EventListener,
+  Listener,
+  MatchListener,
+  eventListener,
+  keys,
+  matchListener,
+  onEnter,
+  onKey,
+  preventDefault,
+  stopPropagation,
+};
