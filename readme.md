@@ -182,5 +182,6 @@ Thank you for contributing.
 
 ## Ongoing work
 - Improving test coverage.
+- Completing and adding examples
 
 
