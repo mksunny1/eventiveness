@@ -1,5 +1,21 @@
 'use strict';
 
+/**
+ * Base class for EventListener and MatchListener
+ */
+class Listener {
+    listener;
+    listen(eventName, ...elements) {
+        for (let element of elements)
+            element.addEventListener(eventName, this.listener);
+    }
+    ;
+    remove(eventName, ...elements) {
+        for (let element of elements)
+            element.removeEventListener(eventName, this.listener);
+    }
+    ;
+}
 const defaultRunContext = { running: false };
 /**
  * Composes a listener function from the functions in ops. ops may be
@@ -57,6 +73,20 @@ function eventListener(ops, runContext) {
     return listener;
 }
 /**
+ * Similar to eventListener function but has methods for attaching
+ * and removing itself from multiple elements at the same time.
+ *
+ * This gives the listener a 'personality' and promotes its reuse
+ * (good practice).
+ */
+class EventListener extends Listener {
+    constructor(ops, runContext) {
+        super();
+        this.listener = eventListener(ops, runContext);
+    }
+    ;
+}
+/**
  * Symbol which will terminate event handling if returned by any of
  * the functions in the ops chain of an event handler created with
  * `eventHandler`.
@@ -93,11 +123,25 @@ function matchListener(matcher, wrapListeners) {
     }
     function listener(e) {
         for (let [selector, fn] of Object.entries(listenerMap)) {
-            if (e.target.matches(selector))
+            if (e.target.matches && e.target.matches(selector))
                 return fn(e);
         }
     }
     return listener;
+}
+/**
+ * Similar to matchListener function but has methods for attaching
+ * and removing itself from multiple elements at the same time.
+ *
+ * This gives the listener a 'personality' and promotes its reuse
+ * (good practice).
+ */
+class MatchListener extends Listener {
+    constructor(matcher, wrapListeners) {
+        super();
+        this.listener = matchListener(matcher, wrapListeners);
+    }
+    ;
 }
 /**
  * Simply calls `stopPropagation` on the event. Useful for creating one-liner
@@ -135,6 +179,9 @@ const keys = { enter: 'Enter' };
 const onEnter = onKey(keys.enter);
 
 exports.END = END;
+exports.EventListener = EventListener;
+exports.Listener = Listener;
+exports.MatchListener = MatchListener;
 exports.eventListener = eventListener;
 exports.keys = keys;
 exports.matchListener = matchListener;

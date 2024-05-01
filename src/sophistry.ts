@@ -32,10 +32,10 @@ export class Sophistry {
      * 
      * @param {Element} root 
      * @param {boolean} [replace] 
-     * @returns {SophistryStyleSheet[]}
+     * @returns {StyleSheet[]}
      */
-    process(root: Element, replace?: boolean): SophistryStyleSheet[] {
-        const cssStyleSheets: SophistryStyleSheet[] = [];
+    process(root: Element, replace?: boolean): StyleSheet[] {
+        const cssStyleSheets: StyleSheet[] = [];
         if ((root instanceof HTMLLinkElement && root.getAttribute('rel') === 'stylesheet') || (root instanceof HTMLStyleElement)) {
             const name = root.getAttribute('s-ophistry') || root.getAttribute('href') || hash(root.outerHTML as string);
             if (this.context.hasOwnProperty(name) && !replace) cssStyleSheets.push(this.context[name]);
@@ -52,7 +52,7 @@ export class Sophistry {
                         st = new CSSStyleSheet();   // root.sheet will not work if style has not been added to DOM!!!
                         st.replaceSync(root.textContent);
                     }
-                    st2 = new SophistryStyleSheet(st);
+                    st2 = new StyleSheet(st);
                     this.context[name] = st2;
                 }
                 cssStyleSheets.push(st2);
@@ -69,24 +69,24 @@ export class Sophistry {
         return cssStyleSheets;
     };
     /**
-     * Import a stylesheet defined in an external CSS file.
+     * Import a stylesheet defined in an external CSS file. Optionally 
+     * specify a name for the imported style in the Scophystry context (cache).
+     * The name will default to the portion of the link before the first 
+     * apostrophe...
      * 
      * @example
-     * const style = mySophistry.import('style.css', false);
+     * const style = mySophistry.import('style.css');
      * 
      * @param {string} link 
-     * @param {boolean} [replace]
-     * @returns {SophistryStyleSheet}
+     * @param {string} [name]
+     * @returns {StyleSheet}
      */
-    import(link: string, replace?: boolean): SophistryStyleSheet {
-        if (this.context.hasOwnProperty(link) && !replace) return this.context[link];
-        else {
-            const st = new CSSStyleSheet();
-            const st2 = new SophistryStyleSheet(st);
-            this.context[link] = st2;
-            fetch(link).then(r => r.text()).then(t => st.replaceSync(t));
-            return st2;
-        }
+    import(link: string, name?: string): StyleSheet {
+        const st = new CSSStyleSheet();
+        const st2 = new StyleSheet(st);
+        this.context[name || link.split('.')[0]] = st2;
+        fetch(link).then(r => r.text()).then(t => st.replaceSync(t));
+        return st2;
     };
     /**
      * Replaces the text of an existing stylesheet. This is reactive.
@@ -98,12 +98,12 @@ export class Sophistry {
      * @param {string} css 
      * @returns 
      */
-    set(name: string, css: string): SophistryStyleSheet {
+    set(name: string, css: string): StyleSheet {
         if (this.context.hasOwnProperty(name)) this.context[name].css.replaceSync(css);
         else {
             const st = document.createElement('style');
             st.innerText = css;
-            this.context[name] = new SophistryStyleSheet(st);
+            this.context[name] = new StyleSheet(st);
         }
         return this.context[name];
     };
@@ -128,7 +128,7 @@ const hash = (str: string) => {
  * const sss = new SophistryStyleSheet(css);
  * 
  */
-export class SophistryStyleSheet{
+export class StyleSheet{
     /**
      * The wrapped CSS stylesheet.
      */
@@ -196,11 +196,3 @@ export class SophistryStyleSheet{
     }
 }
 
-/**
- * Wraps a CSSStyleSheet with a SophistryStyleSheet
- * @param {CSSStyleSheet} cssStyleSheet 
- * @returns 
- */
-export function wrap(cssStyleSheet: CSSStyleSheet) {
-    return new SophistryStyleSheet(cssStyleSheet);
-}

@@ -1,3 +1,15 @@
+/**
+ * Base class for EventListener and MatchListener
+ */
+export class Listener {
+    listener: EventListenerOrEventListenerObject;
+    listen(eventName: string, elements: EventTarget[], options?: boolean | AddEventListenerOptions) {
+        for (let element of elements) element.addEventListener(eventName, this.listener, options);
+    };
+    remove(eventName: string, ...elements: EventTarget[]) {
+        for (let element of elements) element.removeEventListener(eventName, this.listener);
+    };
+}
 
 /**
  * Object mapping element mapping strings to event handler functions.
@@ -64,6 +76,20 @@ export function eventListener(ops: Function[] | Function, runContext?: any) {
 }
 
 /**
+ * Similar to eventListener function but has methods for attaching 
+ * and removing itself from multiple elements at the same time.
+ * 
+ * This gives the listener a 'personality' and promotes its reuse
+ * (good practice).
+ */
+export class EventListener extends Listener {
+    constructor(ops: Function[] | Function, runContext?: any) {
+        super();
+        this.listener = eventListener(ops, runContext);
+    };
+}
+
+/**
  * Symbol which will terminate event handling if returned by any of 
  * the functions in the ops chain of an event handler created with 
  * `eventHandler`.
@@ -95,12 +121,33 @@ export function matchListener(matcher: Matcher, wrapListeners?: boolean) {
             listenerMap[selector] = args2? eventListener(args2[0], args2[1]): eventListener(args[0], args[1]);
         } else listenerMap[selector] = args;
     }
-    function listener(e: { target: { matches: (arg0: string) => any; }; }) {
+    function listener(e: { target: MatchEventTarget; }) {
         for (let [selector, fn] of Object.entries(listenerMap)) {
-            if (e.target.matches(selector)) return fn(e);
+            if (e.target.matches && e.target.matches(selector)) return fn(e);
         }
     }
     return listener;
+}
+
+/**
+ * An event target which may have a 'matches' method.
+ */
+export interface MatchEventTarget extends EventTarget {
+    matches?: (arg0: string) => any; 
+}
+
+/**
+ * Similar to matchListener function but has methods for attaching 
+ * and removing itself from multiple elements at the same time.
+ * 
+ * This gives the listener a 'personality' and promotes its reuse
+ * (good practice).
+ */
+export class MatchListener extends Listener {
+    constructor(matcher: Matcher, wrapListeners?: boolean) {
+        super();
+        this.listener = matchListener(matcher, wrapListeners);
+    };
 }
 
 /**

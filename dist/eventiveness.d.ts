@@ -423,6 +423,14 @@ declare function update(elements: Iterable<Node>, values: Iterable<Node>): void;
 declare function remove(elements: Iterable<Node>): void;
 
 /**
+ * Base class for EventListener and MatchListener
+ */
+declare class Listener {
+    listener: EventListenerOrEventListenerObject;
+    listen(eventName: string, ...elements: EventTarget[]): void;
+    remove(eventName: string, ...elements: EventTarget[]): void;
+}
+/**
  * Object mapping element mapping strings to event handler functions.
  * The matching strings (keys) are used to match event targets to trigger
  * the invocation of their associated handler functions.
@@ -467,6 +475,16 @@ interface Matcher {
  */
 declare function eventListener(ops: Function[] | Function, runContext?: any): (e: any) => Promise<any>;
 /**
+ * Similar to eventListener function but has methods for attaching
+ * and removing itself from multiple elements at the same time.
+ *
+ * This gives the listener a 'personality' and promotes its reuse
+ * (good practice).
+ */
+declare class EventListener extends Listener {
+    constructor(ops: Function[] | Function, runContext?: any);
+}
+/**
  * Symbol which will terminate event handling if returned by any of
  * the functions in the ops chain of an event handler created with
  * `eventHandler`.
@@ -489,10 +507,24 @@ declare const END: unique symbol;
  * @param {boolean} wrapListeners Whether to werap the matcher functions with `eventListener`.
  */
 declare function matchListener(matcher: Matcher, wrapListeners?: boolean): (e: {
-    target: {
-        matches: (arg0: string) => any;
-    };
+    target: MatchEventTarget;
 }) => any;
+/**
+ * An event target which may have a 'matches' method.
+ */
+interface MatchEventTarget extends EventTarget {
+    matches?: (arg0: string) => any;
+}
+/**
+ * Similar to matchListener function but has methods for attaching
+ * and removing itself from multiple elements at the same time.
+ *
+ * This gives the listener a 'personality' and promotes its reuse
+ * (good practice).
+ */
+declare class MatchListener extends Listener {
+    constructor(matcher: Matcher, wrapListeners?: boolean);
+}
 /**
  * Simply calls `stopPropagation` on the event. Useful for creating one-liner
  * event handlers.
@@ -897,4 +929,4 @@ declare class SophistryStyleSheet {
  */
 declare function wrap(cssStyleSheet: CSSStyleSheet): SophistryStyleSheet;
 
-export { Actribute, type ApplyMap, type ArrayTemplate, END, type Inserter, type Matcher, One, type OneConstructor, type SetMap, Sophistry, SophistryStyleSheet, apply, applyTo, arrayTemplate, asyncArrayTemplate, asyncTemplate, createFragment, createRange, eventListener, flat, get, getLength, ignoreContext, insert, inserter, items, iterLengths, keys, matchListener, next, onEnter, onKey, one, parentSelector, preventDefault, range, remove, ruleSelector, ruleSelectorAll, set, setLength, stopPropagation, tag, template, uItems, unWrap, update, wrap };
+export { Actribute, type ApplyMap, type ArrayTemplate, END, EventListener, type Inserter, Listener, type MatchEventTarget, MatchListener, type Matcher, One, type OneConstructor, type SetMap, Sophistry, SophistryStyleSheet, apply, applyTo, arrayTemplate, asyncArrayTemplate, asyncTemplate, createFragment, createRange, eventListener, flat, get, getLength, ignoreContext, insert, inserter, items, iterLengths, keys, matchListener, next, onEnter, onKey, one, parentSelector, preventDefault, range, remove, ruleSelector, ruleSelectorAll, set, setLength, stopPropagation, tag, template, uItems, unWrap, update, wrap };

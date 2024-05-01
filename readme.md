@@ -1,5 +1,7 @@
 # Eventiveness
 
+![Appliance in action](https://github.com/mksunny1/eventiveness/blob/main/docs/assets/logos/logo-transparent-png2.png?raw=true)
+
 This is a group of 8 tiny abstractions created with the goal of simplifying the development of interactive web frontends using vanilla HTML, CSS and JavasSript. This is an inclusive library which caters to the needs of everyone in web development. 
 
 - Frontend JavaScript developers can develop apps without worrying about control, modularity or maintainance. Not only is the framework flexible, modular and compact, it also strives to align with all the familiar semantics we know and love. You still retain the convenience of a declarative API.
@@ -20,19 +22,42 @@ What follows is a brief description of the 8 libraries and how to include them i
 ## Appliance
 Appliance provides a powerful declarative API for manipulating the DOM and for structuring code. It can be used to attach behavior to HTML elements easily and efficiently. At a basic level it can work work similarly to web components without needing to create the elements. This can produce big gains in accessibility and flexibility. When used in tandem with other powerful primitives like `domitory` and `onetomany`, appiance will also match and exceed advanced component and famework functionality, like data-binding, state management and lifecycle hooks. Some things like 'hydration' are even obtained for free.
 
-![Appliance in action](https://github.com/mksunny1/eventiveness/tree/main/images/appliance.jpg?raw=true)
+```js
+import { apply } from 'eventiveness/appliance'
+import { mySophistry } from './my-style-manager.js'
+import { meEventivity } from './my-event-manager.js'
+
+// apply used globally on all paragraphs within the containingElement
+function(containingElement) {
+    apply({
+        p: (...allP) => mySophistry.pStyle.style(...allP) || meEventivity.pClickListener.listen('click', ...allP)
+    }, containingElement);  // containingElement default to document.body.
+}
+```
 
 
 ## Domitory
 This provides a painless SQLesque API for manipulating the DOM. The library exports `insert`, `set`, `update` and `remove` (`delete` is a keyword in JavaScript) functions for bulk manipulation of things on the DOM. It is an efficient, consistent and simple API to use. See the examples and the API docs.
 
-![Domitory in action](https://github.com/mksunny1/eventiveness/tree/main/images/domitory.jpg?raw=true)
+```js
+import { apply } from 'eventiveness/appliance'
+import { set } from 'eventiveness/domitory'
+import { range } from 'eventiveness/generational'
 
+// set the text content of all selected p elements to its position in the array. We can set as many properties or attributes as we want at once.
+function(containingElement) {
+    apply({
+        p: (...allP) => set(allP, {textContent: range(allP.length)})
+    }, containingElement);
+}
+```
 
 ## Eventivity
 This library provides some useful primitives for simiplifying the code that must be included in every page where JavaScript is used to support interactivity. Most JavaScript code can only run in response to an event. Eventivity exports functions for:
 
 - composing event handlers
+- creating 'lazy' handlers whose functionality can be injected later
+- promoting handler reuse with different elements
 - creating fewer event hanandlers by taking advantage of event bubbling
 - disabling event firing until a running handler completes including handlers that use promises.
 - creating handlers for specific key events, like enter.
@@ -40,31 +65,55 @@ This library provides some useful primitives for simiplifying the code that must
 
 It is the uninteresting but relevant bits.
 
-![Eventivity in action](https://github.com/mksunny1/eventiveness/tree/main/images/eventivity.jpg?raw=true)
+```js
+import { EventListener } from 'eventiveness/eventivity'
+
+export const myEventivity = {
+    pClickListener: new EventListener((e, runContext) => console.log({e.target, runContext}))
+};
+
+```
 
 
 ## OneToMany
 This is the API for 'reactivity'. OneToMany exports primitives to help us create and manipulate single objects which function as many objects. OneToMany provides methods for getting and setting properties on multiple objects and methods for invoking multiple functions and object methods. The library is simple, concise, explicit and transparent.
 
-![OneToMany in action](https://github.com/mksunny1/eventiveness/tree/main/images/onetomany.jpg?raw=true)
+```js
+import { One } from 'eventiveness/onetomany'
+export const hydra = new One([{a: 1}, {a: 2}, {a: 3}]);
+```
 
 
 ## Apriori
 This is a fun library to use if you need to build some or all of your DOM with the help of JavaScript. It includes primitives for template creation, template rendering and document tree building. There are primitives for building the DOM with either in-page resources or dynamically loaded ones. This gives us the flexibility to choose whatever works best for a project.
 
-![Apriori in action](https://github.com/mksunny1/eventiveness/tree/main/images/apriori.jpg?raw=true)
+```js
+import { get, template } from 'eventiveness/apriori'
+export const myTemplate = template(await get('markup.html'));
+```
 
 
 ## Sophistry
 CSS is a crucial element of nearly every frontend on the web. It makes pages beautiful and improves UX for visual users. CSS is easy to include globally in any page. However, when localising styles with Shadow DOM (which is the officially supported method), one currently has to make the decision between writing duplicitive declarative styles vs writing JavaScript boilerplate to manage styles efficiently. Sophistry will help with efficiently scoping declaratively written styles to specific elements. The library provides an API which simplifies the code needed for such scoping. It will internally create open shadow roots where necessary and  maintains a cache to avoid reloading or re-processing the same styles (unless we request these). Sophistry can also draw styles from anywhere.
 
-![Sophistry in action](https://github.com/mksunny1/eventiveness/tree/main/images/sophistry.jpg?raw=true)
+```js
+import { Sophistry } from 'eventiveness/sophistry'
+export const mySophistry = new Sophistry();
+mySophistry.import('pStyle.css');
+```
 
 
 ## Generational
 Generational exports some useful generators to improve performance and reduce memory footprint. The `range` and `items` generators have been especially useful in the tests and examples. They are meant for best-performance scenarios and should be used with caution. When in doubt, please just use an array.
 
-![Generational in action](https://github.com/mksunny1/eventiveness/tree/main/images/generational.jpg?raw=true)
+```js
+import { range, items } from 'eventiveness/generational'
+const everyTenthIn1000 = range(0, 1000, 10);   
+// 0, 10, 20, ...
+
+const everyHundredthIn1000 = items(everyTenthIn1000, range(0, 100, 10));
+// 0, 100, 200, ...
+```
 
 
 ## Actribute
@@ -72,8 +121,30 @@ Actribute aims to provide a more widely supported, flexible and powerful alterna
 
 *Note: This library should be considered less mature than the others, because it has not been tested or used as much. Currently it exists as a Proof of Concept.*
 
+```js
+// initialize:
+const fallbackProps = {prop1: 'Fallback', prop4: 'Last resort'};
+const act = new Actribute(fallbackProps);
+
+// register components:
+act.register('comp1', (node, prop1) => node.textContent = prop1);
+act.register('comp2', (node, prop2) => node.style.left = prop2);
+
+// use in markup:
+// <section c-comp1="prop1"  c-comp2="prop2">
+//     First section
+// </section>
+
+// process components:
+act.process(document.body, {prop2: 1, prop3: 2});  
+
+// unregister a component:
+delete act.registry.comp2;
+```
+
 
 ## Installation
+You can currently install eventiveness in 2 ways:
 
 ### Direct download
 Download or clone the repository and import any libraries you need from the ./src. It contains both JavaScript and TypeScript files.
@@ -81,7 +152,11 @@ Download or clone the repository and import any libraries you need from the ./sr
 ### From NPM
 ```npm i eventiveness```
 
+Eventiveness will also be installable from a CDN network soon.
+
+
 ## Usage
+Depending on how you bring Eventiveness into your app, there may be subtle differences in how to import the libraries:
 
 ### Direct download
 ```js
