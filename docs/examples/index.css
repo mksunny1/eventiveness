@@ -13,10 +13,10 @@ p {
     max-width: 600px;
 }
 main {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
+    flex-flow: column;
     gap: 2em;
-    max-width: 90%;
+    max-width: 100%;
     background-color: white;
     margin-top: 2em;
     padding: 4em 2em;
@@ -30,9 +30,9 @@ section {
     min-width: 300px;
 }
 
-@media only screen and (max-width: 768px) {
+@media only screen and (min-width: 768px) {
     main {
-        display: flex;
-        flex-flow: column;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
     }
 }
