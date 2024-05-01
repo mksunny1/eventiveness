@@ -17,7 +17,7 @@
  * act.register('comp2', (node, prop2) => node.style.left = prop2);
  *
  * // use in markup:
- * // &lt;section o-comp1="prop1"  o-comp2="prop2" &rt;
+ * // &lt;section c-comp1="prop1"  c-comp2="prop2" &gt;
  * //       First section
  * // &lt;/section&gt;
  *
@@ -427,7 +427,7 @@ declare function remove(elements: Iterable<Node>): void;
  */
 declare class Listener {
     listener: EventListenerOrEventListenerObject;
-    listen(eventName: string, ...elements: EventTarget[]): void;
+    listen(eventName: string, elements: EventTarget[], options?: boolean | AddEventListenerOptions): void;
     remove(eventName: string, ...elements: EventTarget[]): void;
 }
 /**
@@ -854,20 +854,23 @@ declare class Sophistry {
      *
      * @param {Element} root
      * @param {boolean} [replace]
-     * @returns {SophistryStyleSheet[]}
+     * @returns {StyleSheet[]}
      */
-    process(root: Element, replace?: boolean): SophistryStyleSheet[];
+    process(root: Element, replace?: boolean): StyleSheet[];
     /**
-     * Import a stylesheet defined in an external CSS file.
+     * Import a stylesheet defined in an external CSS file. Optionally
+     * specify a name for the imported style in the Scophystry context (cache).
+     * The name will default to the portion of the link before the first
+     * apostrophe...
      *
      * @example
-     * const style = mySophistry.import('style.css', false);
+     * const style = mySophistry.import('style.css');
      *
      * @param {string} link
-     * @param {boolean} [replace]
-     * @returns {SophistryStyleSheet}
+     * @param {string} [name]
+     * @returns {StyleSheet}
      */
-    import(link: string, replace?: boolean): SophistryStyleSheet;
+    import(link: string, name?: string): StyleSheet;
     /**
      * Replaces the text of an existing stylesheet. This is reactive.
      *
@@ -878,7 +881,7 @@ declare class Sophistry {
      * @param {string} css
      * @returns
      */
-    set(name: string, css: string): SophistryStyleSheet;
+    set(name: string, css: string): StyleSheet;
 }
 /**
  * This is used to wrap a CSSStyleSheet to provide convenient methods
@@ -888,7 +891,7 @@ declare class Sophistry {
  * const sss = new SophistryStyleSheet(css);
  *
  */
-declare class SophistryStyleSheet {
+declare class StyleSheet {
     /**
      * The wrapped CSS stylesheet.
      */
@@ -922,11 +925,5 @@ declare class SophistryStyleSheet {
      */
     remove<T extends (Element | DocumentFragment)>(...elements: T[]): void;
 }
-/**
- * Wraps a CSSStyleSheet with a SophistryStyleSheet
- * @param {CSSStyleSheet} cssStyleSheet
- * @returns
- */
-declare function wrap(cssStyleSheet: CSSStyleSheet): SophistryStyleSheet;
 
-export { Actribute, type ApplyMap, type ArrayTemplate, END, EventListener, type Inserter, Listener, type MatchEventTarget, MatchListener, type Matcher, One, type OneConstructor, type SetMap, Sophistry, SophistryStyleSheet, apply, applyTo, arrayTemplate, asyncArrayTemplate, asyncTemplate, createFragment, createRange, eventListener, flat, get, getLength, ignoreContext, insert, inserter, items, iterLengths, keys, matchListener, next, onEnter, onKey, one, parentSelector, preventDefault, range, remove, ruleSelector, ruleSelectorAll, set, setLength, stopPropagation, tag, template, uItems, unWrap, update, wrap };
+export { Actribute, type ApplyMap, type ArrayTemplate, END, EventListener, type Inserter, Listener, type MatchEventTarget, MatchListener, type Matcher, One, type OneConstructor, type SetMap, Sophistry, StyleSheet, apply, applyTo, arrayTemplate, asyncArrayTemplate, asyncTemplate, createFragment, createRange, eventListener, flat, get, getLength, ignoreContext, insert, inserter, items, iterLengths, keys, matchListener, next, onEnter, onKey, one, parentSelector, preventDefault, range, remove, ruleSelector, ruleSelectorAll, set, setLength, stopPropagation, tag, template, uItems, unWrap, update };

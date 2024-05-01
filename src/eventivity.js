@@ -3,9 +3,9 @@
  */
 export class Listener {
     listener;
-    listen(eventName, ...elements) {
+    listen(eventName, elements, options) {
         for (let element of elements)
-            element.addEventListener(eventName, this.listener);
+            element.addEventListener(eventName, this.listener, options);
     }
     ;
     remove(eventName, ...elements) {

@@ -17,7 +17,7 @@
  * act.register('comp2', (node, prop2) => node.style.left = prop2);
  *
  * // use in markup:
- * // &lt;section o-comp1="prop1"  o-comp2="prop2" &rt;
+ * // &lt;section c-comp1="prop1"  c-comp2="prop2" &gt;
  * //       First section
  * // &lt;/section&gt;
  *
