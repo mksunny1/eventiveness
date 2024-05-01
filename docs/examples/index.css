@@ -30,7 +30,7 @@ section {
     min-width: 300px;
 }
 
-@media only screen and (min-width: 768px) {
+@media only screen and (min-width: 800px) {
     main {
         display: grid;
         grid-template-columns: 1fr 1fr;
