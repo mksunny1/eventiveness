@@ -13,7 +13,7 @@ This is a group of 8 tiny abstractions created with the goal of simplifying the 
 - Ultimately users, which is another name for *all of us*, will benefit the most when all the industry practitioners have the right tools to be more productive and to perform at their best. HTML, JavaScript and CSS are amazinng technologies and we need to emphasize and consolidate this in modern web development.
 
 
-Apart from this brief guide and the [API](https://mksunny1.github.io/eventiveness/docs/api/) documentation, there are also some examples which can be used to understand how the parts fit together and to develop a feel for using Eventiveness. If you want to see the output of the exmples, you can run the included server with `npm start` and visit the 'examples' site at http://localhost:8000/docs/examples/index.html. The site is also hosted online [here](https://mksunny1.github.io/eventiveness/docs/examples).
+Apart from this brief guide and the [API](https://mksunny1.github.io/eventiveness/docs/api/) documentation, there are also some examples which can be used to understand how the parts fit together and to develop a feel for using eventiveness. If you want to see the output of the exmples, you can run the included server with `npm start` and visit the 'examples' site at http://localhost:8000/docs/examples/index.html. The site is also hosted online [here](https://mksunny1.github.io/eventiveness/docs/examples).
 
 
 What follows is a brief description of the 8 libraries and how to include them in your projects.
@@ -79,8 +79,20 @@ export const myEventivity = {
 This is the API for 'reactivity'. OneToMany exports primitives to help us create and manipulate single objects which function as many objects. OneToMany provides methods for getting and setting properties on multiple objects and methods for invoking multiple functions and object methods. The library is simple, concise, explicit and transparent.
 
 ```js
-import { One } from 'eventiveness/onetomany'
-export const hydra = new One([{a: 1}, {a: 2}, {a: 3}]);
+import { One, one } from 'eventiveness/onetomany'
+const arr1 = [1, 2, 3, 4, 5];
+
+const arr2 = ['a', 'b', 'c', 'd'];
+// not compulsory to have the same length
+
+export const oneArray = new One([arr1, arr2]);  
+oneArray.many.unshift([true, true, false]);
+// you can add or remove arrays later using its 'many' property
+
+const wrappedOneArray = one([arr1, arr2])
+wrappedOneArray.push([6], ['e']);
+// wrapping enables shorthand syntax like this.
+
 ```
 
 
@@ -156,7 +168,7 @@ Eventiveness will also be installable from a CDN network soon.
 
 
 ## Usage
-Depending on how you bring Eventiveness into your app, there may be subtle differences in how to import the libraries:
+Depending on how you bring eventiveness into your app, there may be subtle differences in how to import the libraries:
 
 ### Direct download
 ```js
@@ -173,7 +185,7 @@ Depending on how you bring Eventiveness into your app, there may be subtle diffe
 ```
 
 ## Contributing
-If you like the concept and/or the direction of Eventiveness, feel free to contribute to this project. We are accepting contributions in many areas. Just give us a shout. The discussion area is open, and more channels are in the pipeline.
+If you like the concept and/or the direction of eventiveness, feel free to contribute to this project. We are accepting contributions in many areas. Just give us a shout. The discussion area is open, and more channels are in the pipeline.
 
 You can also sponsor this project. That is also in the works. For now you can give us a shout.
 
