@@ -20,7 +20,7 @@ What follows is a brief description of the 8 libraries and how to include them i
 
 
 ## Appliance
-Appliance provides a powerful declarative API for manipulating the DOM and for structuring code. It can be used to attach behavior to HTML elements easily and efficiently. At a basic level it can work work similarly to web components without needing to create the elements. This can produce big gains in accessibility and flexibility. When used in tandem with other powerful primitives like `domitory` and `onetomany`, appiance will also match and exceed advanced component and famework functionality, like data-binding, state management and lifecycle hooks. Some things like 'hydration' are even obtained for free.
+Appliance provides a powerful declarative API for manipulating the DOM and for structuring code. It can be used to attach behavior to HTML elements easily and efficiently. At a basic level it can work similarly to web components without needing to create the elements. This can produce big gains in accessibility and flexibility. When used in tandem with other powerful primitives from `domitory` and `onetomany`, appiance will also match and exceed advanced component and famework functionality, like data-binding, state management and lifecycle hooks. Some things like 'hydration' are even obtained for free.
 
 ```js
 import { apply } from 'eventiveness/appliance'
@@ -56,7 +56,7 @@ function(containingElement) {
 This library provides some useful primitives for simiplifying the code that must be included in every page where JavaScript is used to support interactivity. Most JavaScript code can only run in response to an event. Eventivity exports functions for:
 
 - composing event handlers
-- creating 'lazy' handlers whose functionality can be injected later
+- creating *lazy* handlers whose functionality can be injected later
 - promoting handler reuse with different elements
 - creating fewer event hanandlers by taking advantage of event bubbling
 - disabling event firing until a running handler completes including handlers that use promises.
@@ -94,7 +94,7 @@ export const myTemplate = template(await get('markup.html'));
 
 
 ## Sophistry
-CSS is a crucial element of nearly every frontend on the web. It makes pages beautiful and improves UX for visual users. CSS is easy to include globally in any page. However, when localising styles with Shadow DOM (which is the officially supported method), one currently has to make the decision between writing duplicitive declarative styles vs writing JavaScript boilerplate to manage styles efficiently. Sophistry will help with efficiently scoping declaratively written styles to specific elements. The library provides an API which simplifies the code needed for such scoping. It will internally create open shadow roots where necessary and  maintains a cache to avoid reloading or re-processing the same styles (unless we request these). Sophistry can also draw styles from anywhere.
+CSS is a crucial element of most pages on the web. It makes the pages beautiful and improves the UX for visual users. CSS is easy to include globally in any page. However, when localising styles with Shadow DOM (which is the officially supported method), one currently has to make the decision between writing duplicitive declarative styles vs writing JavaScript boilerplate to manage styles efficiently. Sophistry will help with efficiently scoping declaratively written styles to specific elements. The library provides an API which simplifies the code needed for such scoping. It will internally create open shadow roots where necessary.  it maintains a cache to avoid reloading or re-processing the same styles (unless we request these). Sophistry can also draw styles from anywhere.
 
 ```js
 import { Sophistry } from 'eventiveness/sophistry'
@@ -104,7 +104,7 @@ mySophistry.import('pStyle.css');
 
 
 ## Generational
-Generational exports some useful generators to improve performance and reduce memory footprint. The `range` and `items` generators have been especially useful in the tests and examples. They are meant for best-performance scenarios and should be used with caution. When in doubt, please just use an array.
+Generational exports some useful generators to improve performance and reduce memory footprint. The `range` and `items` generators have been especially useful in the tests and examples. They may not work in many places where arrays are expected because we can only iterate them once. Thus they should be used with caution. When in doubt, just use an array.
 
 ```js
 import { range, items } from 'eventiveness/generational'
