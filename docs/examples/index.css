@@ -30,7 +30,7 @@ section {
     min-width: 300px;
 }
 
-@media screen and (max-width: 500px) {
+@media only screen and (max-width: 600px) {
     main {
         display: flex;
         flex-flow: column;
