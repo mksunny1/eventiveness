@@ -79,16 +79,18 @@ class Component {
     let markup = [];
     const a = this.index,
       z = (this.index += n);
-    const lbl =
-      adjectives[_random(adjectives.length)] +
-      " " +
-      colours[_random(colours.length)] +
-      " " +
-      nouns[_random(nouns.length)];
-    for (let i = a; i < z; i++)
+    let lbl;
+    for (let i = a; i < z; i++) {
+      lbl =
+        adjectives[_random(adjectives.length)] +
+        " " +
+        colours[_random(colours.length)] +
+        " " +
+        nouns[_random(nouns.length)];
       markup.push(
         `<tr><td class='col-md-1'>${i}</td><td class='col-md-4'><a class='lbl'>${lbl}</a></td><td class='col-md-1'><a class='remove'><span class='remove glyphicon glyphicon-remove' aria-hidden='true'></span></a></td><td class='col-md-6'></td></tr>`,
       );
+    }
     this.parent.append(createFragment(markup.join("")));
   }
   swap() {
