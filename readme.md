@@ -2,7 +2,7 @@
 
 ![Logo](https://github.com/mksunny1/eventiveness/blob/main/docs/assets/logos/small.png?raw=true)
 
-_NOTE: Eventiveness has been superceeded by [Deleight](https://github.com/mksunny1/deleight) which is more indicative of what this is about. It also contains an extra libray. Please download [deleight](https://github.com/mksunny1/deleight) instead. Cheers..._
+_NOTE: Eventiveness has been superceeded by [deleight](https://github.com/mksunny1/deleight). Delight is more indicative, up to date and contains an extra libray. Please download [deleight](https://github.com/mksunny1/deleight) instead. Cheers..._
 
 This is a group of 8 tiny abstractions created with the goal of simplifying the development of interactive web frontends using vanilla HTML, CSS and JavasSript. This is an inclusive library which caters to the needs of everyone in web development.
 
